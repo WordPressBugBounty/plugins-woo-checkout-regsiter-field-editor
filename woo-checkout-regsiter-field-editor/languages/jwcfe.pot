@@ -1,0 +1,394 @@
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: WooCommerce Checkout Field Editor (Checkout Manager)\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2024-05-24 11:31+0000\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: \n"
+"Language: \n"
+"Plural-Forms: nplurals=INTEGER; plural=EXPRESSION;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Loco https://localise.biz/\n"
+"X-Loco-Version: 2.6.9; wp-6.5.3\n"
+"X-Domain: jwcfe"
+
+#: classes/class-jwcfe-wc-checkout-field-editor.php:1737
+msgid "+ Add New field"
+msgstr ""
+
+#: classes/class-jwcfe-wc-checkout-field-editor.php:1654
+msgid ""
+"17 field types are available: 15 input fields one field for title/heading "
+"and one for label."
+msgstr ""
+
+#: classes/class-jwcfe-wc-checkout-field-editor.php:1660
+msgid "Add Conditionally based fields"
+msgstr ""
+
+#: classes/class-jwcfe-wc-checkout-field-editor.php:1075
+#: classes/class-jwcfe-wc-checkout-field-editor.php:1351
+msgid "Billing_"
+msgstr ""
+
+#: classes/class-jwcfe-wc-checkout-field-editor.php:1093
+#: classes/class-jwcfe-wc-checkout-field-editor.php:1370
+msgid "Character limit:"
+msgstr ""
+
+#: classes/class-jwcfe-wc-checkout-field-editor.php:66
+msgid "Checkout & Register Editor"
+msgstr ""
+
+#: main.php:715 main.php:734
+msgid "Checkout Fields"
+msgstr ""
+
+#: classes/class-jwcfe-wc-checkout-field-editor.php:1667
+msgid "Click here"
+msgstr ""
+
+#: classes/class-jwcfe-wc-checkout-field-editor.php:1650
+msgid "Custom Fields WooCommerce Checkout Page Pro Version"
+msgstr ""
+
+#. Description of the plugin
+msgid ""
+"Customize WooCommerce checkout and my account page edit woocommerce checkout "
+"fields (Add, Edit, Delete and re-arrange fields). best checkout fields "
+"editor plugin for woocommerce."
+msgstr ""
+
+#: classes/class-jwcfe-wc-checkout-field-editor.php:57
+#: classes/class-jwcfe-wc-checkout-field-editor.php:1664
+msgid "Documentation"
+msgstr ""
+
+#: classes/class-jwcfe-wc-checkout-field-editor.php:1672
+msgid "Donate using PayPal"
+msgstr ""
+
+#: classes/class-jwcfe-wc-checkout-field-editor.php:1727
+msgid "Edit"
+msgstr ""
+
+#: classes/class-jwcfe-wc-checkout-field-editor.php:1109
+#: classes/class-jwcfe-wc-checkout-field-editor.php:1389
+msgid "Email"
+msgstr ""
+
+#: classes/class-jwcfe-wc-checkout-field-editor.php:995
+msgid "Email address"
+msgstr ""
+
+#: classes/class-jwcfe-wc-checkout-field-editor.php:1145
+#: classes/class-jwcfe-wc-checkout-field-editor.php:1424
+msgid "Enter field type"
+msgstr ""
+
+#: classes/class-jwcfe-wc-checkout-field-editor.php:1165
+#: classes/class-jwcfe-wc-checkout-field-editor.php:1444
+msgid "Enter Your placeholder"
+msgstr ""
+
+#: classes/class-jwcfe-wc-checkout-field-editor.php:1126
+#: classes/class-jwcfe-wc-checkout-field-editor.php:1405
+msgid "Field Type:"
+msgstr ""
+
+#: classes/class-jwcfe-wc-checkout-field-editor.php:1172
+#: classes/class-jwcfe-wc-checkout-field-editor.php:1451
+msgid "Field Width:"
+msgstr ""
+
+#: classes/class-jwcfe-wc-checkout-field-editor.php:1086
+#: classes/class-jwcfe-wc-checkout-field-editor.php:1363
+msgid "First name"
+msgstr ""
+
+#: classes/class-jwcfe-wc-checkout-field-editor.php:1178
+#: classes/class-jwcfe-wc-checkout-field-editor.php:1457
+msgid "Full-Width"
+msgstr ""
+
+#: classes/class-jwcfe-wc-checkout-field-editor.php:1060
+#: classes/class-jwcfe-wc-checkout-field-editor.php:1333
+msgid "General Settings"
+msgstr ""
+
+#: classes/class-jwcfe-wc-checkout-field-editor.php:1197
+#: classes/class-jwcfe-wc-checkout-field-editor.php:1476
+msgid "H1"
+msgstr ""
+
+#: classes/class-jwcfe-wc-checkout-field-editor.php:1198
+#: classes/class-jwcfe-wc-checkout-field-editor.php:1477
+msgid "H2"
+msgstr ""
+
+#: classes/class-jwcfe-wc-checkout-field-editor.php:1199
+#: classes/class-jwcfe-wc-checkout-field-editor.php:1478
+msgid "H3"
+msgstr ""
+
+#: classes/class-jwcfe-wc-checkout-field-editor.php:1200
+#: classes/class-jwcfe-wc-checkout-field-editor.php:1479
+msgid "H4"
+msgstr ""
+
+#: classes/class-jwcfe-wc-checkout-field-editor.php:1201
+#: classes/class-jwcfe-wc-checkout-field-editor.php:1480
+msgid "H5"
+msgstr ""
+
+#: classes/class-jwcfe-wc-checkout-field-editor.php:1202
+#: classes/class-jwcfe-wc-checkout-field-editor.php:1481
+msgid "H6"
+msgstr ""
+
+#: classes/class-jwcfe-wc-checkout-field-editor.php:1180
+#: classes/class-jwcfe-wc-checkout-field-editor.php:1459
+msgid "Half-Width"
+msgstr ""
+
+#: classes/class-jwcfe-wc-checkout-field-editor.php:1740
+msgid "Hide"
+msgstr ""
+
+#. URI of the plugin
+msgid "https://jcodex.com/plugins/woocommerce-custom-checkout-field-editor/"
+msgstr ""
+
+#. Author URI of the plugin
+msgid "https://www.jcodex.com"
+msgstr ""
+
+#: classes/class-jwcfe-wc-checkout-field-editor.php:1670
+msgid "IF you found this plugin helpful,"
+msgstr ""
+
+#. Author of the plugin
+msgid "Jcodex"
+msgstr ""
+
+#: classes/class-jwcfe-wc-checkout-field-editor.php:1722
+msgid "Label"
+msgstr ""
+
+#: classes/class-jwcfe-wc-checkout-field-editor.php:1084
+#: classes/class-jwcfe-wc-checkout-field-editor.php:1361
+msgid "Label:"
+msgstr ""
+
+#: classes/class-jwcfe-wc-checkout-field-editor.php:1077
+#: classes/class-jwcfe-wc-checkout-field-editor.php:1353
+msgid "Must be unique for each field"
+msgstr ""
+
+#: classes/class-jwcfe-wc-checkout-field-editor.php:1720
+msgid "Name"
+msgstr ""
+
+#: classes/class-jwcfe-wc-checkout-field-editor.php:1073
+#: classes/class-jwcfe-wc-checkout-field-editor.php:1347
+msgid "Name:"
+msgstr ""
+
+#: classes/class-jwcfe-wc-checkout-field-editor.php:1253
+#: classes/class-jwcfe-wc-checkout-field-editor.php:1534
+msgid "Option Text"
+msgstr ""
+
+#: classes/class-jwcfe-wc-checkout-field-editor.php:1250
+#: classes/class-jwcfe-wc-checkout-field-editor.php:1529
+msgid "Option Value"
+msgstr ""
+
+#: classes/class-jwcfe-wc-checkout-field-editor.php:1240
+#: classes/class-jwcfe-wc-checkout-field-editor.php:1518
+msgid "Options:"
+msgstr ""
+
+#: classes/class-jwcfe-wc-checkout-field-editor.php:983
+msgid "Order Notes"
+msgstr ""
+
+#: classes/class-jwcfe-wc-checkout-field-editor.php:999
+msgid "Password"
+msgstr ""
+
+#: classes/class-jwcfe-wc-checkout-field-editor.php:1110
+#: classes/class-jwcfe-wc-checkout-field-editor.php:1390
+msgid "Phone"
+msgstr ""
+
+#: classes/class-jwcfe-wc-checkout-field-editor.php:1723
+msgid "Placeholder"
+msgstr ""
+
+#: classes/class-jwcfe-wc-checkout-field-editor.php:984
+msgctxt "placeholder"
+msgid "Notes about your order, e.g. special notes for delivery."
+msgstr ""
+
+#: classes/class-jwcfe-wc-checkout-field-editor.php:1157
+#: classes/class-jwcfe-wc-checkout-field-editor.php:1436
+msgid "Placeholder:"
+msgstr ""
+
+#: classes/class-jwcfe-wc-checkout-field-editor.php:667
+#: classes/class-jwcfe-wc-checkout-field-editor.php:757
+msgid "Please Select"
+msgstr ""
+
+#: classes/class-jwcfe-wc-checkout-field-editor.php:1651
+msgid ""
+"premium version provides more features to design your checkout and my "
+"account page."
+msgstr ""
+
+#: classes/class-jwcfe-wc-checkout-field-editor.php:1738
+msgid "Remove"
+msgstr ""
+
+#: classes/class-jwcfe-wc-checkout-field-editor.php:1725
+msgid "Required"
+msgstr ""
+
+#: classes/class-jwcfe-wc-checkout-field-editor.php:144
+#: classes/class-jwcfe-wc-checkout-field-editor.php:186
+#: classes/class-jwcfe-wc-checkout-field-editor.php:223
+#: classes/class-jwcfe-wc-checkout-field-editor.php:267
+#: classes/class-jwcfe-wc-checkout-field-editor.php:299
+#: classes/class-jwcfe-wc-checkout-field-editor.php:364
+#: classes/class-jwcfe-wc-checkout-field-editor.php:425
+#: classes/class-jwcfe-wc-checkout-field-editor.php:460
+#: classes/class-jwcfe-wc-checkout-field-editor.php:497
+#: classes/class-jwcfe-wc-checkout-field-editor.php:535
+#: classes/class-jwcfe-wc-checkout-field-editor.php:580
+#: classes/class-jwcfe-wc-checkout-field-editor.php:659
+#: classes/class-jwcfe-wc-checkout-field-editor.php:749
+#: classes/class-jwcfe-wc-checkout-field-editor.php:816
+msgid "required"
+msgstr ""
+
+#: classes/class-jwcfe-wc-checkout-field-editor.php:1745
+msgid "Reset to default fields"
+msgstr ""
+
+#: classes/class-jwcfe-wc-checkout-field-editor.php:1743
+msgid "Save changes"
+msgstr ""
+
+#: classes/class-jwcfe-wc-checkout-field-editor.php:1632
+msgid "Section"
+msgstr ""
+
+#: classes/class-jwcfe-wc-checkout-field-editor.php:1662
+msgid "See Plugin"
+msgstr ""
+
+#: classes/class-jwcfe-wc-checkout-field-editor.php:781
+msgid "Select some options"
+msgstr ""
+
+#: classes/class-jwcfe-wc-checkout-field-editor.php:1113
+#: classes/class-jwcfe-wc-checkout-field-editor.php:1393
+msgid "select validation above"
+msgstr ""
+
+#: classes/class-jwcfe-wc-checkout-field-editor.php:53
+msgid "Settings"
+msgstr ""
+
+#: classes/class-jwcfe-wc-checkout-field-editor.php:1739
+msgid "Show"
+msgstr ""
+
+#: classes/class-jwcfe-wc-checkout-field-editor.php:1726
+msgid "Show / Hide"
+msgstr ""
+
+#: classes/class-jwcfe-wc-checkout-field-editor.php:906
+msgid "SUCCESS: Checkout fields successfully reset"
+msgstr ""
+
+#: classes/class-jwcfe-wc-checkout-field-editor.php:1654
+msgid ""
+"Text, Hidden, Password, Textarea, Radio, Checkbox, Select, Multi-select, "
+"Date Picker, Heading, Label"
+msgstr ""
+
+#: classes/class-jwcfe-wc-checkout-field-editor.php:1189
+#: classes/class-jwcfe-wc-checkout-field-editor.php:1468
+msgid "Title Type:"
+msgstr ""
+
+#: classes/class-jwcfe-wc-checkout-field-editor.php:1721
+msgid "Type"
+msgstr ""
+
+#: classes/class-jwcfe-wc-checkout-field-editor.php:1149
+#: classes/class-jwcfe-wc-checkout-field-editor.php:1428
+msgid "Type your custom text"
+msgstr ""
+
+#: classes/class-jwcfe-wc-checkout-field-editor.php:55
+msgid "Upgrade to Premium"
+msgstr ""
+
+#: classes/class-jwcfe-wc-checkout-field-editor.php:1225
+#: classes/class-jwcfe-wc-checkout-field-editor.php:1503
+msgid "User Can't edit this field"
+msgstr ""
+
+#: classes/class-jwcfe-wc-checkout-field-editor.php:1724
+msgid "Validation Rules"
+msgstr ""
+
+#: classes/class-jwcfe-wc-checkout-field-editor.php:1102
+#: classes/class-jwcfe-wc-checkout-field-editor.php:1382
+msgid "Validations:"
+msgstr ""
+
+#: classes/class-jwcfe-wc-checkout-field-editor.php:892
+msgid "WooCommerce"
+msgstr ""
+
+#: classes/class-jwcfe-wc-checkout-field-editor.php:66
+msgid "WooCommerce Checkout & Register Form Editor"
+msgstr ""
+
+#. Name of the plugin
+msgid "WooCommerce Checkout Field Editor (Checkout Manager)"
+msgstr ""
+
+#: classes/class-jwcfe-wc-checkout-field-editor.php:1656
+msgid "You can add all of these fields on my account page too."
+msgstr ""
+
+#: classes/class-jwcfe-wc-checkout-field-editor.php:1657
+msgid ""
+"You can add more sections in addition to the core sections (billing, "
+"shipping and additional) in checkout page."
+msgstr ""
+
+#: classes/class-jwcfe-wc-checkout-field-editor.php:1659
+msgid "You Can Integration of My Account With Checkout page"
+msgstr ""
+
+#: classes/class-jwcfe-wc-checkout-field-editor.php:1666
+msgid "You can talk to support any time if you have any queries"
+msgstr ""
+
+#: classes/class-jwcfe-wc-checkout-field-editor.php:2157
+msgid "Your changes were not saved due to an error (or you made none!)."
+msgstr ""
+
+#: classes/class-jwcfe-wc-checkout-field-editor.php:2155
+msgid "Your changes were saved."
+msgstr ""
