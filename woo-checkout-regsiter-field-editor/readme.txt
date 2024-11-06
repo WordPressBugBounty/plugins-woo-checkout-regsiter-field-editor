@@ -5,7 +5,7 @@ Tags: checkout field editor, woocommerce checkout field editor, checkout manager
 Requires at least: 4.9
 Tested up to: 6.6.2
 Requires PHP: 5.6
-Stable tag: 2.3.0
+Stable tag: 2.3.2
 Text Domain: jwcfe
 Domain Path: /languages/
 License: GPLv3

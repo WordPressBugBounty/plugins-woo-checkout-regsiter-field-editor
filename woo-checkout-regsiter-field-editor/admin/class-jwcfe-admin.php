@@ -780,29 +780,7 @@ if (!class_exists('JWCFE_Admin')) :
 			}
 		}
 
-		public function check_plugin_updates()
-		{
-			// Your code to check for updates using the Software Licensing API
-			$jwcfe_license_key = get_option('jwcfe_license_key');
-			$current_version = get_option('jwcfe_license_version');
-			if (isset($jwcfe_license_key) && !empty($jwcfe_license_key) && isset($current_version) && !empty($current_version)) {
-				$getversion_res = JWCFE_Helper::get_version_jwcfe($jwcfe_license_key);
-
-				// Ensure $getversion_res is an array before accessing 'new_version'
-				if (is_array($getversion_res) && isset($getversion_res['new_version'])) {
-
-					if (version_compare($getversion_res['new_version'], $current_version, '>')) {
-
-						// New version available, update transient
-						$plugin_slug = 'woo-checkout-regsiter-field-editor-premium/checkout-register-field-editor.php'; // Plugin file path
-						$plugin_data = get_plugin_data(WP_PLUGIN_DIR . '/' . $plugin_slug);
-						$plugin_data['new_version'] = $getversion_res['new_version'];
-						$plugin_data['url'] = 'https://jcodex.com/my-account/'; // Link to download or update page
-						set_site_transient('update_plugins', array($plugin_slug => $plugin_data));
-					}
-				}
-			}
-		}
+	
 
 
 		public function is_reserved_field_name($field_name)

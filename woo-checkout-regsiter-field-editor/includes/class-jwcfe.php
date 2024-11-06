@@ -98,7 +98,6 @@ class JWCFE {
         add_action('woocommerce_admin_order_data_after_billing_address', array($plugin_admin, 'jwcfe_checkout_field_display_admin_order_meta_billing'), 10, 1);
         add_action('woocommerce_admin_order_data_after_shipping_address', array($plugin_admin, 'jwcfe_checkout_field_display_admin_order_meta_shipping'), 10, 1);
         add_action('woocommerce_order_details_after_order_table', array($plugin_admin, 'jwcfe_order_details_after_customer_details_lite'), 20, 1);
-        add_action('admin_init', array($plugin_admin, 'check_plugin_updates'));
         add_action('wp_ajax_get_product_attributes', array($plugin_admin, 'get_all_variations_of_product'));
     }
 
