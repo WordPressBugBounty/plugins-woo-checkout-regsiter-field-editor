@@ -1,0 +1,142 @@
+.custom-email-style{
+	box-sizing: border-box;
+	width: 100%;
+	margin: 0;
+	outline: 0;
+	line-height: normal;
+	font-size: var(--wp--preset--font-size--small);
+	padding: .9rem 1.1rem;
+  }
+  .custom-phone-style{
+	box-sizing: border-box;
+	width: 100%;
+	margin: 0;
+	outline: 0;
+	line-height: normal;
+	font-size: var(--wp--preset--font-size--small);
+	padding: .9rem 1.1rem;
+  }
+  input.select2-search__field {
+	/* border: 2px solid rgb(9, 255, 0); */
+    padding-top: 0px !important;        
+    padding-bottom: 1px !important;      
+    line-height: normal !important;      
+    height: auto !important;            
+	padding-left: 0px !important;
+}
+ul.select2-selection__rendered{
+
+    /* border: 1px solid red;  */
+    /* padding-top: 0px !important; */
+    /* padding-bottom: 1px !important; */
+    line-height: normal !important;
+    height: auto !important;
+}
+  #custom-file-style{
+	box-sizing: border-box;
+    width: 100%;
+    margin: 0;
+    padding: .9rem 1.1rem;
+    font-size: var(--wp--preset--font-size--small);
+    line-height: normal;
+    border: 1px solid rgb(118, 118, 118); /* Light-dark border color */
+    border-radius: 2px;
+    cursor: pointer;
+  }
+input.hasDatepicker {
+	background: url("calender.png")  no-repeat right 10px center;
+	background-size: 5%;
+  cursor: pointer;
+  border: 1px solid grey;
+    border-radius: 2px;
+}
+
+.select2-selection--single .select2-selection__clear {
+  display: none !important;
+}
+
+.custom-checkbox-style{
+padding-top: 10px;
+}
+
+/* Custom styles for checkbox fields */
+.custom-checkbox-field {
+    margin-bottom: 20px;
+}
+
+.custom-checkbox .jwcfe-price-field {
+    margin-right: 10px;
+    cursor: pointer;
+}
+/* .select2-container {
+    border-color: var(--wc-red);
+    border: 2px solid red;
+} */
+.custom-select-validation {
+  border: 1px solid #ccc; /* Default border */
+}
+
+.custom-td{
+  text-align: justify !important;
+}
+
+.custom-th{
+  font-weight: 700 !important;
+  width: 54%;
+}
+.custom-select-validation.invalid {
+  border: 1px solid red; /* Red border when invalid */
+}
+.custom-checkbox-wrapper {
+    display: flex;
+    align-items: center;
+    padding: 10px 0;
+}
+.main-check{
+margin-bottom: 0px;
+}
+.custom-checkbox label {
+    margin-left: 10px;
+    font-size: 16px;
+    font-weight: 600;
+}
+
+   
+
+
+.custom-checkboxes label {
+  margin-left: 10px;
+  font-size: 16px;
+  font-weight: 200;
+}
+.custom-checkbox .required {
+    margin-left: 5px;
+    color: yellow; /* Customize the color of the required asterisk */
+}
+
+.custom-checkbox input[type="checkbox"]:checked + label {
+    color: #0073aa; /* Change color when checkbox is checked */
+}
+
+.woocommerce form .form-row .select2-container {
+	width: 100% !important;
+}
+
+.custom-radio-container .custom-radio-wrapper {
+	display: flex;
+	column-gap: 0.8em;
+}
+.custom-radio-value {
+    margin-top: 14px;
+}
+/* input[type="month"]::before{
+	content: attr(placeholder) !important;
+	color: #aaa;
+	width: 100%;
+  } */
+  
+  /* input[type="month"]:focus::before,
+  input[type="month"]:active::before {
+	content: "";
+	width: 0%;
+  } */
