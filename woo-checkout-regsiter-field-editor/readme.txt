@@ -1,31 +1,29 @@
-=== WooCommerce Checkout Field Editor (Checkout Manager) ===
+=== Checkout Fields Manager for WooCommerce (Checkout, My Account, Register) ===
 Contributors: jcodex, junaidit
 Donate link: https://www.paypal.com/donate/?hosted_button_id=QD4H8N3QVLLML
-Tags: checkout field editor, woocommerce checkout field editor, checkout manager, woocommerce checkout manager, checkout field customizer, checkout form editor, checkout form customizer, checkout, WooCommerce checkout, checkout form designer, woocommerce checkout fields, woocommerce checkout addons
+Tags: Checkout  Manager, WooCommerce My Account form Editor, Checkout Field Editor, WooCommerce Checkout, WooCommerce Checkout Field, WooCommerce Checkout Addons
 Requires at least: 4.9
-Tested up to: 6.6.2
+Tested up to: 6.6
 Requires PHP: 5.6
-Stable tag: 2.3.2
-Text Domain: jwcfe
-Domain Path: /languages/
+Stable tag: 2.3.3
 License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
-WooCommerce Checkout Field Editor - Best WooCommerce checkout manager plugin to quickly add or edit a field on WooCommerce checkout.
+Checkout Fields Manager for WooCommerce (Checkout, My Account, Register) – Best WooCommerce checkout manager plugin to quickly add or edit a field on WooCommerce checkout.
 
 
 == Description ==
 
-= Checkout Field Editor for WooCommerce =
+= Checkout Fields Manager for WooCommerce (Checkout, My Account, Register) =
 WooCommerce Checkout Field Editor is specifically developed to organize the smooth checkout experience. It’s a plugin that allows users to add up to 20 different types of custom checkout fields in sections that include Billing, Shipping, and Additional fields. A user gets an opportunity to add, modify, and remove fields with ease of use. With a single click, you may validate and customize checkout fields without technical knowledge.
 
 Using this checkout field editor plugin, you get a chance to customize the account details of your customers as required in WooCommerce plugins. The choice is yours whether you consider free and premium features, both are ideal for customisation and facilitate users. Let’s look at the critical points of the WooCommerce checkout manager.
 
 
-[Premium Version](https://jcodex.com/plugins/woocommerce-custom-checkout-field-editor/) | [Demo](https://demo.tastewp.com/woo-checkout-regsiter-field-editor) | [Documentation](https://jcodex.com/docs/woocommerce-custom-checkout-field-editor/)
---------------------------------------------
+[Premium Version](https://jcodex.com/our-plugins/) | [Demo](https://demo.tastewp.com/woo-checkout-regsiter-field-editor) | [Documentation](https://jcodex.com/docs/woocommerce-custom-checkout-field-editor/)
+——————————————–
 https://www.youtube.com/watch?v=pAStUFCgPso
---------------------------------------------
+——————————————–
 
 == FREE VERSION FIELDS  ==
 If you want to add any field using the free version during checkout customization, you may come across amazing fields that include text, number, password, email, phone, textarea, select, multi-select and radio, etc. 
@@ -175,5 +173,4 @@ Yes its support multilingual you can translate strings of Custom Fields WooComme
 
 1. Plugin Setting for add new custom field
 2. How to add dropdown field using Custom Fields WooCommerce Checkout Page
-3. How your fields will look on front end 
-
+3. How your fields will look on front end
