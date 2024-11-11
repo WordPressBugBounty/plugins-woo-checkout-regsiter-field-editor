@@ -1,17 +1,17 @@
 <?php
 /**
- * Plugin Name:  Checkout Fields Manager for WooCommerce (Checkout, My Account, Register)
+ * Plugin Name:  Checkout Fields Manager (Checkout, My Account, Register)
  * Description: Customize WooCommerce checkout and my account page edit woocommerce checkout fields (Add, Edit, Delete and re-arrange fields). best checkout fields editor plugin for woocommerce.
  * Author:      Jcodex
- * Version:     2.3.3
+ * Version:     2.3.4
  * Author URI:  https://www.jcodex.com
- * Plugin URI:  https://jcodex.com/plugins/woocommerce-custom-checkout-field-editor/
+ * Plugin URI:  https://jcodex.com/plugins
  * Text Domain: jwcfe
  * Domain Path: /languages/
  * WC requires at least: 3.0.0
  * WC tested up to: 9.3.0
  *
- * Copyright (C) 2018-2023 Jcodex Inc.
+ * Copyright (C) 2018-2024 Jcodex Inc.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by

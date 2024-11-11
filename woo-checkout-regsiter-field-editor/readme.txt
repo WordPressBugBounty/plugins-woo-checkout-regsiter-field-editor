@@ -1,20 +1,20 @@
-=== Checkout Fields Manager for WooCommerce (Checkout, My Account, Register) ===
+=== Checkout Fields Manage(Checkout, My Account, Register) ===
 Contributors: jcodex, junaidit
 Donate link: https://www.paypal.com/donate/?hosted_button_id=QD4H8N3QVLLML
 Tags: Checkout  Manager, WooCommerce My Account form Editor, Checkout Field Editor, WooCommerce Checkout, WooCommerce Checkout Field, WooCommerce Checkout Addons
 Requires at least: 4.9
 Tested up to: 6.6
 Requires PHP: 5.6
-Stable tag: 2.3.3
+Stable tag: 2.3.4
 License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
-Checkout Fields Manager for WooCommerce (Checkout, My Account, Register) – Best WooCommerce checkout manager plugin to quickly add or edit a field on WooCommerce checkout.
+Checkout Fields Manage(Checkout, My Account, Register) – Best WooCommerce checkout manager plugin to quickly add or edit a field on WooCommerce checkout.
 
 
 == Description ==
 
-= Checkout Fields Manager for WooCommerce (Checkout, My Account, Register) =
+= Checkout Fields Manage(Checkout, My Account, Register) =
 WooCommerce Checkout Field Editor is specifically developed to organize the smooth checkout experience. It’s a plugin that allows users to add up to 20 different types of custom checkout fields in sections that include Billing, Shipping, and Additional fields. A user gets an opportunity to add, modify, and remove fields with ease of use. With a single click, you may validate and customize checkout fields without technical knowledge.
 
 Using this checkout field editor plugin, you get a chance to customize the account details of your customers as required in WooCommerce plugins. The choice is yours whether you consider free and premium features, both are ideal for customisation and facilitate users. Let’s look at the critical points of the WooCommerce checkout manager.
