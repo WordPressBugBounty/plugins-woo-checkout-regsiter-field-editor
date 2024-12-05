@@ -1134,6 +1134,8 @@ var jwcfe_settings = (function ($, window, document) {
 			form.find('.rowDescription2').hide();
 			form.find('.rowMaxlength').show();
 			form.find('.rowDescription2').hide();
+			form.find('.rowPlaceholder').hide();
+
 
 		} 
 		else if (type === 'timepicker') {

@@ -60,19 +60,19 @@ class JWCFE {
         if (file_exists($autoloader_class_path)) {
             require_once $autoloader_class_path;
         } else {
-            error_log("Autoloader class file not found: $admin_class_path");
+            // error_log("Autoloader class file not found: $admin_class_path");
         }
 
         if (file_exists($admin_class_path)) {
             require_once $admin_class_path;
         } else {
-            error_log("Admin class file not found: $admin_class_path");
+            // error_log("Admin class file not found: $admin_class_path");
         }
 
         if (file_exists($public_class_path)) {
             require_once $public_class_path;
         } else {
-            error_log("Public class file not found: $public_class_path");
+            // error_log("Public class file not found: $public_class_path");
         }
 
     }

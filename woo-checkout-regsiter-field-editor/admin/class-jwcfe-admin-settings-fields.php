@@ -610,13 +610,15 @@ if (!class_exists('JWCFE_Admin_Settings_Fields')) :
                                     </div>
                                 </div>
                             </div>
-                            <div class="popup_button_dailogbox">
-                                <div class="dialog-button-set">
-                                    <button type="button" id="btnaddfield" name="" class="" value="yes">Add New Field</button>
-                                </div>
-                                <div class="dialog-button-set">
-                                    <button type="button" id="btncancel" class="btncancel" value="yes" >Cancel</button>
-                                </div>
+                            <div class="popup_button_dailogbox" 
+                                 style="position: sticky;bottom: 0;  background-color: white; padding: 10px 0;z-index: 100;height: 50px">
+                                    
+                                    <div class="dialog-button-set">
+                                        <button type="button" id="btnaddfield" name="" class="" value="yes">Add New Field</button>
+                                    </div>
+                                    <div class="dialog-button-set">
+                                        <button type="button" id="btncancel" class="btncancel" value="yes" >Cancel</button>
+                                    </div>
                             </div>
                         </form>
                     </div>

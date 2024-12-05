@@ -304,8 +304,8 @@ if (!class_exists('JWCFE_Public_Checkout')) :
 				switch ($args['type']) {
 
 					case 'checkboxgroup':
-						$field = '';
-						$field = '<div class="form-row ' . esc_attr(implode(' ', $args['class'])) . '" id="' . esc_attr($key) . '_field">';
+						$field 	= '';
+						$field 	= '<div class="form-row ' . esc_attr(implode(' ', $args['class'])) . '" id="' . esc_attr($key) . '_field">';
 						$field .= '<fieldset><legend><label for="' . esc_attr($args['id']) . '" class="' . esc_attr(implode(' ', $args['label_class'])) . '">' . esc_html($args['label']) . $required . $tooltip . '</label></legend>';
 					
 						// Retrieve previous values from session
@@ -1411,77 +1411,70 @@ if (!class_exists('JWCFE_Public_Checkout')) :
 		 * @return array
 		 */
 		
+		
 		public function jwcfe_display_custom_fields_in_emails_lite($order, $sent_to_admin, $plain_text) {
 			$fields_html = '';
-			$debug_messages = []; // Initialize an array to capture debug messages
+			$fields_to_display = []; // Store fields that have data to display
 		
 			$fields = array_merge(
 				JWCFE_Helper::get_fields('billing'),
 				JWCFE_Helper::get_fields('shipping'),
 				JWCFE_Helper::get_fields('additional')
 			);
-		
-			// Log the fields to debug
-			$debug_messages[] = "Fields: " . print_r($fields, true);
-		
-			if ($plain_text === false) {
-				$sec_heading = 'Additional Fields';
-				$fields_html .= '<h2>' . esc_html($sec_heading, 'jwcfe') . '</h2>';
-				$fields_html .= '<table style="width: 100%; border-collapse: collapse;">'; // Start the table
-				$fields_html .= '<thead><tr><th style="border: 1px solid #ddd; padding: 8px;">Field</th><th style="border: 1px solid #ddd; padding: 8px;">Value</th></tr></thead>';
-				$fields_html .= '<tbody>'; // Start the body of the table
-			}
-		
+				
 			// Retrieve order
 			$order = wc_get_order($order->get_id());
-			$debug_messages[] = "Order ID: " . $order->get_id();
 		
-			// Loop through all custom fields to see if it should be added
+			// Loop through all custom fields to check if they should be displayed
 			foreach ($fields as $key => $options) {
-				$debug_messages[] = "Processing field: " . $key . " with options: " . print_r($options, true);
 		
 				if (isset($options['show_in_email']) && $options['show_in_email']) {
-					$value = '';
+					$value = $this->fetch_order_meta_value($order, $key, $options['type']);
 		
-					// Fetch value based on the WooCommerce version check
-					if (JWCFE_Helper::jwcfe_woocommerce_version_check()) {
-						$value = $this->fetch_order_meta_value($order, $key, $options['type']);
-					} else {
-						$value = $this->fetch_order_meta_value($order, $key, $options['type']);
-					}
-		
-					// Log the retrieved value
-					$debug_messages[] = "Retrieved value for " . $key . ": " . $value;
-		
+					
 					if (!empty($value)) {
 						$label = (isset($options['label']) && $options['label'] ? $options['label'] : $key);
-						$label = esc_attr($label);
-		
-						if ($plain_text === false) {
-							$fields_html .= '<tr>';
-							$fields_html .= '<th style="border: 1px solid #ddd; padding: 8px;">' . esc_html($label) . '</th>';
-							$fields_html .= '<td style="border: 1px solid #ddd; padding: 8px;">';
-		
-							if (isset($options['type']) && $options['type'] == 'file') {
-								$upload_dir = wp_upload_dir();
-								$target_path = $upload_dir['url'] . "/";
-								$fields_html .= '<a href="' . esc_url($value) . '" download>Download File</a>';
-							} else {
-								$fields_html .= esc_html($value);
-							}
-		
-							$fields_html .= '</td>';
-							$fields_html .= '</tr>';
-						} else {
-							$fields_html .= $label . ':' . $value;
-						}
+						$fields_to_display[] = [
+							'label' => esc_attr($label),
+							'value' => $value,
+							'type'  => $options['type'] ?? ''
+						];
 					}
 				}
 			}
 		
-			if ($plain_text === false) {
-				$fields_html .= '</tbody>'; // Close the table body
-				$fields_html .= '</table>'; // Close the table
+			// Only render the section if there are fields to display
+			if (!empty($fields_to_display)) {
+				if ($plain_text === false) {
+					$sec_heading = 'Additional Fields';
+					$fields_html .= '<h2>' . esc_html($sec_heading, 'jwcfe') . '</h2>';
+					$fields_html .= '<table style="width: 100%; border-collapse: collapse;">'; // Start the table
+					$fields_html .= '<thead><tr><th style="border: 1px solid #ddd; padding: 8px;">Field</th><th style="border: 1px solid #ddd; padding: 8px;">Value</th></tr></thead>';
+					$fields_html .= '<tbody>'; // Start the body of the table
+		
+					// Add rows for each field
+					foreach ($fields_to_display as $field) {
+						$fields_html .= '<tr>';
+						$fields_html .= '<th style="border: 1px solid #ddd; padding: 8px;">' . esc_html($field['label']) . '</th>';
+						$fields_html .= '<td style="border: 1px solid #ddd; padding: 8px;">';
+		
+						if ($field['type'] === 'file') {
+							$fields_html .= '<a href="' . esc_url($field['value']) . '" download>Download File</a>';
+						} else {
+							$fields_html .= esc_html($field['value']);
+						}
+		
+						$fields_html .= '</td>';
+						$fields_html .= '</tr>';
+					}
+		
+					$fields_html .= '</tbody>'; // Close the table body
+					$fields_html .= '</table>'; // Close the table
+				} else {
+					foreach ($fields_to_display as $field) {
+						$fields_html .= $field['label'] . ': ' . $field['value'] . "\n";
+					}
+				}
 			}
 		
 			echo $fields_html; // Output the final HTML

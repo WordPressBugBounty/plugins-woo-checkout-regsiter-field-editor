@@ -5,7 +5,7 @@ Tags: Checkout  Manager, WooCommerce My Account form Editor, Checkout Field Edit
 Requires at least: 4.9
 Tested up to: 6.6
 Requires PHP: 5.6
-Stable tag: 2.3.4
+Stable tag: 2.3.5
 License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
@@ -171,6 +171,7 @@ Yes its support multilingual you can translate strings of Custom Fields WooComme
 
 == Screenshots ==
 
-1. Plugin Setting for add new custom field
+1. Add new field Popup Box
 2. How to add dropdown field using Custom Fields WooCommerce Checkout Page
 3. How your fields will look on front end
+4. All Fields table on plugin page
