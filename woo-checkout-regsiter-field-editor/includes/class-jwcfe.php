@@ -52,7 +52,21 @@ class JWCFE {
 
         // Construct the paths to admin and public directories
         // require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/class-jwcfe-autoloader.php';
+        require_once plugin_dir_path( __FILE__ ) . '../public/class-jwcfe-print-invoice-wp-overnight.php';
+        require_once plugin_dir_path( __FILE__ ) . '../public/class-jwcfe-print-invoice.php';
+        require_once plugin_dir_path( __FILE__ ) . '../public/class-jwcfe-wc-checkout-field-editor-export-handler.php';
 
+       
+        if (!function_exists('initialize_checkout_field_export_handler')) {
+            function initialize_checkout_field_export_handler() {
+                new JWCFE_WC_Checkout_Field_Editor_Export_Handler();
+            }
+        }
+        
+        add_action( 'plugins_loaded', 'initialize_checkout_field_export_handler' );
+
+
+        
         $autoloader_class_path = $plugin_dir . '/class-jwcfe-autoloader.php';
         $admin_class_path = $plugin_dir . '../admin/class-jwcfe-admin.php';
         $public_class_path = $plugin_dir . '../public/class-jwcfe-public-checkout.php';

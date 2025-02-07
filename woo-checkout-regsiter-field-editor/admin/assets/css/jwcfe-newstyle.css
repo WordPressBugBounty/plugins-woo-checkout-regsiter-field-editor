@@ -21,14 +21,7 @@ form#jwcfe_new_field_form tr.jwcfe_condition.condition-rule-div{
 }
 /* jwcfe_condition_set */
 
-form#jwcfe_new_field_form #jwcfe_field_editor_form_new{
-    display: flex;
-    flex-wrap: wrap;
-    flex-direction: column;
-    justify-content: space-between;
-    height: calc(100% - 42px);
-    box-sizing: border-box;
-}
+
 
 form#jwcfe_new_field_form .conditional-rule-new-field{
     display: flex;
@@ -728,17 +721,49 @@ table.wc_shipping tr:nth-child(odd) td {
 .jwcfe-wrap textarea {
     color: #32373c;
     line-height: 1;
-    min-height: 30px;
+    /* min-height: 30px; */
     /* background-color: #fff; */
     border: 1px solid #e2e2e2;
     border-radius: 2px;
     overflow: hidden;
-    font-size: 14px;
+    font-size: 13px;
     padding: 0 12px;
     box-shadow: 0 0 0 transparent;
-
+    height: 34px;
     background-color: #F1F2F6;
     border-color: lightgray;
+}
+ .ui-widget select, .ui-widget textarea, .ui-widget button{
+    font-size: 13px !important;
+    height: 34px !important;
+
+}
+.select2-selection{
+    font-size: 13px !important;
+    height: 34px !important;
+}
+.select2-selection--multiple{
+    height: 34px !important; /* Make input field take full height */
+    width: 100% !important; /* Ensure it fills the available space */
+    display: flex !important;
+    align-items: center !important; /* Vertically center placeholder */
+    padding: 5px !important; /* Adjust padding for better alignment */
+    font-size: 14px !important; /* Adjust font size if needed */
+}
+ .select2-search__field {
+    height: 34px !important; /* Make input field take full height */
+    width: 100% !important; /* Ensure it fills the available space */
+    display: flex !important;
+    align-items: center !important; /* Vertically center placeholder */
+    padding: 5px !important; /* Adjust padding for better alignment */
+    font-size: 14px !important; /* Adjust font size if needed */
+    margin-bottom: 8px !important;
+}
+
+.select2-selection__rendered {
+    display: flex !important;
+    align-items: center !important; /* Vertically center align items */
+    min-height: 36px; /* Match the height of a typical input field */
 }
 
 .jwcfe-wrap input[name="license_key"] {
@@ -791,6 +816,7 @@ table.wc_shipping tr:nth-child(odd) td {
     max-height: 100%;
     justify-content: space-between;
     margin-bottom: 0.5em;
+    margin-top: 15px;
 }
 
 .vl {
@@ -824,16 +850,19 @@ table.wc_shipping tr:nth-child(odd) td {
 .ui-tabs .ui-tabs-nav {
     margin: 0;
     border: none;
-    height: 39px;
-    background: black;
-    padding: .2em 1.2em 0 !important;
+    height: 43px;
+    background: #f6f6f6;
+    /* padding: .2em 1.2em 0 !important; */
+    padding: .2em 0.5em 0 !important;
+    border-radius: 7px;
     /* padding: 0.2em 0.2em 0; */
 }
 
 .ui-tabs .ui-tabs-nav li.ui-tabs-active {
     /* margin-bottom: -1px; */
     /* padding-bottom: 1px; */
-    padding: 0px !important;
+    /* padding: 0px !important; */
+    padding-top: 3px !important;
 }
 
 
@@ -931,18 +960,28 @@ table.wc_shipping tr:nth-child(odd) td {
 
 
 .ui-tabs .ui-tabs-nav li.ui-tabs-active .ui-tabs-anchor {
-    background-color: white;
-    color: #000000;
+    background-color: #000000;
+    color: white;
     border-bottom: 1px;
+    border-radius: 7px;
 }
 
+.custom-textarea-css {
+    height: 38px; /* Same height as a typical input field */
+    padding: 5px; /* Similar padding to an input field */
+    font-size: 14px; /* Match the font size of the input field */
+    border: 1px solid #ccc; /* Border style like an input field */
+    border-radius: 4px; /* Rounded corners like an input field */
+    width: 100%; /* Ensure the textarea takes full width inside the container */
+    resize: none; /* Prevent resizing the textarea */
+}
 
 
 .rowName,
 .fieldlabel {
     color: #000000;
-    font-size: 15px;
-    font-weight: 600;
+    font-size: 13px;
+    font-weight: 650;
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
 }
 
@@ -950,8 +989,8 @@ table.wc_shipping tr:nth-child(odd) td {
 .fieldlabel {
 
     color: #000000;
-    font-size: 15px;
-    font-weight: 600;
+    font-size: 13px;
+    font-weight: 650;
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
 
 }
@@ -960,8 +999,8 @@ table.wc_shipping tr:nth-child(odd) td {
 .fieldlabel {
 
     color: #000000;
-    font-size: 15px;
-    font-weight: 600;
+    font-size: 13px;
+    font-weight: 650;
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
 }
 
@@ -969,16 +1008,16 @@ table.wc_shipping tr:nth-child(odd) td {
 .fieldlabel {
 
     color: #000000;
-    font-size: 15px;
-    font-weight: 600;
+    font-size: 13px;
+    font-weight: 650;
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
 }
 
 .rowPlaceholder,
 .fieldlabel {
     color: #000000;
-    font-size: 15px;
-    font-weight: 600;
+    font-size: 13px;
+    font-weight: 650;
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
 
 }
@@ -986,40 +1025,40 @@ table.wc_shipping tr:nth-child(odd) td {
 .rowMaxlength,
 .fieldlabel {
     color: #000000;
-    font-size: 15px;
-    font-weight: 600;
+    font-size: 13px;
+    font-weight: 650;
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
 }
 
 .rowLabel1,
 .fieldlabel {
     color: #000000;
-    font-size: 15px;
-    font-weight: 600;
+    font-size: 13px;
+    font-weight: 650;
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
 }
 
 .rowDescription2,
 .fieldlabel {
     color: #000000;
-    font-size: 15px;
-    font-weight: 600;
+    font-size: 13px;
+    font-weight: 650;
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
 }
 
 .rowValidate,
 .fieldlabel {
     color: #000000;
-    font-size: 15px;
-    font-weight: 600;
+    font-size: 13px;
+    font-weight: 650;
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
 }
 
 .rowPricing,
 .fieldlabel {
     color: #000000;
-    font-size: 15px;
-    font-weight: 600;
+    font-size: 13px;
+    font-weight: 650;
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
 }
 
@@ -1027,8 +1066,8 @@ table.wc_shipping tr:nth-child(odd) td {
 #fieldlabel {
 
     color: #000000;
-    font-size: 15px;
-    font-weight: 600;
+    font-size: 13px;
+    font-weight: 650;
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
 
 }
@@ -1047,7 +1086,7 @@ table.wc_shipping tr:nth-child(odd) td {
     align-items: center;
 }
 
-.popup_footer {
+/* .popup_footer {
     display: flex;
     gap: 15px;
     margin-top: 1em;
@@ -1059,9 +1098,49 @@ table.wc_shipping tr:nth-child(odd) td {
     text-align: center;
     align-items: center;
     justify-content: center;
+} */
+.popup_footer {
+    display: flex;                /* Enables flexbox */
+    flex-direction: column;       /* Stacks child elements vertically */
+    gap: 15px;                    /* Adds space between checkboxes */
+    margin-top: 1em;
+    background-color: #E9ECF3;
+    height: auto;
+    width: 100%;
+    padding: 0;
+    box-sizing: border-box;
+    text-align: center;           /* Centers text inside each checkbox */
+    align-items: center;          /* Centers the items horizontally */
+    justify-content: center;      /* Centers the items vertically */
 }
 
 
+.checkbox-table {
+    width: 100%;
+    height: 100%; 
+    border-collapse: collapse;
+    display: flex;
+    justify-content: center;
+    align-items: center;  
+    text-align: center;  
+    /* margin-left: 131px; */
+
+}
+
+.checkbox-cell {
+    text-align: left;  
+    padding: 3px;
+}
+
+.checkbox-row {
+    display: flex;
+    /* justify-content: center;  */
+    align-items: center;  
+}
+
+.checkbox-cell input {
+    margin-right: 10px; 
+}
 
 .popup_footer [type="checkbox"]:not(:checked),
 .popup_footer [type="checkbox"]:checked {
@@ -1415,7 +1494,15 @@ table.wc_shipping tr:nth-child(odd) td {
     padding: 15px 10px 18px;
 
 }
-
+form#jwcfe_new_field_form #jwcfe_field_editor_form_new {
+    display: flex;
+    flex-wrap: wrap;
+    flex-direction: column;
+    justify-content: space-between;
+    /* height: calc(100% - 42px); */
+    box-sizing: border-box;
+    min-height: 401px;
+}
 .woocommerce_page_jwcfe_checkout_register_editor .ui-dialog-buttonset .ui-button:first-child {
     color: #000 !important;
     background-color: #CDCDCD !important;
@@ -1558,15 +1645,12 @@ span.ui-jwcf-sortable-handle {
     border: none;
 } */
 
-
-
-
 .thpladmin_rule_operand .select2-container--default .select2-selection--multiple .select2-selection__rendered li {
     text-wrap: balance !important;
 }
 .jwcfe_form_container {
     display: flex;
-    justify-content: space-between;
+    justify-content: center;
 }
 
 .jwcfe_left_col,
@@ -1622,7 +1706,7 @@ span.ui-jwcf-sortable-handle {
     max-width: 960px;
     min-height: 80%;
     overflow-y: auto;
-    max-height: 600px;
+    max-height: 570px;
     animation: appear-down 250ms ease-in-out;
 }
 .jwcfe_form_container::-webkit-scrollbar,
@@ -1651,6 +1735,7 @@ span.ui-jwcf-sortable-handle {
 .ui-dialog-title {
     margin: unset;
     margin-left: 7px;
+    font-size: 15px;
 }
 
 .jwcfecloseBtn:hover,
@@ -1665,8 +1750,8 @@ span.ui-jwcf-sortable-handle {
 }
 
 .jwcfemodal-content-div {
-    padding: 8px;
-    border: 1px solid #aaa;
+    padding: 2px;
+    /* border: 1px solid #aaa; */
     border-radius: 2px;
 }
 
@@ -1746,7 +1831,16 @@ span.ui-jwcf-sortable-handle {
     box-sizing: border-box !important;
     line-height: 1.5 !important;
     resize: vertical !important;
-    height: 114px !important;
+    height: 40px !important;
+
+    width: 100%; /* Ensure textarea takes full width */
+    height: 30px; /* Set height to match input field height */
+    padding: 5px 10px; /* Match padding to input field */
+    border: 1px solid #ccc; /* Border style similar to input field */
+    font-size: 14px; /* Match font size to input field */
+    border-radius: 4px; /* Match border radius to input field */
+    box-sizing: border-box; /* Ensure padding is included in the width/height calculation */
+
 }
 .custom-scroll-option{
 padding-right: 15px;

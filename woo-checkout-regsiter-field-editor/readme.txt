@@ -5,7 +5,7 @@ Tags: Checkout  Manager, WooCommerce My Account form Editor, Checkout Field Edit
 Requires at least: 4.9
 Tested up to: 6.6
 Requires PHP: 5.6
-Stable tag: 2.3.5
+Stable tag: 2.3.6
 License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
