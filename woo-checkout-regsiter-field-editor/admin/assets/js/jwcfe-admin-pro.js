@@ -1,3 +1,88 @@
+// document.addEventListener("DOMContentLoaded", function () {
+//     const urlParams = new URLSearchParams(window.location.search);
+//     const tab = urlParams.get("tab");
+//     const section = urlParams.get("section");
+
+//     if (tab === "block" && section === "additional") {
+//         const elements = document.querySelectorAll(".row_0");
+//         elements.forEach(el => el.style.display = "none");
+//     }
+// });
+// document.addEventListener("DOMContentLoaded", function () {
+//     const urlParams = new URLSearchParams(window.location.search);
+//     const tab = urlParams.get("tab");
+//     const section = urlParams.get("section");
+
+//     if (tab === "block" && section === "additional") {
+//         const elements = document.querySelectorAll(".row_0");
+
+//         elements.forEach(el => el.style.display = "none");
+//         // Check if any row_0 elements exist after hiding
+//         // if (elements.length === 1) {
+// 		// 	console.log('dasdasd');
+
+//         //     showNoFieldsMessage();
+//         // }
+//     }
+
+//     function showNoFieldsMessage() {
+// 		const container = document.querySelector(".ui-sortable");
+// 		console.log("Container found:", container);
+	
+// 		if (container) {
+// 			const message = document.createElement("p");
+// 			message.textContent = "No checkout fields found. Click on Add Field button to create new fields.";
+			
+// 			container.appendChild(message);
+// 		}
+// 	}
+	
+// });
+document.addEventListener("DOMContentLoaded", function () {
+    const urlParams = new URLSearchParams(window.location.search);
+    const tab = urlParams.get("tab");
+    const section = urlParams.get("section");
+
+    if (tab === "block" && section === "additional") {
+        const elements = document.querySelectorAll(".row_0");
+
+        elements.forEach(el => el.style.display = "none");
+
+        // Check if there are any other rows apart from row_0
+        const allRows = document.querySelectorAll(".ui-sortable tr");
+        const visibleRows = Array.from(allRows).filter(row => 
+            !row.classList.contains("row_0") && row.style.display !== "none"
+        );
+
+        if (visibleRows.length === 0) {
+            showNoFieldsMessage();
+        }
+    }
+
+    function showNoFieldsMessage() {
+        const table = document.querySelector(".ui-sortable");
+        console.log("Table found:", table);
+
+        if (table && !document.querySelector(".no-fields-message")) {
+            const messageRow = document.createElement("tr");
+            const messageCell = document.createElement("td");
+
+            messageCell.className = "no-fields-message";
+            messageCell.setAttribute("colspan", table.rows[0]?.cells.length || 1); // Span all columns
+            messageCell.style.textAlign = "center";
+            messageCell.style.padding = "10px";
+            // messageCell.style.background = "#f8d7da"; 
+            messageCell.style.color = "#721c24";
+            messageCell.style.fontWeight = "bold";
+            messageCell.textContent = "No checkout fields found. Click on Add Field button to create new fields.";
+
+            messageRow.appendChild(messageCell);
+            table.appendChild(messageRow); // Append the new row to the table
+        }
+    }
+});
+
+
 // Polyfill for jQuery.isArray
 if (typeof jQuery !== 'undefined' && !jQuery.isArray) {
     jQuery.isArray = Array.isArray;
@@ -986,7 +1071,6 @@ var jwcfe_settings = (function ($, window, document) {
 		var type = $(elm).val();
 		var form = $(elm).closest('form');
 		showAllFields(form);
-
 		if (type === 'select' || type === 'multiselect' ||  type === 'checkboxgroup') {
 			form.find('.rowValidate').hide();
 			form.find('.rowPricing').hide();
@@ -1213,7 +1297,66 @@ var jwcfe_settings = (function ($, window, document) {
 
 		setup_enhanced_multi_select(form);
 	}
-
+	_fieldTypeChangeListnerblock = function fieldTypeChangeListnerblock(elm) {
+		var type = $(elm).val();
+		var form = $(elm).closest('form');
+		showAllFields(form);
+	
+		// Fix for hiding the required checkbox when type is 'checkbox'
+		var requiredCheckboxRow = $('#requiredechk').closest('.checkbox-row');
+	
+		if (type === 'checkbox') {
+			requiredCheckboxRow.hide(); // Hide the required checkbox row
+		} else {
+			requiredCheckboxRow.show(); // Show it again for other field types
+		}
+	
+		if (type === 'select' || type === 'multiselect' || type === 'checkboxgroup') {
+			form.find('.rowValidate, .rowPricing, .rowPlaceholder, .rowMaxlength, .rowCustomText').hide();
+			form.find('.rowLabel, .rowOptions, .rowClass').show();
+			form.find('.pricetxt, .taxtxt, .rowDescription').hide();
+			form.find('.rowLabel1').appendTo('.jwcfe_left_col_child_div');
+		} else if (type === 'radio') {
+			form.find('.rowValidate, .rowPricing, .rowPlaceholder, .rowMaxlength, .rowCustomText').hide();
+			form.find('.rowLabel, .rowDescription, .rowOptions, .rowClass').show();
+			form.find('.pricetxt, .taxtxt, .rowDescription2').hide();
+		} else if (type === 'text') {
+			form.find('.rowLabel1, .rowDescription2,.rowMaxlength,.rowDescription, .rowOptions').hide();
+			form.find('  .rowValidate, .rowClass').show();
+			form.find('.pricetxt, .taxtxt').hide();
+		} else if (type === 'checkbox') {
+			form.find('.rowDescription2,.rowDescription, .rowRequired, .rowAccess, .rowMaxlength, .rowValidate, .rowCustomText, .rowOptions, .rowPlaceholder').hide();
+			form.find(' .rowClass').show();
+		} else if (type === 'textarea') {
+			form.find('.rowDescription2, .rowLabel1, .rowOptions, .rowMaxlength, .rowValidate').hide();
+		} else if (type === 'hidden') {
+			form.find('.rowDescription2, .rowRequired, .rowAccess, .rowMaxlength, .rowValidate, .rowCustomText, .rowOptions, .rowPlaceholder, .rowDescription, .rowClass, .rowLabel1, .rowLabel').hide();
+		} else if (type === 'heading') {
+			form.find('.rowDescription2, .rowRequired, .rowAccess, .rowMaxlength, .rowValidate, .rowCustomText, .rowOptions, .rowPlaceholder').hide();
+			form.find('.rowDescription, .rowClass').show();
+		} else if (type === 'paragraph') {
+			form.find('.rowDescription2, .rowRequired, .rowAccess, .rowMaxlength, .rowValidate, .rowCustomText, .rowOptions').hide();
+			form.find('.rowPlaceholder, .rowDescription, .rowClass').show();
+		} else if (type === 'email' || type === 'phone') {
+			form.find('.rowLabel1, .rowDescription2, .rowOptions, .rowMaxlength').hide();
+			form.find('.rowDescription, .rowValidate, .rowClass').show();
+		} else if (type === 'password') {
+			form.find('.rowRequired, .rowAccess, .rowClass, .rowMaxlength').show();
+			form.find('.rowValidate, .rowCustomText, .rowOptions, .rowPlaceholder, .rowLabel1, .rowDescription2').hide();
+		} else if (type === 'timepicker' || type === 'date' || type === 'month' || type === 'week') {
+			form.find('.rowRequired, .rowAccess, .rowMaxlength, .rowValidate, .rowCustomText, .rowOptions, .rowPlaceholder').hide();
+			form.find('.rowDescription, .rowClass').show();
+		} else if (type === 'number') {
+			form.find('.rowLabel1, .rowDescription2, .rowOptions').hide();
+			form.find('.rowMaxlength').show();
+		} else {
+			form.find('.rowOptions, .rowCustomText').hide();
+		}
+	
+		$('.accountdialog form .rowPricing').hide();
+		setup_enhanced_multi_select(form);
+	};
+	
 
 
 	function showAllFields(form) {
@@ -1332,6 +1475,7 @@ var jwcfe_settings = (function ($, window, document) {
 		enableDisableSelectedFields: _enableDisableSelectedFields,
 
 		fieldTypeChangeListner: _fieldTypeChangeListner,
+		fieldTypeChangeListnerblock: _fieldTypeChangeListnerblock,
 
 		selectAllCheckoutFields: _selectAllCheckoutFields,
 
@@ -1360,7 +1504,9 @@ function saveFieldForm(tabName, pluginPath) {
 function jwcfeFieldTypeChangeListner(elm) {
 	jwcfe_settings.fieldTypeChangeListner(elm);
 }
-
+function jwcfeFieldTypeChangeListnerblock(elm) {
+	jwcfe_settings.fieldTypeChangeListnerblock(elm);
+}
 
 
 function jwcfeRuleOperandChangeListner(elm, loaderPath, donePath) {

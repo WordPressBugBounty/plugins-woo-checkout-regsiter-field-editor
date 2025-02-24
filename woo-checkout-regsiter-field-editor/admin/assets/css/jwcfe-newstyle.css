@@ -7,6 +7,7 @@
     padding: 15px;
     height: calc(100% - 53px);
     box-sizing: border-box;
+    padding-top: 7px;
 } 
 #jwcfeModal .jwcfemodal-content #jwcfe_new_field_form_pp #jwcfe_new_field_form{
     height: 100%;
@@ -21,6 +22,9 @@ form#jwcfe_new_field_form tr.jwcfe_condition.condition-rule-div{
 }
 /* jwcfe_condition_set */
 
+div[class="jwcfe_tabs ui-tabs ui-corner-all ui-widget ui-widget-content"] {
+    padding-top: 0px; /* Adjust as needed */
+}
 
 
 form#jwcfe_new_field_form .conditional-rule-new-field{
@@ -315,12 +319,15 @@ table.widefat {
     border-bottom: 1px solid #dcdcde;
     background-color: white;
 }
+.hidden-field {
+    display: none !important;
+}
 
 .jwcfe-sections li:nth-child(2) {
-    height: 30px;
-    margin-top: 18px;
+    height: 20px;
+    margin-top: 5px;
 
-    margin-bottom: 15px;
+    /* margin-bottom: 15px; */
 
 
 }
@@ -442,7 +449,7 @@ table.widefat {
     /*background-color: #ddd;
 */
     text-decoration: none;
-    font-size: 15px;
+    font-size: 13.5px;
     border-right: 1px solid #fff;
     color: #333;
     background-color: #fff;
@@ -1736,6 +1743,7 @@ span.ui-jwcf-sortable-handle {
     margin: unset;
     margin-left: 7px;
     font-size: 15px;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
 }
 
 .jwcfecloseBtn:hover,
@@ -1746,13 +1754,16 @@ span.ui-jwcf-sortable-handle {
 }
 
 .jwcfemodal-content-main-div {
-    padding: 16px 18px 0 18px;
+    /* padding: 16px 18px 0 18px; */
+    background-color: #fff;
 }
 
 .jwcfemodal-content-div {
     padding: 2px;
     /* border: 1px solid #aaa; */
     border-radius: 2px;
+    margin-bottom: 10px;
+
 }
 
 

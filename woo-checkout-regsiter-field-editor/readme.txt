@@ -1,155 +1,198 @@
-=== Checkout Fields Manage(Checkout, My Account, Register) ===
+=== Checkout Fields Editor For WooCommerce (My Account) ===
 Contributors: jcodex, junaidit
 Donate link: https://www.paypal.com/donate/?hosted_button_id=QD4H8N3QVLLML
-Tags: WooCommerce Checkout, Checkout Field Editor, Checkout Manager, WooCommerce Custom Fields, WooCommerce Form Editor, WooCommerce Checkout Customization, WooCommerce Checkout Fields, WooCommerce Registration Fields, WooCommerce My Account Editor, WooCommerce User Fields
+Tags: WooCommerce Checkout Field, Checkout Manager, Checkout form editor, My Account Fields, Checkout custom field
 Requires at least: 4.9
 Tested up to: 6.7.1
 Requires PHP: 5.6
-Stable tag: 2.3.8	
+Stable tag: 2.3.9
 License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
-WooCommerce Checkout Field Editor ñ The ultimate plugin to add, edit, and manage checkout fields effortlessly for a seamless shopping experience.
-
+WooCommerce Checkout Field Editor ‚Äì The Best plugin to add, edit, and remove, disable checkout fields easily on checkout page or My account page.
 
 == Description ==
 
-= Checkout Fields Manage(Checkout, My Account, Register) =
-WooCommerce Checkout Field Editor is specifically developed to organize the smooth checkout experience. Itís a plugin that allows users to add up to 20 different types of custom checkout fields in sections that include Billing, Shipping, and Additional fields. A user gets an opportunity to add, modify, and remove fields with ease of use. With a single click, you may validate and customize checkout fields without technical knowledge.
+= Checkout Field Editor for WooCommerce (My Account) =
+Build up now your WooCommerce checkout & My Account form with a powerful & user-friendly plugin that allows you to add 20+ custom checkout fields.
 
-Using this checkout field editor plugin, you get a chance to customize the account details of your customers as required in WooCommerce plugins. The choice is yours whether you consider free and premium features, both are ideal for customisation and facilitate users. Letís look at the critical points of the WooCommerce checkout manager.
+This plugin specialy developed for users who are not much technical they can easily adjust there WooCommerce Checkout and My account Fields.
+ 
+‚ú≥Ô∏è **Block Compatible ‚Üí** Now supports WooCommerce checkout blocks, allowing text, select, radio, and checkbox fields, plus extra validation options.
 
-
-[Premium Version](https://jcodex.com/plugins/woocommerce-custom-checkout-field-editor/) | [Demo](https://demo.tastewp.com/woo-checkout-regsiter-field-editor) | [Documentation](https://jcodex.com/docs/woocommerce-custom-checkout-field-editor/)
-óóóóóóóóóóóóóóñ
+[Check Demo](https://demo.tastewp.com/woo-checkout-regsiter-field-editor) | [Documentation](https://jcodex.com/docs/woocommerce-custom-checkout-field-editor/) | [Premium Version](https://jcodex.com/plugins/woocommerce-custom-checkout-field-editor/)
+--------------------------------------------
 https://www.youtube.com/watch?v=pAStUFCgPso
-óóóóóóóóóóóóóóñ
+--------------------------------------------
 
-== FREE VERSION FIELDS  ==
-If you want to add any field using the free version during checkout customization, you may come across amazing fields that include text, number, password, email, phone, textarea, select, multi-select and radio, etc. 
+= Key Features =
+= ‚òû Add Custom Checkout Fields (s) =
+Seamlessly add additional fields to your checkout form & my account form. This plugin supports 20 different field types, including:
 
+	*	Text
+	*   Number
+	*   Hidden
+	*	Password
+	*	Email
+	*	Phone
+	*	Radio
+	*	Textarea
+	*	Select
+	*   Multi Select
+	*   Checkbox
+	*   Checkbox Group
+	*	Datetime local
+	*	Date
+	*	Month
+	*	Time
+	*	Week
+	*	URL
+	*   Heading
+	*	Paragraph
 
+= ‚òû Edit Field(s) =
+Update both custom and default WooCommerce fields to meet your business needs.
 
-== PREMIUM VERSION FIELDS  ==
-Premium version fields come with more custom options and premium plugins that reduce the bounce rate of a website and make users feel comfortable with stunning custom fields that include time picker, date picker, file upload, custom text, heading, hidden and checkbox group, etc.
-
-
-== KEY FEATURES ==
-If you are curious about the WooCommerce checkout field editor and want to know how it works, you must be familiar with the key features of WooCommerce customization. Let's take a look at the key features given below!
-
-== COMPATIBILITY WITH THIRD-PARTY PLUGINS  ==
-1. WP-Overnight (Invoice)
-2. SkyVerge for invoices
-3. SkyVerge Export CSV (Orders only)
-
-= REARRANGE CHECKOUT FIELDS  =
-Rearrange the default and custom checkout fields based on your needs
-
-= CUSTOMIZE CHECKOUT FIELDS  =
-Customization is not a tricky job when it comes to WooCommerce checkout manager, you just need to focus on additional fields on your checkout page and make sure you are familiar with the art of using WooCommerce plugins. No doubt, you're about to add 20 checkout fields to your checkout page to make users informed about the customization process. 
-
-= CUSTOMIZE FIELDS ON ALL IMPORTANT SECTIONS =
-Are you looking for the advanced functionality of checkout field editors to add and update fields without any complication? Try our WooCommerce checkout editor plugin to ease your process. With the help of this plugin, you may easily update and add fields in the billing, shipping, and additional sections.  
-
-= CUSTOMIZE MULTIPLE FIELD TYPES =
-WooCommerce checkout field editor also helps to customize multiple field types. Let's overview some top-notch checkout fields!
-
-* *<strong>TEXT</strong>*
-* *<strong>EMAIL</strong>*
-
-* *<strong>PASSWORD</strong>*
-* *<strong>PHONE</strong>* 
-* *<strong>TEXTAREA</strong>*
-* *<strong>SELECT</strong>*
-* *<strong>RADIO BUTTON</strong>* 
-* *<strong>FILE UPLOAD</strong>* 
-To improve security checks, you often ask for user identity proof and like to view their document files. However, to make it happen you always facilitate your customers with an option of the 'File Upload' field. In this particular addition, your users can provide you with identity proof by uploading files and other evidential information as required.
-* *<strong>MULTI-SELECT</strong>* 
-* *<strong>TIME PICKER</strong>* 
-Time Picker field offers great benefits to users who want to pick time value and format. It's an interesting option for customers who want to collect useful information from the site and you have no point in ignoring these types of WooCommerce checkout field editors.
-* *<strong>Date Picker</strong>* 
-Buyers who are concerned about delivery always prefer to use this date picker field. Using this custom editor field, you may pick dates of your choice including day, month, and year with no confusion at all. It shows that the date picker field is useful for buyers.
-* *<strong>CHECKBOX GROUP</strong>* 
-
-* *<strong>CUSTOM TEXT</strong>* 
-Custom text is also a cool feature that comes in handy for many users especially those who want to add custom text to specify their purchase. The purpose is to leave suggestions and comments with the help of this custom text field that matters to buyers. Hence, a buyer may include this checkout editor to get feedback.
-
-* *<strong>HEADING</strong>* 
-* *<strong>NUMBER</strong>* 
-* *<strong>HIDDEN</strong>* 
+= ‚òû Delete Field(s) =
+Easily hide, remove, or disable unnecessary checkout fields.
 
 
-== EDIT FIELDS ==
-Edit the custom fields as per the varying business requirements, including the default ones.
 
-== DELETE FIELDS ==
-Delete the default WooCommerce checkout fields if needed.
+= ‚òû Repositioning Checkout fields =
+Display your Checkout fields at different locations drag and drop options.
 
-== ENABLE/DISABLE FIELDS ==
-Enable/Disable your custom checkout fields with an easy checkbox option.
+= ‚òû Enable/Disable field(s) =
+Rearrange checkout fields effortlessly using a simple drag-and-drop interface.
 
-== ADD CONDITIONAL FIELDS ==
-After you've added multiple checkout fields, you're not done with customization. Conditional fields also come into play with an entirely different checkout process. For custom checkout fields and products, this conditional field customization process implies. However, you may restrict your fields depending on your preference.
+= ‚òû Display Fields in Emails and Order Details Pages =
+You can choose to display or hide custom fields in order emails and on the order details page.
 
-If you want to gather additional information for any specific product no matter the size, you want this to be done for specific customers. Of course, you add conditional fields for a specific group to whom you want to appear on the checkout page. With this, you allow selected users to provide information you want to see. It provides you full control and access to details our users fill out.
-Here are the details you expect from your customers to fill out using conditional field checkout:
-Cart Content
-Cart Subtotal
-Cart Total
-User Roles
-Product Category
-Product Variation
+= ‚òû Add Custom CSS Class =
+Apply custom CSS classes to checkout fields to enhance form design and improve user experience.
 
-==FREEMIUM AND PREMIUM FIELDS==
-WooCommerce checkout field editor comes with an amazing option at the same time. The choice is not limited, as you can enjoy both free and paid checkout fields to interact with our bespoke customization features. For free users, we have displayed all checkout editor plugins. On the other hand, users can unlock premium plugins to take the checkout process to a new level.
-
-If you want to use free plugins to save money, you may utilize the benefits of fields such as Text, Email, Password, Phone, Textarea, Select, Multi-Select, Checkout, and Radio. These are free fields that anyone can access with ease. On the contrary, premium plugins include a range of fields such as file upload, custom text, checkbox group, date picker, time picker and hidden, etc.
-If you compare both, premium checkout fields have more features and are more in demand.  
-
-==USE ADVANCED CUSTOMIZATION OPTIONS==
-The game isn't over once you have overviewed all the free and premium plugins, you may also use advanced customization options such as field name, label, placeholder text, character limit, and width to add more options. Usually, a user prefers to add details and these advanced customization options play a key role.
+= ‚òû Validate the Checkout Fields =
+You can easily make your fields required or optional.
 
 
-==SHOW OR HIDE CHECKOUT FIELDS==
-Show and hide checkout fields also work great, as these are the fields that allow you to put restrictions on users at the time of adding and disabling unnecessary fields. So, you always have a chance to hide and disable it. Further, this checkout custom field is interesting, as you can disable and enable it with one single click of 'hide' and 'show'.
+= ‚òû Reset to Default Fields =
+Restore WooCommerce‚Äôs default checkout fields anytime with a single click.
 
-==ADD OR DELETE CHECKOUT FIELDS==
-If you want some more experiments and looking forward to adding or deleting checkout fields, then you may try this WooCommerce checkout manager plugin on your checkout page to provide more options to your buyers. It simply works when you press 'add a new field' or click 'remove' as required. 
+= ‚òû Multilingual Ready =
+Fully compatible with WPML, Polylang, and Loco Translate for easy translation.
 
-==MARK MANDATORY FIELDS AS REQUIRED==
-A mandatory checkout field editor also inspires users when they have to go through fields that are required. Hence, users have the chance to mark mandatory fields using this plugin. There is no way to skip the fields, as this mandatory field is specifically designed for users with some meaningful purpose behind it.
+‚ú≥Ô∏è Upgrade to the [Premium version](https://jcodex.com/plugins/woocommerce-custom-checkout-field-editor/) to access more sections and advanced conditional logic features along with our **block integration!**
 
-==DISPLAY THE FIELDS IN EMAILS==
-If you want to know some more custom fields that have a link with customer emails, then you must use this display the fields in emails to address your customers regarding this option. There is always an option to display the fields for your respective customers in emails to provide them with smooth edit options.
 
-==DISPLAY THE FIELDS ON ORDER DETAIL PAGES==
-'Order detail page' is an effective WooCommerce checkout field editor plugin that supports users who want to see more specifications and product details. Thankfully, they happen to see this terrific checkout editor plugin that eases their work and comes across details with one single click. Using this plugin, customers may add contact details and provide the necessary information required.
+== üíéüíé Upgrade to the Premium Version! ==
+Premium version of the plugin comes with 24+ prebuilt custom fields that can help you 
+to make your Checkout or Accout registration pages according to your needs.
 
-==REPOSITION THE REQUIRED FIELDS==
-The option of repositioning has a good impact on the checkout page. The option of repositioning is always a special process and a kind of gift for users who want to swap one field for another. Hence, users can easily drag the fields to change their order and that's an interesting customization process that implies on a checkout page.
 
-==RESET THE DEFAULT SETTINGS==
-The option of resetting the default settings facilitates users when they have the desire to make some tricky changes that require a resetting feature to take this action. By clicking on the 'reset to default fields' button, you may easily reset the default settings to overcome the mistakes and wrong actions. Indeed, this WooCommerce checkout field editor works great!
+== Premium Features ==
 
-==QUICKLY SAVE REQUIRED CHANGES== 
-If you want to make friendly changes to your WooCommerce checkout manager just to improve the functionality, you must use this checkout field editor to add and edit advanced custom fields in no time. With this editor field, you probably find massive improvements in the WooCommerce checkout page with accuracy.
+= ‚òû Custom Checkout Sections =
+You can easily add new sections except default billing, shipping, additional.
 
-== PRICE FIELDS WITH THE SET OF PRICE TYPES ==
+= ‚òû 24 Custom field types with File Upload =
+Premium version of the WooCommerce Checkout Manager supports more then 24 field types, including the File Upload option. Following 24 field types are:
+
+	1. Text
+	2. Hidden
+	3. Password
+	4. Telephone
+	5. Email
+	6. Number
+	7. Textarea
+	8. Select
+	9. Multi Select
+	10. Radio
+	11. Checkbox
+	12. Checkbox Group
+	13. Date picker
+	14. Time picker
+	15. File Upload
+	16. Datetime local
+	17. Date
+	18. Month
+	19. Time
+	20. Week
+	21. URL
+	22. Heading 
+	23. Label
+	24. Paragraph
+
+= ‚òû Display Fields at 14 different Positions =
+You can rearrange checkout fields at different locations according to your needs.
+
+	1. Before customer details
+	2. After customer details
+	3. Before billing form
+	4. After billing form
+	5. Before shipping form
+	6. After shipping form
+	7. Before registration form
+	8. After registration form
+	9. Before order notes
+	10. After order notes
+	11. Before terms and conditions
+	12. After terms and conditions
+	13. Before submit button
+	14. After submit button
+	15. Inside a custom step created using WooCommerce MultiStep Checkout
+
+= ‚òû Conditional Logic for Fields & Sections =
+Show or hide fields dynamically based on cart contents, user roles, selected products, and more.
+
+	* Cart Contents
+	* Cart Subtotal
+	* Cart Total
+	* User Roles
+	* Product
+	* Product Variation
+	* Product Category
+	* Based on other field values
+
+= ‚òû Custom Validation Rules =
+Set custom field validation to ensure correct data entry before order submission.
+
+= ‚òû Pricing Fields =
+Add extra fee based on a custom field.
+
+= ‚òû Price Fields With A Set of Price Types =
 Add an extra price value to the total price by adding a field with price into the checkout form. You can also add predefined fixed prices using hidden field type in WooCommerce Checkout. Following price types can be added to WooCommerce checkout fields:
 
-Fixed Price: Set a fixed price for the addon (Extra Field). This fixed amount will be added to the total product price upon selecting the addon.
-Custom Price: A price entered by the user will be added to the product price. This will help you receive donations, tips and similar things.
-Percentage of Subtotal: Set the addon price in percentage of the sub total. The corresponding percentage amount of the product price will be added to the product price.
-Percent of Subtotal: Set the addon price in percentage of the subtotal excluding tax price in your locality. So,the corresponding percentage amount of the product price will be added to the subtotal during checkout.
+* *Fixed Price*: Set a fixed price for the addon (Extra Field). This fixed amount will be added to the total product price upon selecting the addon.
+* *Custom Price*: A price entered by the user will be added to the product price. This will help you receive donations, tips and similar things.
+* *Percentage of Cart Total*: Set the addon price in percentage of the cart total. The specificified percentage amount of the product price will be added to the product price.
+* *Percentage of Subtotal*:  Set the addon price in percentage of the sub total. The corresponding percentage amount of the product price will be added to the product price.
+* *Percent of Subtotal excluding tax*: Set the addon price in percentage of the subtotal excluding tax price in your locality. So,the corresponding percentage amount of the product price will be added to the subtotal during checkout.
+* *Dynamic Price*: Set the price per ‚Äòn‚Äô number of units. Then the addon price will be calculated for the total number units selected by the customer and added to the product price.
 
-== COMPATIBILITY WITH THIRD-PARTY PLUGINS  ==
+= ‚òû Change Address Display Format =
+With the WooCommerce Checkout Field Editor, change the address formats displayed in the Addresses in My Account page, Thank You page and Transactional Emails. The custom fields created using the plugin can also be included in the addresses using the override feature.
 
-1. WP-Overnight (Invoice & Packing Slip): The custom fields created in your Checkout forms can be included in the PDF invoices and packing slips that you provide to the customers. Thus, it allows you to include a set of valuable information to the customers through bills or invoices.
-2. SkyVerge for invoices : Seamlessly integrates with WooCommerce to generate and manage invoices, ensuring that custom checkout fields are included for a more detailed and automated billing process.
-3. Export CSV (Export files for both orders and customers): With this WooCommerce plugin, one can download the orders made by the customer in CSV format. Our plugin allows you to include the custom fields in these data and thus download it.
+= ‚òû Set Repeat Rules =
+The pro version of the Woocomerce Checkout Manager plugin lets you set repeat rules for the custom fields and sections created based on various criteria like Product Quantity and Cart Count.
 
+= ‚òû Developer Friendly =
+All the custom fields in the Checkout Field Editor are available through hooks. So, the developers can use the checkout fields to extend the functionality of the fields.  
 
-<p>If you have any questions about our plugin and donít know how to use it, feel free to <a href="https://jcodex.com/contact/">Contact Us</a></p>
+= ‚òû Compatibility with third-party plugins =
+Pro version of the plugin supports multiple third-party plugins, so as to benefit the user the best from us. Some of them include:
+
+*WooCommerce PDF Invoices & Packing Slips (Include custom checkout fields in invoices)
+
+*WooCommerce Order CSV Export (Export checkout field data with customer orders)
+
+*Zapier Support (Automate workflows and integrate with other services)
+
+*Multilingual Support (Compatible with WPML for translation)
+
+--------------------------------------------
+*Take your WooCommerce checkout customization to the next level with the [WooCommerce Checkout Field Editor (Checkout Manager)](https://jcodex.com/plugins/woocommerce-custom-checkout-field-editor/) plugin's official page.*
+
+Check how it works: üîó [Live Demo](https://demo.tastewp.com/woo-checkout-regsiter-field-editor)
+--------------------------------------------
 
 == Installation ==
 You can install this plugin like any other WordPress plugin.
@@ -188,15 +231,11 @@ Yes its support multilingual you can translate strings of Custom Fields WooComme
 
 == Changelog ==
 
-= 2.3.6 =
+= 2.3.9 =
 --layout updated!
-Integrations:
---WP-Overnight (Invoice)
---SkyVerge for invoices
---SkyVerge Export CSV (Orders only) 
+--Block Compatible
 
 == Upgrade Notice ==
 
-= 2.3.6 =
-With this to this version we have updgraded plugin layout and multiple functional fixes now 
-adding field or editing any checkout field is more easy.
+= 2.3.9 =
+Now supports WooCommerce checkout blocks, allowing text, select, radio, and checkbox fields, plus extra validation options.

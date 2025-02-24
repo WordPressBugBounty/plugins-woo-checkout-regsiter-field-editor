@@ -1,5 +1,4 @@
 <?php
-
 if (!defined('ABSPATH')) exit;
 
 require_once plugin_dir_path(__FILE__) . '../includes/class-jwcfe-helper.php';
@@ -23,11 +22,9 @@ if (!class_exists('JWCFE_Public_Checkout')) :
 
 		public function __construct($plugin_name, $version)
 		{
-
-
 			$this->plugin_name = $plugin_name;
 			$this->version = $version;
-
+	
 		}
 
 
@@ -68,9 +65,134 @@ if (!class_exists('JWCFE_Public_Checkout')) :
 			add_filter('woocommerce_form_field_heading', array($this, 'jwcfe_checkout_fields_heading_field'), 10, 4);
 			add_filter('woocommerce_form_field_customcontent', array($this, 'jwcfe_checkout_fields_customcontent_field'), 10, 4);
 			add_filter('woocommerce_form_field_paragraph', array($this, 'jwcfe_checkout_fields_pro_paragraph_field'), 10, 4);
+			
 
+			add_action('woocommerce_init', array($this, 'jwcfe_register_checkout_fields'));
+			
 		}
-
+		
+		function jwcfe_register_checkout_fields() {
+			$sections = ['billing', 'shipping', 'additional'];
+		
+			// Define fields to exclude
+			$excluded_shipping_fields = [
+				'shipping_first_name',
+				'shipping_last_name',
+				'shipping_company',
+				'shipping_country',
+				'shipping_address_1',
+				'shipping_address_2',
+				'shipping_city',
+				'shipping_state',
+				'shipping_postcode',
+				'shipping_phone'
+			];
+		
+			foreach ($sections as $section) {
+				$option_name = 'jwcfe_wc_fields_block_' . $section;
+				$saved_fields = maybe_unserialize(get_option($option_name, []));
+		
+				if (!is_array($saved_fields)) {
+					$saved_fields = [];
+				}
+		
+				// Filter out unwanted shipping fields
+				if ($section === 'shipping') {
+					$saved_fields = array_filter($saved_fields, function ($key) use ($excluded_shipping_fields) {
+						return !in_array($key, $excluded_shipping_fields, true);
+					}, ARRAY_FILTER_USE_KEY);
+				}
+		
+				if (!empty($saved_fields)) {
+					foreach ($saved_fields as $field_id => $field_data) {
+						if (empty($field_data['enabled'])) continue;
+		
+						// Remove any existing section prefix (billing_, shipping_, additional_)
+						$clean_field_id = preg_replace('/^(billing|shipping|additional)_/', '', $field_id);
+		
+						// Ensure the correct namespace
+						$field_id_formatted = "{$section}/{$clean_field_id}";
+		
+						$location = ($section === 'shipping') ? 'address' : (($section === 'billing') ? 'contact' : 'order');
+		
+						$field_attributes = [
+							'id'              => $field_id_formatted,
+							'label'           => $field_data['label'] ?? ucfirst($clean_field_id),
+							'optionalLabel'   => $field_data['optionalLabel'] ?? '',
+							'location'        => $location,
+							'required'        => !empty($field_data['required']),
+							'placeholder'     => $field_data['placeholder'] ?? '',
+							'show_in_order'   => true,
+							'show_in_email'   => true,
+						];
+		
+						$field_type = $field_data['type'] ?? 'text';
+		
+						switch ($field_type) {
+							case 'text':
+								if (!empty($field_data['validate'])) {
+									if (in_array('email', $field_data['validate'], true)) {
+										// Apply email validation
+										$field_attributes['validate_callback'] = function ($field_value) use ($field_data, $clean_field_id) {
+											if (!is_email($field_value)) {
+												return new WP_Error(
+													'invalid_email',
+													'Please enter a valid email address for ' . ($field_data['label'] ?? ucfirst($clean_field_id)) . '.'
+												);
+											}
+										};
+									} elseif (in_array('phone', $field_data['validate'], true)) {
+										// Apply phone validation
+										$field_attributes['validate_callback'] = function ($field_value) use ($field_data, $clean_field_id) {
+											if (!preg_match('/^\+?[0-9]{10,15}$/', $field_value)) {
+												return new WP_Error(
+													'invalid_phone',
+													'Please enter a valid phone number for ' . ($field_data['label'] ?? ucfirst($clean_field_id)) . '.'
+												);
+											}
+										};
+									}
+								}
+								
+								woocommerce_register_additional_checkout_field($field_attributes);
+								break;
+		
+							case 'checkbox':
+								woocommerce_register_additional_checkout_field([
+									'type'     => 'checkbox',
+									'id'       => $field_id_formatted,
+									'label'    => $field_data['label'] ?? ucfirst($clean_field_id),
+									'location' => $location,
+								]);
+								break;
+		
+							case 'select':
+								if (!empty($field_data['options_json'])) {
+									$options = [];
+									foreach ($field_data['options_json'] as $option) {
+										if (isset($option['key'], $option['text'])) {
+											$options[] = [
+												'value' => $option['key'],
+												'label' => $option['text'],
+											];
+										}
+									}
+									if ($options) {
+										$field_attributes['type'] = 'select';
+										$field_attributes['options'] = $options;
+										woocommerce_register_additional_checkout_field($field_attributes);
+									}
+								}
+								break;
+		
+							default:
+								error_log("Unsupported field type: " . $field_type);
+						}
+					}
+				}
+			}
+		}
+		
 		/**
 		 * generating tooltip for fields in checkoutpage*
 		 */
@@ -332,8 +454,8 @@ if (!class_exists('JWCFE_Public_Checkout')) :
 							$field .= '<label for="' . esc_attr($args['id']) . '" style="margin-bottom: 0;">';
 							
 							// Get the previous value from the session
-							$previous_value = WC()->session->get($key, ''); // Get the previous value
-						
+							$session = WC()->session;
+							$previous_value = $session ? $session->get($key, '') : '';						
 							// Determine if the checkbox should be checked
 							$is_checked = (!empty($previous_value) || (!empty($args['checked']) && $args['checked'] === true));
 						
@@ -364,7 +486,8 @@ if (!class_exists('JWCFE_Public_Checkout')) :
 								}
 							
 								// Check for previous value in the session
-								$previous_value = WC()->session->get($key, ''); // Get the previous value from session
+								$session = WC()->session;
+								$previous_value = $session ? $session->get($key, '') : '';
 								$display_value = !empty($previous_value) ? $previous_value : $value; // Use session value if available
 							
 								$field .= '<input type="month" class="input-text ' . esc_attr(implode(' ', $args['input_class'])) . '" name="' . esc_attr($args['id']) . '" id="' . esc_attr($args['id']) . '"';
@@ -396,7 +519,9 @@ if (!class_exists('JWCFE_Public_Checkout')) :
 							}
 						
 							// Check for previous value in the session
-							$previous_value = WC()->session->get($key, ''); // Get the previous value from session
+							
+							$session = WC()->session;
+							$previous_value = $session ? $session->get($key, '') : '';
 							$display_value = !empty($previous_value) ? $previous_value : $value; // Use session value if available
 						
 							$field .= '<input type="week" class="input-text ' . esc_attr(implode(' ', $args['input_class'])) . '" name="' . esc_attr($args['id']) . '" id="' . esc_attr($args['id']) . '"';
@@ -484,7 +609,8 @@ if (!class_exists('JWCFE_Public_Checkout')) :
 								$field = '';
 							
 								// Check for previous value in session if not provided
-								$previous_value = WC()->session->get($key, ''); // Get value from session
+								$session = WC()->session;
+								$previous_value = $session ? $session->get($key, '') : '';	
 								$display_value = !empty($previous_value) ? $previous_value : $value; // Use session value if available
 							
 								$field = '<p class="form-row ' . esc_attr(implode(' ', $args['class'])) . '" id="' . esc_attr($key) . '_field">';
@@ -515,7 +641,8 @@ if (!class_exists('JWCFE_Public_Checkout')) :
 								$fieldLabel = '';
 								
 								// Check for previous value in session if not provided
-								$previous_value = WC()->session->get($key, ''); // Get value from session
+								$session = WC()->session;
+								$previous_value = $session ? $session->get($key, '') : '';
 								$display_value = !empty($previous_value) ? $previous_value : $value; // Use session value if available
 							
 								$field = '<p class="form-row ' . esc_attr(implode(' ', $args['class'])) . '" id="' . esc_attr($key) . '_field">';
@@ -544,7 +671,8 @@ if (!class_exists('JWCFE_Public_Checkout')) :
 							$fieldLabel = '';
 							$field = '';
 							// Check for previous value in session if not provided
-							$previous_value = WC()->session->get($key, ''); // Get value from session
+							$session = WC()->session;
+							$previous_value = $session ? $session->get($key, '') : '';
 							$display_value = !empty($previous_value) ? $previous_value : $value; // Use session value if available
 						
 							$field = '<p class="form-row ' . esc_attr(implode(' ', $args['class'])) . '" id="' . esc_attr($key) . '_field" data-validations="' . $data_validations . '">';
@@ -575,7 +703,9 @@ if (!class_exists('JWCFE_Public_Checkout')) :
 							$field = '';
 						
 							// Check for previous value in session if not provided
-							$previous_value = WC()->session->get($key, ''); // Get value from session
+
+							$session = WC()->session;
+							$previous_value = $session ? $session->get($key, '') : '';
 							$display_value = !empty($previous_value) ? $previous_value : $value; // Use session value if available
 						
 							$field = '<p class="form-row ' . esc_attr(implode(' ', $args['class'])) . '" id="' . esc_attr($key) . '_field" data-validations="' . $data_validations . '">';
@@ -607,7 +737,9 @@ if (!class_exists('JWCFE_Public_Checkout')) :
 					case 'phone':
 							$fieldLabel = '';
 							$field = '';
-							$previous_value = WC()->session->get($key, ''); // Get value from session
+
+							$session = WC()->session;
+							$previous_value = $session ? $session->get($key, '') : '';
 							$display_value = !empty($previous_value) ? $previous_value : $value; // Use session value if available
 						
 							$field = '<p class="form-row ' . esc_attr(implode(' ', $args['class'])) . '" id="' . esc_attr($key) . '_field" data-validations="' . $data_validations . '">';
@@ -646,7 +778,10 @@ if (!class_exists('JWCFE_Public_Checkout')) :
 								]);
 							
 								// Get previous value if available
-								$previous_value = WC()->session->get($key, '');
+
+								$session = WC()->session;
+								$previous_value = $session ? $session->get($key, '') : '';
+
 								$display_values = !empty($previous_value) ? $previous_value : $value;
 								$display_value = is_array($display_values) ? reset($display_values) : $display_values;
 							
@@ -692,9 +827,11 @@ if (!class_exists('JWCFE_Public_Checkout')) :
 								$field .= '<div class="custom-radio-container">';
 								
 								// Check for previous value in session if not provided
-								$previous_value = WC()->session->get($key, ''); // Get value from session
+								$session = WC()->session;
+								$previous_value = $session ? $session->get($key, '') : '';
 								$display_value = !empty($previous_value) ? $previous_value : $value; // Use session value if available
-							
+
+								
 								if (!empty($args['options_json'])) {
 									foreach ($args['options_json'] as $option) {
 										$field .= '<div class="custom-radio-wrapper">'; 
@@ -725,7 +862,8 @@ if (!class_exists('JWCFE_Public_Checkout')) :
 						$field = '';
 					
 						// Check for previous value in session if not provided
-						$previous_value = WC()->session->get($key, ''); // Get value from session
+						$session = WC()->session;
+						$previous_value = $session ? $session->get($key, '') : '';
 						$display_value = !empty($previous_value) ? $previous_value : $value; // Use session value if available
 					
 						$field = '<p class="form-row ' . esc_attr(implode(' ', $args['class'])) . '" id="' . esc_attr($key) . '_field" data-validations="' . $data_validations . '">';
@@ -777,7 +915,8 @@ if (!class_exists('JWCFE_Public_Checkout')) :
 					
 					case 'timepicker':
 					// Check for previous value in session if not provided
-					$previous_value = WC()->session->get($key, ''); 
+					$session = WC()->session;
+					$previous_value = $session ? $session->get($key, '') : '';
 					$display_values = !empty($previous_value) ? $previous_value : $value; 
 					
 					if (is_array($display_values) && !empty($display_values)) {
@@ -922,7 +1061,8 @@ if (!class_exists('JWCFE_Public_Checkout')) :
 			$fieldLabel = '';
 			
 			// Get the previous value from session
-			$previous_value = WC()->session->get($key, ''); // Get value from session
+			$session = WC()->session;
+			$previous_value = $session ? $session->get($key, '') : '';
 			$display_value = !empty($previous_value) ? $previous_value : $value; // Use session value if available
 			
 			// Start building the field HTML
@@ -1014,7 +1154,8 @@ if (!class_exists('JWCFE_Public_Checkout')) :
 
 		public function jwcfe_checkout_fields_pro_paragraph_field($field, $key, $args, $value) {
 			// Check for previous value in session if not provided
-			$previous_value = WC()->session->get($key, ''); // Get value from session
+			$session = WC()->session;
+			$previous_value = $session ? $session->get($key, '') : '';
 			$display_value = !empty($previous_value) ? $previous_value : $value; // Use session value if available
 		
 			if ((!empty($args['clear']))) $after = '';
@@ -1115,10 +1256,17 @@ if (!class_exists('JWCFE_Public_Checkout')) :
 		}
 		
 
-		
+		public static function get_current_tab() {
+			$allowed_tabs = array('fields', 'block'); // Define allowed tabs
+			$tab = isset($_GET['tab']) ? sanitize_text_field($_GET['tab']) : 'fields';
+	
+			return in_array($tab, $allowed_tabs) ? $tab : 'fields';
+		}
 
 		public function jwcfe_woo_default_address_fields($fields)
-		{
+		{				
+			
+		
 			$sname = apply_filters('jwcfe_address_field_override_with', 'billing');
 
 			if ($sname === 'billing' || $sname === 'shipping') {
@@ -1233,7 +1381,54 @@ if (!class_exists('JWCFE_Public_Checkout')) :
 				);
 			}
 		}
-
+		// public function jwcfe_billing_fields_lite_paid($fields, $country)
+		// {
+		// 	global $supress_field_modification;
+		// 	if ($supress_field_modification) {
+		// 		return $fields;
+		// 	}
+		// 	if (is_wc_endpoint_url('edit-address')) {
+		// 		return $fields;
+		// 	} else {
+		// 		$fields_set = array();
+		
+		// 		// Get Block tab fields
+		// 		$block_fields = get_option('jwcfe_wc_fields_block');
+		// 	error_log($block_fields)
+		// 		if (get_option('jwcfe_account_sync_fields') && get_option('jwcfe_account_sync_fields') == "on") {
+		// 			// Existing account and billing fields handling
+		// 			if (is_array(get_option('jwcfe_wc_fields_account'))) {
+		// 				foreach (get_option('jwcfe_wc_fields_account') as $name => $field) {
+		// 					if ($name == 'account_username' || $name == 'account_password') continue;
+		// 					if (isset($field['type']) && $field['type'] === 'hidden') $field['required'] = 0;
+		// 					if (isset($field['type']) && $field['type'] === 'heading') $field['required'] = 0;
+		// 					if (isset($field['type']) && $field['type'] === 'customcontent') $field['required'] = 0;
+		// 					if (isset($field['type']) && $field['type'] === 'file' && WC()->session->get($name)) $field['required'] = 0;
+		// 					$fields_set[$name] = $field;
+		// 				}
+		// 			}
+		
+		// 			$billing_fields = get_option('jwcfe_wc_fields_billing');
+		// 			if ($billing_fields && is_array($billing_fields)) {
+		// 				$fields_set = array_merge($billing_fields, $fields_set);
+		// 			}
+		// 		} else {
+		// 			$fields_set = get_option('jwcfe_wc_fields_billing');
+		// 		}
+		
+		// 		// Merge Block fields
+		// 		if ($block_fields && is_array($block_fields)) {
+		// 			$fields_set = array_merge($fields_set, $block_fields);
+		// 		}
+		
+		// 		return $this->jwcfe_prepare_address_fields_paid(
+		// 			$fields_set,
+		// 			$fields,
+		// 			'billing',
+		// 			$country
+		// 		);
+		// 	}
+		// }
 		/**
 		 * wc_checkout_fields_modify_shipping_fields function.
 		 *

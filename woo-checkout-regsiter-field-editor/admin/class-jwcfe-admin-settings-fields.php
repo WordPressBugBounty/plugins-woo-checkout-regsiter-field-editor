@@ -351,20 +351,29 @@ if (!class_exists('JWCFE_Admin_Settings_Fields')) :
             <div id="jwcfeModal" class="jwcfemodal" style="display: none;">
             
                 <div class="jwcfemodal-content">
-                    <div class="jwcfemodal-content-main-div">
+                    <!-- <div class="jwcfemodal-content-main-div">
                         <div class="jwcfemodal-content-div">
                             <span class="jwcfecloseBtn">&times;</span>
                             <h2 class="ui-dialog-title"><?php echo $formTitle; ?></h2>
                         </div>
-                    </div>
+                    </div> -->
                     <div id="jwcfe_new_field_form_pp" title="<?php echo esc_html($formTitle); ?>" class="<?php echo $addClass; ?> jwcfe_popup_wrapper">
                         <form method="POST" id="jwcfe_new_field_form" action="">
                             <div class="jwcfe_tabs" class="jwcfe-tabs">
-                                <ul>
+                                <!-- <ul>
+                                    <li><a href="#tab-1"><?php echo esc_html__('General Settings', 'jwcfe'); ?></a></li>
+                                    <span class="circle1"></span>
+                                </ul> -->
+                                <div class="jwcfemodal-content-main-div" style="position: sticky;top: 0;z-index: 1000;">
+                                <div class="jwcfemodal-content-div">
+                                    <span class="jwcfecloseBtn">&times;</span>
+                                    <h2 class="ui-dialog-title"><?php echo $formTitle; ?></h2>
+                                </div>
+                                <ul style="position: sticky;top: 0;z-index: 1000;">
                                     <li><a href="#tab-1"><?php echo esc_html__('General Settings', 'jwcfe'); ?></a></li>
                                     <span class="circle1"></span>
                                 </ul>
-
+                            </div>
                                 <div id="jwcfe_field_editor_form_new">
                                     <div id="tab-1">
                                         <input type="hidden" name="i_options" value="" />
@@ -392,8 +401,8 @@ if (!class_exists('JWCFE_Admin_Settings_Fields')) :
                                                             <input type="text" value="" name="fname" placeholder="<?php esc_attr_e('eg. new_field', 'jwcfe'); ?>" require />
                                                             <br>
                                                             <span style="font-size: 10px;"><?php esc_html_e('Must be unique for each field', 'jwcfe'); ?></span>
+                                                            <br><span class="err_msgs"></span>
                                                         </div>
-                                                        <div class="err_msgs"></div>
 
                                                     </div>
 

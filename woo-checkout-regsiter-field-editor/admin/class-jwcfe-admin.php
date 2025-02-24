@@ -27,6 +27,7 @@ if (!class_exists('JWCFE_Admin')) :
 
 		public function __construct($plugin_name, $version)
 		{
+			
 			$this->plugin_name = $plugin_name;
 			$this->version = $version;
 			$this->locale_fields = array(
@@ -51,11 +52,24 @@ if (!class_exists('JWCFE_Admin')) :
 
 		    wp_enqueue_script('jwcfe-admin-script', JWCFE_ASSETS_URL_ADMIN . 'js/jwcfe-admin-pro.js', $deps, $this->version, true);
 
+			
+
+			$tab = $this->get_current_tab();
+			
 			$fields_options = [];
-			$fields_options['shipping'] = get_option('jwcfe_wc_fields_shipping',[]);
-			$fields_options['additional'] = get_option('jwcfe_wc_fields_additional',[]);
-			$fields_options['billing'] = get_option('jwcfe_wc_fields_billing',[]);
-			$fields_options['account'] = get_option('jwcfe_wc_fields_account',[]);
+
+			if ($tab === 'fields') {
+				$fields_options['shipping'] = get_option('jwcfe_wc_fields_shipping',[]);
+				$fields_options['additional'] = get_option('jwcfe_wc_fields_additional',[]);
+				$fields_options['billing'] = get_option('jwcfe_wc_fields_billing',[]);
+				$fields_options['account'] = get_option('jwcfe_wc_fields_account',[]);
+			}else if ($tab === 'block') {
+				$fields_options['shipping'] = get_option('jwcfe_wc_fields_block_shipping',[]);
+				$fields_options['additional'] = get_option('jwcfe_wc_fields_block_additional',[]);
+				$fields_options['billing'] = get_option('jwcfe_wc_fields_block_billing',[]);
+			}
+			
+
 		    wp_localize_script('jwcfe-admin-script', 'WcfeAdmin', array(
 		        'MSG_INVALID_NAME' => 'NAME cannot contain spaces',
 		        'ajaxurl' => admin_url('admin-ajax.php'),
@@ -93,31 +107,80 @@ if (!class_exists('JWCFE_Admin')) :
 		{
 
 			$Fields_settings = JWCFE_Admin_Settings_Fields::instance($this->plugin_name, $this->version);
+			$blocks_Setting = new JWCFE_Admin_Settings_Block_Fields($this->plugin_name, $this->version);
 
 			$tab = $this->get_current_tab();
 
 			if ($tab === 'fields') {
 				$Fields_settings->checkout_form_field_editor();
+			}else if ($tab === 'block') {
+				$blocks_Setting->checkout_form_field_editor();
 			}
 			
 		}
+		
+
+		// public function get_current_tab()
+		// {
+		// 	return isset($_GET['tab']) ? esc_attr($_GET['tab']) : 'fields';
+		// }
 
 
+		// public function get_current_section()
+		// {
+		// 	$tab = $this->get_current_tab();
+		// 	$section = '';
+		// 	if ($tab === 'fields') {
+		// 		$section = isset($_GET['section']) ? esc_attr($_GET['section']) : 'billing';
+		// 	}
+		// 	return $section;
+		// }
 		public function get_current_tab()
 		{
-			return isset($_GET['tab']) ? esc_attr($_GET['tab']) : 'fields';
+			$allowed_tabs = array('fields', 'block'); // Define allowed tabs
+			$tab = isset($_GET['tab']) ? sanitize_text_field($_GET['tab']) : 'fields';
+		
+			return in_array($tab, $allowed_tabs) ? $tab : 'fields';
 		}
-
-
+		
+		// public function get_current_section()
+		// {
+		// 	$tab = $this->get_current_tab();
+			
+		// 	// Define sections based on the selected tab
+		// 	$sections_by_tab = array(
+		// 		'fields' => array('billing', 'shipping', 'additional', 'account'),
+		// 		'block'  => array('billing', 'shipping', 'additional'),
+		// 	);
+		
+		// 	$default_section = 'billing'; // Default section
+		// 	$sections = isset($sections_by_tab[$tab]) ? $sections_by_tab[$tab] : array();
+		
+		// 	if (isset($_GET['section']) && in_array($_GET['section'], $sections)) {
+		// 		return sanitize_text_field($_GET['section']);
+		// 	}
+		
+		// 	return $default_section;
+		// }
 		public function get_current_section()
-		{
-			$tab = $this->get_current_tab();
-			$section = '';
-			if ($tab === 'fields') {
-				$section = isset($_GET['section']) ? esc_attr($_GET['section']) : 'billing';
-			}
-			return $section;
-		}
+{
+    $tab = $this->get_current_tab();
+    
+    // Define sections based on the selected tab
+    $sections_by_tab = array(
+        'fields' => array('billing', 'shipping', 'additional', 'account'),
+        'block'  => array('billing', 'shipping', 'additional'),
+    );
+
+    $default_section = 'billing'; // Default section
+    $sections = isset($sections_by_tab[$tab]) ? $sections_by_tab[$tab] : array();
+
+    if (isset($_GET['section']) && in_array($_GET['section'], $sections)) {
+        return sanitize_text_field($_GET['section']);
+    }
+
+    return $default_section;
+}
 
 		public function get_all_variations_of_product()
 		{
@@ -163,7 +226,7 @@ if (!class_exists('JWCFE_Admin')) :
 		{
 			?>
 
-				<div id="message" style="border-left-color: #6B2C88" class="wc-connect updated wcfe-notice">
+				<div id="message" style="display:none; border-left-color: #6B2C88" class="wc-connect updated wcfe-notice">
 					<div class="squeezer">
 						<table>
 							<tr>
@@ -215,284 +278,728 @@ if (!class_exists('JWCFE_Admin')) :
 				</div>
 
 			<?php
-			$tabs = array('fields' => 'Checkout & Account Fields');
-			$tab  = isset($_GET['tab']) ? esc_attr($_GET['tab']) : 'fields';
-			$sections = '';
-			$section  = '';
+			// $tabs = array('fields' => 'Checkout & Account Fields');
+			// $tab  = isset($_GET['tab']) ? esc_attr($_GET['tab']) : 'fields';
+			// $sections = '';
+			// $section  = '';
 
+			// if ($tab === 'fields') {
+			// 	$sections = array('billing', 'shipping', 'additional', 'account');
+			// 	$section  = isset($_GET['section']) ? esc_attr($_GET['section']) : 'billing';
+			// }
+			// $tabs = array(
+			// 	'fields' => 'Checkout & Account Fields',
+			// 	'block'  => 'Block Checkout Fields'
+			// );
+			
+			// $allowed_tabs = array_keys($tabs); // Use keys directly
+			// $tab = isset($_GET['tab']) && in_array($_GET['tab'], $allowed_tabs) ? sanitize_text_field($_GET['tab']) : 'fields';
+			
+			// $sections = array();
+			// $section  = 'billing';
+			
+			// if ($tab === 'fields') {
+			// 	$sections = array('billing', 'shipping', 'additional', 'account');
+			// } elseif ($tab === 'block') {
+			// 	$sections = array('billing', 'shipping', 'additional');
+			// }
+			
+			// // Validate the section
+			// if (isset($_GET['section']) && in_array($_GET['section'], $sections)) {
+			// 	$section = sanitize_text_field($_GET['section']);
+			// }
+			
+			// echo '<h2 class="nav-tab-wrapper woo-nav-tab-wrapper">';
+
+			// foreach ($tabs as $key => $value) {
+			// 	$active = ($key == $tab) ? 'nav-tab-active' : '';
+			// 	echo '<a class="nav-tab ' . $active . '" href="' . admin_url('admin.php?page=jwcfe_checkout_register_editor&tab=' . $key) . '">' . $value . '</a>';
+			// }
+			// echo '</h2>';
+
+			// if (!empty($sections)) {
+			// 	echo '<ul class="jwcfe-sections">';
+			// 	$size = sizeof($sections);
+			// 	$i = 0;
+			// 	foreach ($sections as $key) {
+			// 		$i++;
+			// 		$active = ($key == $section) ? 'current' : '';
+
+			// 		$url = 'admin.php?page=jwcfe_checkout_register_editor&tab=fields&section=' . $key;
+			// 		echo '<li>';
+			// 		echo '<a href="' . admin_url($url) . '" class="' . $active . '" >' . ucwords($key) . ' ' . esc_html__('Fields', 'jwcfe') . ' <span class="circle"></span></a>';
+			// 		echo ($size > $i) ? '' : '';
+			// 		echo '</li>';
+			// 	}
+			// 	echo '</ul>';
+			$tabs = array(
+				'fields' => 'Checkout & Account Fields',
+				'block'  => 'Block Checkout Fields'
+			);
+			
+			$allowed_tabs = array_keys($tabs); // Use keys directly
+			$tab = isset($_GET['tab']) && in_array($_GET['tab'], $allowed_tabs) ? sanitize_text_field($_GET['tab']) : 'fields';
+			
+			$sections = array();
+			$section  = '';
+			
 			if ($tab === 'fields') {
 				$sections = array('billing', 'shipping', 'additional', 'account');
-				$section  = isset($_GET['section']) ? esc_attr($_GET['section']) : 'billing';
+			} elseif ($tab === 'block') {
+				$sections = array('billing', 'shipping', 'additional');
 			}
-
+			
+			// Validate the section
+			if (isset($_GET['section']) && in_array($_GET['section'], $sections)) {
+				$section = sanitize_text_field($_GET['section']);
+			}
+			
 			echo '<h2 class="nav-tab-wrapper woo-nav-tab-wrapper">';
-
 			foreach ($tabs as $key => $value) {
 				$active = ($key == $tab) ? 'nav-tab-active' : '';
-				echo '<a class="nav-tab ' . $active . '" href="' . admin_url('admin.php?page=jwcfe_checkout_register_editor&tab=' . $key) . '">' . $value . '</a>';
+				echo '<a class="nav-tab ' . esc_attr($active) . '" href="' . esc_url(admin_url('admin.php?page=jwcfe_checkout_register_editor&tab=' . $key)) . '">' . esc_html($value) . '</a>';
 			}
 			echo '</h2>';
-
-			if (!empty($sections)) {
-				echo '<ul class="jwcfe-sections">';
-				$size = sizeof($sections);
-				$i = 0;
-				foreach ($sections as $key) {
-					$i++;
-					$active = ($key == $section) ? 'current' : '';
-
-					$url = 'admin.php?page=jwcfe_checkout_register_editor&tab=fields&section=' . $key;
-					echo '<li>';
-					echo '<a href="' . admin_url($url) . '" class="' . $active . '" >' . ucwords($key) . ' ' . esc_html__('Fields', 'jwcfe') . ' <span class="circle"></span></a>';
-					echo ($size > $i) ? '' : '';
-					echo '</li>';
-				}
-				echo '</ul>';
-			}
-	
-
-
 			
+			// if (!empty($sections)) {
+			// 	echo '<ul class="jwcfe-sections">';
+			// 	$size = count($sections);
+			// 	$i = 0;
+			// 	foreach ($sections as $key) {
+			// 		$i++;
+			// 		$active = ($key == $section) ? 'current' : '';
+			// 		$url = 'admin.php?page=jwcfe_checkout_register_editor&tab=' . $tab . '&section=' . $key;
+					
+			// 		echo '<li>';
+			
+			// 		// Customize display text only for the "block" tab
+			// 		if ($tab === 'block') {
+			// 			$display_text = ($key === 'billing') ? 'Contact Information' :
+			// 				(($key === 'shipping') ? 'Address' :
+			// 				(($key === 'additional') ? 'Additional Information' : ucwords($key) . ' Fields'));
+			// 		} else {
+			// 			// Default display text for other tabs
+			// 			$display_text = ($key === 'billing') ? 'Billing Fields' :
+			// 				(($key === 'shipping') ? 'Shipping Fields' :
+			// 				(($key === 'additional') ? 'Additional Fields' : ucwords($key) . ' Fields'));
+			// 		}
+			
+			// 		echo '<a href="' . esc_url(admin_url($url)) . '" class="' . esc_attr($active) . '" >' . esc_html__($display_text, 'jwcfe') . ' <span class="circle"></span></a>'; 
+			// 		echo ($size > $i) ? '' : '';
+			// 		echo '</li>';
+			// 	}
+			// 	echo '</ul>';
+			// }
+			$section = $this->get_current_section(); // Get the current section
+
+if (!empty($sections)) {
+    echo '<ul class="jwcfe-sections">';
+    foreach ($sections as $key) {
+        $active = ($key === $section) ? 'current' : ''; // Assign "current" class if active
+        $url = 'admin.php?page=jwcfe_checkout_register_editor&tab=' . esc_attr($tab) . '&section=' . esc_attr($key);
+
+        echo '<li>';
+        
+        // Customize display text only for the "block" tab
+        if ($tab === 'block') {
+            $display_text = ($key === 'billing') ? 'Contact Information' :
+                (($key === 'shipping') ? 'Address' :
+                (($key === 'additional') ? 'Additional Information' : ucwords($key) . ' Fields'));
+        } else {
+            // Default display text for other tabs
+            $display_text = ($key === 'billing') ? 'Billing Fields' :
+                (($key === 'shipping') ? 'Shipping Fields' :
+                (($key === 'additional') ? 'Additional Fields' : ucwords($key) . ' Fields'));
+        }
+
+        echo '<a href="' . esc_url(admin_url($url)) . '" class="' . esc_attr($active) . '">' . 
+                esc_html__($display_text, 'jwcfe') . 
+                ' <span class="circle"></span>' . 
+             '</a>';
+        
+        echo '</li>';
+    }
+    echo '</ul>';
+}
+
 		}
 
 
 		public function save_options($section)
 		{
-			if (isset($_POST['woo_checkout_editor_nonce']) && wp_verify_nonce($_POST['woo_checkout_editor_nonce'], 'woo_checkout_editor_settings')) {
-				// Handle settings saving
-				$o_fields      = JWCFE_Helper::get_fields($section);
-				$fields = $o_fields;
-				$f_order       = !empty($_POST['f_order']) ? $_POST['f_order'] : array();
-				$f_names       = !empty($_POST['f_name']) ? $_POST['f_name'] : array();
-				$f_names_new   = !empty($_POST['f_name_new']) ? $_POST['f_name_new'] : array();
-				$f_types       = !empty($_POST['f_type']) ? $_POST['f_type'] : array();
-				$f_labels      = !empty($_POST['f_label']) ? $_POST['f_label'] : array();
-				$f_extoptions     = !empty($_POST['f_extoptions']) ? $_POST['f_extoptions'] : array();
-				$f_access    = !empty($_POST['f_access']) ? $_POST['f_access'] : array();
-				$f_placeholder = !empty($_POST['f_placeholder']) ? $_POST['f_placeholder'] : array();
-				$i_min_time = !empty($_POST['i_min_time']) ? $_POST['i_min_time'] : array();
-				$i_max_time = !empty($_POST['i_max_time']) ? $_POST['i_max_time'] : array();
-				$i_time_step = !empty($_POST['i_time_step']) ? $_POST['i_time_step'] : array();
-				$i_time_format = !empty($_POST['i_time_format']) ? $_POST['i_time_format'] : array();
-				$f_maxlength = !empty($_POST['f_maxlength']) ? $_POST['f_maxlength'] : array();
+			$tab = $this->get_current_tab();
+			// error_log($tab);
+			// if($tab==='fields'){
+				if (isset($_POST['woo_checkout_editor_nonce']) && wp_verify_nonce($_POST['woo_checkout_editor_nonce'], 'woo_checkout_editor_settings')) {
+					// Handle settings saving
+					$o_fields      = JWCFE_Helper::get_fields($section);
+					$fields = $o_fields;
+					$f_order       = !empty($_POST['f_order']) ? $_POST['f_order'] : array();
+					$f_names       = !empty($_POST['f_name']) ? $_POST['f_name'] : array();
+					$f_names_new   = !empty($_POST['f_name_new']) ? $_POST['f_name_new'] : array();
+					$f_types       = !empty($_POST['f_type']) ? $_POST['f_type'] : array();
+					$f_labels      = !empty($_POST['f_label']) ? $_POST['f_label'] : array();
+					$f_extoptions     = !empty($_POST['f_extoptions']) ? $_POST['f_extoptions'] : array();
+					$f_access    = !empty($_POST['f_access']) ? $_POST['f_access'] : array();
+					$f_placeholder = !empty($_POST['f_placeholder']) ? $_POST['f_placeholder'] : array();
+					$i_min_time = !empty($_POST['i_min_time']) ? $_POST['i_min_time'] : array();
+					$i_max_time = !empty($_POST['i_max_time']) ? $_POST['i_max_time'] : array();
+					$i_time_step = !empty($_POST['i_time_step']) ? $_POST['i_time_step'] : array();
+					$i_time_format = !empty($_POST['i_time_format']) ? $_POST['i_time_format'] : array();
+					$f_maxlength = !empty($_POST['f_maxlength']) ? $_POST['f_maxlength'] : array();
 
-				if (isset($_POST['f_options'])) {
-					$f_options     = !empty($_POST['f_options']) ? $_POST['f_options'] : array();
-				}
-
-				$f_text      = !empty($_POST['f_text']) ? $_POST['f_text'] : array();
-
-				if (isset($_POST['f_rules_action'])) {
-					if (!empty($_POST['f_rules_action'])) {
-						$f_rules_action = $_POST['f_rules_action'];
-					} else {
-						$f_rules_action = array();
-					}
-				}
-
-				
-
-				$f_rules = !empty($_POST['f_rules']) ? $_POST['f_rules'] : '';
-
-				if (isset($_POST['f_rules_action_ajax'])) {
-					if (!empty($_POST['f_rules_action_ajax'])) {
-						$f_rules_action_ajax = $_POST['f_rules_action_ajax'];
-					} else {
-						$f_rules_action_ajax = array();
-					}
-				}
-
-				
-
-				$f_rules_ajax = !empty($_POST['f_rules_ajax'])? $_POST['f_rules_ajax'] : '';
-
-
-				$f_label_class  = !empty($_POST['f_label_class']) ? $_POST['f_label_class'] : array();
-				$f_class       = !empty($_POST['f_class']) ? $_POST['f_class'] : array();
-				$f_required    = !empty($_POST['f_required']) ? $_POST['f_required'] : array();
-				$f_is_include    = !empty($_POST['f_is_include']) ? $_POST['f_is_include'] : array();
-				$f_enabled     = !empty($_POST['f_enabled']) ? $_POST['f_enabled'] : array();
-				$f_show_in_email = !empty($_POST['f_show_in_email']) ? $_POST['f_show_in_email'] : array();
-				$f_show_in_order = !empty($_POST['f_show_in_order']) ? $_POST['f_show_in_order'] : array();
-				$f_validation  = !empty($_POST['f_validation']) ? $_POST['f_validation'] : array();
-				$f_deleted     = !empty($_POST['f_deleted']) ? $_POST['f_deleted'] : array();
-				$f_position        = !empty($_POST['f_position']) ? $_POST['f_position'] : array();
-				$f_display_options = !empty($_POST['f_display_options']) ? $_POST['f_display_options'] : array();
-
-				$max = max(array_map('absint', array_keys($f_names)));
-
-				for ($i = 0; $i <= $max; $i++) {
-					$name     = empty($f_names[$i]) ? '' : urldecode(sanitize_title(wc_clean(stripslashes($f_names[$i]))));
-					$new_name = empty($f_names_new[$i]) ? '' : urldecode(sanitize_title(wc_clean(stripslashes($f_names_new[$i]))));
-
-
-					if (!empty($f_deleted[$i]) && $f_deleted[$i] == 1) {
-						unset($fields[$name]);
-						continue;
+					if (isset($_POST['f_options'])) {
+						$f_options     = !empty($_POST['f_options']) ? $_POST['f_options'] : array();
 					}
 
-					// Check reserved names
-					if ($this->is_reserved_field_name($new_name)) {
-						continue;
-					}
+					$f_text      = !empty($_POST['f_text']) ? $_POST['f_text'] : array();
 
-					//if update field
-					if ($name && $new_name && $new_name !== $name) {
-
-						if (isset($fields[$name])) {
-							$fields[$new_name] = $fields[$name];
+					if (isset($_POST['f_rules_action'])) {
+						if (!empty($_POST['f_rules_action'])) {
+							$f_rules_action = $_POST['f_rules_action'];
 						} else {
-							$fields[$new_name] = array();
+							$f_rules_action = array();
 						}
-						unset($fields[$name]);
-						$name = $new_name;
+					}
+
+					
+
+					$f_rules = !empty($_POST['f_rules']) ? $_POST['f_rules'] : '';
+
+					if (isset($_POST['f_rules_action_ajax'])) {
+						if (!empty($_POST['f_rules_action_ajax'])) {
+							$f_rules_action_ajax = $_POST['f_rules_action_ajax'];
+						} else {
+							$f_rules_action_ajax = array();
+						}
+					}
+
+					
+
+					$f_rules_ajax = !empty($_POST['f_rules_ajax'])? $_POST['f_rules_ajax'] : '';
+
+
+					$f_label_class  = !empty($_POST['f_label_class']) ? $_POST['f_label_class'] : array();
+					$f_class       = !empty($_POST['f_class']) ? $_POST['f_class'] : array();
+					$f_required    = !empty($_POST['f_required']) ? $_POST['f_required'] : array();
+					$f_is_include    = !empty($_POST['f_is_include']) ? $_POST['f_is_include'] : array();
+					$f_enabled     = !empty($_POST['f_enabled']) ? $_POST['f_enabled'] : array();
+					$f_show_in_email = !empty($_POST['f_show_in_email']) ? $_POST['f_show_in_email'] : array();
+					$f_show_in_order = !empty($_POST['f_show_in_order']) ? $_POST['f_show_in_order'] : array();
+					$f_validation  = !empty($_POST['f_validation']) ? $_POST['f_validation'] : array();
+					$f_deleted     = !empty($_POST['f_deleted']) ? $_POST['f_deleted'] : array();
+					$f_position        = !empty($_POST['f_position']) ? $_POST['f_position'] : array();
+					$f_display_options = !empty($_POST['f_display_options']) ? $_POST['f_display_options'] : array();
+					
+					// $max ='';
+
+					$max = max(array_map('absint', array_keys($f_names)));
+
+					for ($i = 0; $i <= $max; $i++) {
+						$name     = empty($f_names[$i]) ? '' : urldecode(sanitize_title(wc_clean(stripslashes($f_names[$i]))));
+						$new_name = empty($f_names_new[$i]) ? '' : urldecode(sanitize_title(wc_clean(stripslashes($f_names_new[$i]))));
+
+
+						if (!empty($f_deleted[$i]) && $f_deleted[$i] == 1) {
+							unset($fields[$name]);
+							continue;
+						}
+
+						// Check reserved names
+						if ($this->is_reserved_field_name($new_name)) {
+							continue;
+						}
+
+						//if update field
+						if ($name && $new_name && $new_name !== $name) {
+
+							if (isset($fields[$name])) {
+								$fields[$new_name] = $fields[$name];
+							} else {
+								$fields[$new_name] = array();
+							}
+							unset($fields[$name]);
+							$name = $new_name;
+						} else {
+							$name = $name ? $name : $new_name;
+						}
+
+						if (!$name) {
+							continue;
+						}
+
+
+						if ( $f_types[$i] == 'file' && empty( $f_extoptions[$i] ) ) {
+							echo '<div class="error"><p>' . esc_html__( 'Allowed file types input field must be specified for file fields!.', 'jwcfe' ) . '</p></div>';
+							continue;
+						}
+
+
+						// if new field
+
+						if (!isset($fields[$name])) {
+							$fields[$name] = array();
+						}
+						$o_type  = isset($o_fields[$name]['type']) ? $o_fields[$name]['type'] : 'text';
+
+						$allowed_tags = array(
+							'a' => array(
+								'class' => array(),
+								'href'  => array(),
+								'rel'   => array(),
+								'title' => array(),
+							),
+							'abbr' => array(
+								'title' => array(),
+							),
+							'b' => array(),
+							'blockquote' => array(
+								'cite'  => array(),
+							),
+							'cite' => array(
+								'title' => array(),
+							),
+							'code' => array(),
+							'del' => array(
+								'datetime' => array(),
+								'title' => array(),
+							),
+
+							'dd' => array(),
+							'div' => array(
+								'class' => array(),
+								'title' => array(),
+								'style' => array(),
+							),
+							'dl' => array(),
+							'dt' => array(),
+							'em' => array(),
+							'h1' => array(),
+							'h2' => array(),
+							'h3' => array(),
+							'h4' => array(),
+							'h5' => array(),
+							'h6' => array(),
+							'i' => array(),
+							'img' => array(
+								'alt'    => array(),
+								'class'  => array(),
+								'height' => array(),
+								'src'    => array(),
+								'width'  => array(),
+							),
+
+							'li' => array(
+								'class' => array(),
+							),
+							'ol' => array(
+								'class' => array(),
+							),
+							'p' => array(
+								'class' => array(),
+							),
+							'q' => array(
+								'cite' => array(),
+								'title' => array(),
+							),
+							'span' => array(
+								'class' => array(),
+								'title' => array(),
+								'style' => array(),
+							),
+							'strike' => array(),
+							'strong' => array(),
+							'ul' => array(
+								'class' => array(),
+							),
+						);
+						$fields[$name]['type']    	  = empty($f_types[$i]) ? $o_type : wc_clean($f_types[$i]);
+						$fields[$name]['label']   	  = empty($f_labels[$i]) ? '' : wp_kses_post(trim(stripslashes($f_labels[$i])));
+						$fields[$name]['text']   	  = empty($f_text[$i]) ? '' : $f_text[$i];
+						$fields[$name]['access']    = empty($f_access[$i]) ? false : true;
+						$fields[$name]['placeholder'] = empty($f_placeholder[$i]) ? '' : wc_clean(stripslashes($f_placeholder[$i]));
+						$fields[$name]['min_time'] = empty($i_min_time[$i]) ? '' : wc_clean(stripslashes($i_min_time[$i]));
+						$fields[$name]['max_time'] = empty($i_max_time[$i]) ? '' : wc_clean(stripslashes($i_max_time[$i]));
+						$fields[$name]['time_step'] = empty($i_time_step[$i]) ? '' : wc_clean(stripslashes($i_time_step[$i]));
+						$fields[$name]['time_format'] = empty($i_time_format[$i]) ? '' : wc_clean(stripslashes($i_time_format[$i]));
+						$fields[$name]['options_json'] 	  = empty($f_options[$i]) ? '' : json_decode(urldecode($f_options[$i]), true);
+						$fields[$name]['maxlength'] = empty($f_maxlength[$i]) ? '' : wc_clean(stripslashes($f_maxlength[$i]));
+						$fields[$name]['class'] 	  = empty($f_class[$i]) ? array() : array_map('wc_clean', explode(',', $f_class[$i]));
+						$fields[$name]['label_class'] = empty($f_label_class[$i]) ? array() : array_map('wc_clean', explode(',', $f_label_class[$i]));
+						$fields[$name]['rules_action']    = empty($f_rules_action[$i]) ? '' : $f_rules_action[$i];
+						$fields[$name]['rules']    = empty($f_rules[$i]) ? '' : $f_rules[$i];
+						$fields[$name]['rules_action_ajax']    = empty($f_rules_action_ajax[$i]) ? '' : $f_rules_action_ajax[$i];
+						$fields[$name]['rules_ajax']    = empty($f_rules_ajax[$i]) ? '' : $f_rules_ajax[$i];
+						$fields[$name]['required']    = empty($f_required[$i]) ? false : true;
+						$fields[$name]['is_include']    = empty($f_is_include[$i]) ? false : true;
+						$fields[$name]['enabled']     = empty($f_enabled[$i]) ? false : true;
+						$fields[$name]['order']       = empty($f_order[$i]) ? '' : wc_clean($f_order[$i]);
+
+						if (!in_array($name, $this->locale_fields)) {
+							$fields[$name]['validate'] = empty($f_validation[$i]) ? array() : explode(',', $f_validation[$i]);
+						}
+
+						$fields[$name]['extoptions'] 	  = empty($f_extoptions[$i]) ? array() : explode(',', $f_extoptions[$i]);
+
+						if (!$this->is_default_field_name($name)) {
+							$fields[$name]['custom'] = true;
+							$fields[$name]['show_in_email'] = empty($f_show_in_email[$i]) ? false : true;
+							$fields[$name]['show_in_order'] = empty($f_show_in_order[$i]) ? false : true;
+						} else {
+							$fields[$name]['custom'] = false;
+						}
+
+						$fields[$name]['label']   	  = $fields[$name]['label'];
+						$fields[$name]['placeholder'] = esc_html__($fields[$name]['placeholder'], 'woocommerce');
+						$fields[$name]['maxlength'] = esc_html__($fields[$name]['maxlength'], 'woocommerce');
+					}
+
+					uasort($fields, array($this, 'sort_fields_by_order'));
+					if($tab === 'fields'){
+						$result = update_option('jwcfe_wc_fields_' . $section, $fields);
+
+
+					}else if ($tab === 'block') {
+						if (isset($_POST['woo_checkout_editor_nonce']) && wp_verify_nonce($_POST['woo_checkout_editor_nonce'], 'woo_checkout_editor_settings')) {
+							// Handle settings saving
+							$o_fields      = JWCFE_Helper::get_fields($section);
+							$fields = $o_fields;
+							$f_order       = !empty($_POST['f_order']) ? $_POST['f_order'] : array();
+							$f_names       = !empty($_POST['f_name']) ? $_POST['f_name'] : array();
+							$f_names_new   = !empty($_POST['f_name_new']) ? $_POST['f_name_new'] : array();
+							$f_types       = !empty($_POST['f_type']) ? $_POST['f_type'] : array();
+							$f_labels      = !empty($_POST['f_label']) ? $_POST['f_label'] : array();
+							$f_extoptions     = !empty($_POST['f_extoptions']) ? $_POST['f_extoptions'] : array();
+							$f_access    	= !empty($_POST['f_access']) ? $_POST['f_access'] : array();
+							$f_placeholder = !empty($_POST['f_placeholder']) ? $_POST['f_placeholder'] : array();
+							$i_min_time	= !empty($_POST['i_min_time']) ? $_POST['i_min_time'] : array();
+							$i_max_time = !empty($_POST['i_max_time']) ? $_POST['i_max_time'] : array();
+							$i_time_step = !empty($_POST['i_time_step']) ? $_POST['i_time_step'] : array();
+							$i_time_format = !empty($_POST['i_time_format']) ? $_POST['i_time_format'] : array();
+							$f_maxlength = !empty($_POST['f_maxlength']) ? $_POST['f_maxlength'] : array();
+		
+							if (isset($_POST['f_options'])) {
+								$f_options     = !empty($_POST['f_options']) ? $_POST['f_options'] : array();
+							}
+		
+							$f_text      = !empty($_POST['f_text']) ? $_POST['f_text'] : array();
+		
+							if (isset($_POST['f_rules_action'])) {
+								if (!empty($_POST['f_rules_action'])) {
+									$f_rules_action = $_POST['f_rules_action'];
+								} else {
+									$f_rules_action = array();
+								}
+							}
+		
+							
+		
+							$f_rules = !empty($_POST['f_rules']) ? $_POST['f_rules'] : '';
+		
+							if (isset($_POST['f_rules_action_ajax'])) {
+								if (!empty($_POST['f_rules_action_ajax'])) {
+									$f_rules_action_ajax = $_POST['f_rules_action_ajax'];
+								} else {
+									$f_rules_action_ajax = array();
+								}
+							}
+		
+							
+		
+							$f_rules_ajax = !empty($_POST['f_rules_ajax'])? $_POST['f_rules_ajax'] : '';
+		
+		
+							$f_label_class  = !empty($_POST['f_label_class']) ? $_POST['f_label_class'] : array();
+							$f_class       = !empty($_POST['f_class']) ? $_POST['f_class'] : array();
+							$f_required    = !empty($_POST['f_required']) ? $_POST['f_required'] : array();
+							$f_is_include    = !empty($_POST['f_is_include']) ? $_POST['f_is_include'] : array();
+							$f_enabled     = !empty($_POST['f_enabled']) ? $_POST['f_enabled'] : array();
+							$f_show_in_email = !empty($_POST['f_show_in_email']) ? $_POST['f_show_in_email'] : array();
+							$f_show_in_order = !empty($_POST['f_show_in_order']) ? $_POST['f_show_in_order'] : array();
+							$f_validation  = !empty($_POST['f_validation']) ? $_POST['f_validation'] : array();
+							$f_deleted     = !empty($_POST['f_deleted']) ? $_POST['f_deleted'] : array();
+							$f_position        = !empty($_POST['f_position']) ? $_POST['f_position'] : array();
+							$f_display_options = !empty($_POST['f_display_options']) ? $_POST['f_display_options'] : array();
+		
+							$max = max(array_map('absint', array_keys($f_names)));
+		
+							for ($i = 0; $i <= $max; $i++) {
+								$name     = empty($f_names[$i]) ? '' : urldecode(sanitize_title(wc_clean(stripslashes($f_names[$i]))));
+								$new_name = empty($f_names_new[$i]) ? '' : urldecode(sanitize_title(wc_clean(stripslashes($f_names_new[$i]))));
+		
+		
+								if (!empty($f_deleted[$i]) && $f_deleted[$i] == 1) {
+									unset($fields[$name]);
+									continue;
+								}
+		
+								// Check reserved names
+								if ($this->is_reserved_field_name($new_name)) {
+									continue;
+								}
+		
+								//if update field
+								if ($name && $new_name && $new_name !== $name) {
+		
+									if (isset($fields[$name])) {
+										$fields[$new_name] = $fields[$name];
+									} else {
+										$fields[$new_name] = array();
+									}
+									unset($fields[$name]);
+									$name = $new_name;
+								} else {
+									$name = $name ? $name : $new_name;
+								}
+		
+								if (!$name) {
+									continue;
+								}
+		
+		
+								if ( $f_types[$i] == 'file' && empty( $f_extoptions[$i] ) ) {
+									echo '<div class="error"><p>' . esc_html__( 'Allowed file types input field must be specified for file fields!.', 'jwcfe' ) . '</p></div>';
+									continue;
+								}
+		
+		
+								// if new field
+		
+								if (!isset($fields[$name])) {
+									$fields[$name] = array();
+								}
+								$o_type  = isset($o_fields[$name]['type']) ? $o_fields[$name]['type'] : 'text';
+		
+								$allowed_tags = array(
+									'a' => array(
+										'class' => array(),
+										'href'  => array(),
+										'rel'   => array(),
+										'title' => array(),
+									),
+									'abbr' => array(
+										'title' => array(),
+									),
+									'b' => array(),
+									'blockquote' => array(
+										'cite'  => array(),
+									),
+									'cite' => array(
+										'title' => array(),
+									),
+									'code' => array(),
+									'del' => array(
+										'datetime' => array(),
+										'title' => array(),
+									),
+		
+									'dd' => array(),
+									'div' => array(
+										'class' => array(),
+										'title' => array(),
+										'style' => array(),
+									),
+									'dl' => array(),
+									'dt' => array(),
+									'em' => array(),
+									'h1' => array(),
+									'h2' => array(),
+									'h3' => array(),
+									'h4' => array(),
+									'h5' => array(),
+									'h6' => array(),
+									'i' => array(),
+									'img' => array(
+										'alt'    => array(),
+										'class'  => array(),
+										'height' => array(),
+										'src'    => array(),
+										'width'  => array(),
+									),
+		
+									'li' => array(
+										'class' => array(),
+									),
+									'ol' => array(
+										'class' => array(),
+									),
+									'p' => array(
+										'class' => array(),
+									),
+									'q' => array(
+										'cite' => array(),
+										'title' => array(),
+									),
+									'span' => array(
+										'class' => array(),
+										'title' => array(),
+										'style' => array(),
+									),
+									'strike' => array(),
+									'strong' => array(),
+									'ul' => array(
+										'class' => array(),
+									),
+								);
+								$fields[$name]['type']    	  = empty($f_types[$i]) ? $o_type : wc_clean($f_types[$i]);
+								$fields[$name]['label']   	  = empty($f_labels[$i]) ? '' : wp_kses_post(trim(stripslashes($f_labels[$i])));
+								$fields[$name]['text']   	  = empty($f_text[$i]) ? '' : $f_text[$i];
+								$fields[$name]['access']    = empty($f_access[$i]) ? false : true;
+								$fields[$name]['placeholder'] = empty($f_placeholder[$i]) ? '' : wc_clean(stripslashes($f_placeholder[$i]));
+								$fields[$name]['min_time'] = empty($i_min_time[$i]) ? '' : wc_clean(stripslashes($i_min_time[$i]));
+								$fields[$name]['max_time'] = empty($i_max_time[$i]) ? '' : wc_clean(stripslashes($i_max_time[$i]));
+								$fields[$name]['time_step'] = empty($i_time_step[$i]) ? '' : wc_clean(stripslashes($i_time_step[$i]));
+								$fields[$name]['time_format'] = empty($i_time_format[$i]) ? '' : wc_clean(stripslashes($i_time_format[$i]));
+								$fields[$name]['options_json'] 	  = empty($f_options[$i]) ? '' : json_decode(urldecode($f_options[$i]), true);
+								$fields[$name]['maxlength'] = empty($f_maxlength[$i]) ? '' : wc_clean(stripslashes($f_maxlength[$i]));
+								$fields[$name]['class'] 	  = empty($f_class[$i]) ? array() : array_map('wc_clean', explode(',', $f_class[$i]));
+								$fields[$name]['label_class'] = empty($f_label_class[$i]) ? array() : array_map('wc_clean', explode(',', $f_label_class[$i]));
+								$fields[$name]['rules_action']    = empty($f_rules_action[$i]) ? '' : $f_rules_action[$i];
+								$fields[$name]['rules']    = empty($f_rules[$i]) ? '' : $f_rules[$i];
+								$fields[$name]['rules_action_ajax']    = empty($f_rules_action_ajax[$i]) ? '' : $f_rules_action_ajax[$i];
+								$fields[$name]['rules_ajax']    = empty($f_rules_ajax[$i]) ? '' : $f_rules_ajax[$i];
+								$fields[$name]['required']    = empty($f_required[$i]) ? false : true;
+								$fields[$name]['is_include']    = empty($f_is_include[$i]) ? false : true;
+								$fields[$name]['enabled']     = empty($f_enabled[$i]) ? false : true;
+								$fields[$name]['order']       = empty($f_order[$i]) ? '' : wc_clean($f_order[$i]);
+		
+								if (!in_array($name, $this->locale_fields)) {
+									$fields[$name]['validate'] = empty($f_validation[$i]) ? array() : explode(',', $f_validation[$i]);
+								}
+		
+								$fields[$name]['extoptions'] 	  = empty($f_extoptions[$i]) ? array() : explode(',', $f_extoptions[$i]);
+		
+								if (!$this->is_default_field_name($name)) {
+									$fields[$name]['custom'] = true;
+									$fields[$name]['show_in_email'] = empty($f_show_in_email[$i]) ? false : true;
+									$fields[$name]['show_in_order'] = empty($f_show_in_order[$i]) ? false : true;
+								} else {
+									$fields[$name]['custom'] = false;
+								}
+		
+								$fields[$name]['label']   	  = $fields[$name]['label'];
+								$fields[$name]['placeholder'] = esc_html__($fields[$name]['placeholder'], 'woocommerce');
+								$fields[$name]['maxlength'] = esc_html__($fields[$name]['maxlength'], 'woocommerce');
+							}
+							$excluded_fields = ['billing_first_name', 'billing_last_name', 'billing_country', 'billing_address_1', 'billing_city'];
+
+							// Remove excluded fields before saving
+							foreach ($excluded_fields as $field) {
+								unset($fields[$field]);
+							}
+							
+							// Sort fields before saving
+							uasort($fields, array($this, 'sort_fields_by_order'));
+							$result = update_option('jwcfe_wc_fields_block_' . $section, $fields);
+							if ($result == true) {
+								echo '<div class="updated"><p>' . esc_html__('Your changes were saved.', 'jwcfe') . '</p></div>';
+							} else {
+								echo '<div class="error"><p> ' . esc_html__('Your changes were not saved due to an error (or you made none!).', 'jwcfe') . '</p></div>';
+							}
+						} else {
+							wp_die('Security check failed. Please try again or contact support for assistance.', 'Security Error');
+						}
+					}
+					// else if ($tab === 'block') {
+					// 	if (!isset($section) || !isset($fields) || !is_array($fields)) {
+					// 		error_log("Error: Missing required variables or invalid data for the block tab.");
+					// 		return;
+					// 	}
+					// 	foreach ($fields as $index => &$field_data) { // Handle only select, checkbox, and text fields
+
+					// 		if (!is_array($field_data)) continue;
+						
+					// 		// Extract field type (default to 'text' if missing)
+					// 		$field_type = isset($field_data['type']) ? sanitize_text_field($field_data['type']) : 'text';
+						
+					// 		// Ensure 'options_json' is properly formatted or remove if empty
+					// 		if (isset($field_data['options_json']) && empty($field_data['options_json'][0]['key'])) {
+					// 			unset($field_data['options_json']);
+					// 		}
+						
+					// 		// Convert 'undefined' strings to empty and sanitize inputs
+					// 		foreach (['rules_action', 'rules_action_ajax'] as $key) {
+					// 			if (isset($field_data[$key])) {
+					// 				$field_data[$key] = $field_data[$key] === 'undefined' ? '' : sanitize_text_field($field_data[$key]);
+					// 			}
+					// 		}
+						
+					// 		// Handle only the required field types
+					// 		if (in_array($field_type, ['text', 'checkbox', 'select'])) {
+					// 			switch ($field_type) {
+					// 				case 'text':
+					// 					if (isset($field_data['value'])) {
+					// 						$field_data['value'] = sanitize_text_field($field_data['value']);
+					// 					}
+					// 					break;
+						
+					// 				case 'checkbox':
+										
+					// 					if (isset($field_data['value'])) {
+					// 						$field_data['value'] = ($field_data['value'] === '1' || $field_data['value'] === 'true') ? '1' : '0';
+					// 					}
+					// 					break;
+					// 				case 'select':
+					// 						if (isset($field_data['value'])) {
+					// 							$field_data['value'] = sanitize_text_field($field_data['value']);
+					// 						}
+					// 						if (isset($field_data['options_json']) && is_array($field_data['options_json'])) {
+					// 							foreach ($field_data['options_json'] as &$option) {
+					// 								if (isset($option['key']) && isset($option['value'])) {
+					// 									$option['key'] = sanitize_text_field($option['key']);
+					// 									$option['value'] = sanitize_text_field($option['value']);
+					// 								}
+					// 							}
+					// 							unset($option);
+					// 						}
+					// 						break;
+					// 			}
+					// 		} else {
+					// 			// Ignore other field types
+					// 			error_log("Skipping unsupported field type: " . $field_type);
+					// 		}
+						
+					// 		error_log("Processed Field: " . print_r($field_data, true));
+					// 	}
+					// 	unset($field_data); // Break reference
+						
+					// 	// Prepare option name
+					// 	$option_name = 'jwcfe_wc_fields_block_' . sanitize_key($section);
+					// 	error_log($option_name . ' - ' . maybe_serialize($fields));
+
+					// 	// Use maybe_serialize to handle arrays properly
+					// 	$result = update_option($option_name, maybe_serialize($fields));
+
+					// 	if ($result === false) {
+					// 		error_log("Error updating option for section: " . $section);
+							
+					// 		// Check if the option exists and compare values
+					// 		$current_value = get_option($option_name);
+					// 		if ($current_value === maybe_serialize($fields)) {
+					// 			error_log("No change needed, data is identical.");
+					// 		} else {
+					// 			error_log("Potential database write issue.");
+					// 		}
+					// 	} else {
+					// 		error_log("Successfully updated option for section: " . $section);
+					// 	}
+					// }
+					
+					
+					
+					if ($result == true) {
+						echo '<div class="updated"><p>' . esc_html__('Your changes were saved.', 'jwcfe') . '</p></div>';
 					} else {
-						$name = $name ? $name : $new_name;
+						echo '<div class="error"><p> ' . esc_html__('Your changes were not saved due to an error (or you made none!).', 'jwcfe') . '</p></div>';
 					}
-
-					if (!$name) {
-						continue;
-					}
-
-
-					if ( $f_types[$i] == 'file' && empty( $f_extoptions[$i] ) ) {
-						echo '<div class="error"><p>' . esc_html__( 'Allowed file types input field must be specified for file fields!.', 'jwcfe' ) . '</p></div>';
-						continue;
-					}
-
-
-					// if new field
-
-					if (!isset($fields[$name])) {
-						$fields[$name] = array();
-					}
-					$o_type  = isset($o_fields[$name]['type']) ? $o_fields[$name]['type'] : 'text';
-
-					$allowed_tags = array(
-						'a' => array(
-							'class' => array(),
-							'href'  => array(),
-							'rel'   => array(),
-							'title' => array(),
-						),
-						'abbr' => array(
-							'title' => array(),
-						),
-						'b' => array(),
-						'blockquote' => array(
-							'cite'  => array(),
-						),
-						'cite' => array(
-							'title' => array(),
-						),
-						'code' => array(),
-						'del' => array(
-							'datetime' => array(),
-							'title' => array(),
-						),
-
-						'dd' => array(),
-						'div' => array(
-							'class' => array(),
-							'title' => array(),
-							'style' => array(),
-						),
-						'dl' => array(),
-						'dt' => array(),
-						'em' => array(),
-						'h1' => array(),
-						'h2' => array(),
-						'h3' => array(),
-						'h4' => array(),
-						'h5' => array(),
-						'h6' => array(),
-						'i' => array(),
-						'img' => array(
-							'alt'    => array(),
-							'class'  => array(),
-							'height' => array(),
-							'src'    => array(),
-							'width'  => array(),
-						),
-
-						'li' => array(
-							'class' => array(),
-						),
-						'ol' => array(
-							'class' => array(),
-						),
-						'p' => array(
-							'class' => array(),
-						),
-						'q' => array(
-							'cite' => array(),
-							'title' => array(),
-						),
-						'span' => array(
-							'class' => array(),
-							'title' => array(),
-							'style' => array(),
-						),
-						'strike' => array(),
-						'strong' => array(),
-						'ul' => array(
-							'class' => array(),
-						),
-					);
-					$fields[$name]['type']    	  = empty($f_types[$i]) ? $o_type : wc_clean($f_types[$i]);
-					$fields[$name]['label']   	  = empty($f_labels[$i]) ? '' : wp_kses_post(trim(stripslashes($f_labels[$i])));
-					$fields[$name]['text']   	  = empty($f_text[$i]) ? '' : $f_text[$i];
-					$fields[$name]['access']    = empty($f_access[$i]) ? false : true;
-					$fields[$name]['placeholder'] = empty($f_placeholder[$i]) ? '' : wc_clean(stripslashes($f_placeholder[$i]));
-					$fields[$name]['min_time'] = empty($i_min_time[$i]) ? '' : wc_clean(stripslashes($i_min_time[$i]));
-					$fields[$name]['max_time'] = empty($i_max_time[$i]) ? '' : wc_clean(stripslashes($i_max_time[$i]));
-					$fields[$name]['time_step'] = empty($i_time_step[$i]) ? '' : wc_clean(stripslashes($i_time_step[$i]));
-					$fields[$name]['time_format'] = empty($i_time_format[$i]) ? '' : wc_clean(stripslashes($i_time_format[$i]));
-					$fields[$name]['options_json'] 	  = empty($f_options[$i]) ? '' : json_decode(urldecode($f_options[$i]), true);
-					$fields[$name]['maxlength'] = empty($f_maxlength[$i]) ? '' : wc_clean(stripslashes($f_maxlength[$i]));
-					$fields[$name]['class'] 	  = empty($f_class[$i]) ? array() : array_map('wc_clean', explode(',', $f_class[$i]));
-					$fields[$name]['label_class'] = empty($f_label_class[$i]) ? array() : array_map('wc_clean', explode(',', $f_label_class[$i]));
-					$fields[$name]['rules_action']    = empty($f_rules_action[$i]) ? '' : $f_rules_action[$i];
-					$fields[$name]['rules']    = empty($f_rules[$i]) ? '' : $f_rules[$i];
-					$fields[$name]['rules_action_ajax']    = empty($f_rules_action_ajax[$i]) ? '' : $f_rules_action_ajax[$i];
-					$fields[$name]['rules_ajax']    = empty($f_rules_ajax[$i]) ? '' : $f_rules_ajax[$i];
-					$fields[$name]['required']    = empty($f_required[$i]) ? false : true;
-					$fields[$name]['is_include']    = empty($f_is_include[$i]) ? false : true;
-					$fields[$name]['enabled']     = empty($f_enabled[$i]) ? false : true;
-					$fields[$name]['order']       = empty($f_order[$i]) ? '' : wc_clean($f_order[$i]);
-
-					if (!in_array($name, $this->locale_fields)) {
-						$fields[$name]['validate'] = empty($f_validation[$i]) ? array() : explode(',', $f_validation[$i]);
-					}
-
-					$fields[$name]['extoptions'] 	  = empty($f_extoptions[$i]) ? array() : explode(',', $f_extoptions[$i]);
-
-					if (!$this->is_default_field_name($name)) {
-						$fields[$name]['custom'] = true;
-						$fields[$name]['show_in_email'] = empty($f_show_in_email[$i]) ? false : true;
-						$fields[$name]['show_in_order'] = empty($f_show_in_order[$i]) ? false : true;
-					} else {
-						$fields[$name]['custom'] = false;
-					}
-
-					$fields[$name]['label']   	  = $fields[$name]['label'];
-					$fields[$name]['placeholder'] = esc_html__($fields[$name]['placeholder'], 'woocommerce');
-					$fields[$name]['maxlength'] = esc_html__($fields[$name]['maxlength'], 'woocommerce');
-				}
-
-				uasort($fields, array($this, 'sort_fields_by_order'));
-				$result = update_option('jwcfe_wc_fields_' . $section, $fields);
-				if ($result == true) {
-					echo '<div class="updated"><p>' . esc_html__('Your changes were saved.', 'jwcfe') . '</p></div>';
 				} else {
-					echo '<div class="error"><p> ' . esc_html__('Your changes were not saved due to an error (or you made none!).', 'jwcfe') . '</p></div>';
+					wp_die('Security check failed. Please try again or contact support for assistance.', 'Security Error');
 				}
-			} else {
-				wp_die('Security check failed. Please try again or contact support for assistance.', 'Security Error');
-			}
-			//exit;
+		
+			
+			
 		}
-
+		
 
 		public function save_jwcfe_options()
 		{

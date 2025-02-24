@@ -38,7 +38,6 @@ class JWCFE {
         $this->define_admin_hooks();
         $this->define_public_checkout_hooks();
         // $this->define_public_account_hooks();
-
         add_action('init', array($this, 'init'));
     }
 
@@ -56,7 +55,7 @@ class JWCFE {
         require_once plugin_dir_path( __FILE__ ) . '../public/class-jwcfe-print-invoice.php';
         require_once plugin_dir_path( __FILE__ ) . '../public/class-jwcfe-wc-checkout-field-editor-export-handler.php';
 
-       
+
         if (!function_exists('initialize_checkout_field_export_handler')) {
             function initialize_checkout_field_export_handler() {
                 new JWCFE_WC_Checkout_Field_Editor_Export_Handler();
@@ -122,6 +121,8 @@ class JWCFE {
     }
 
 
+    
+    
 
     public function init() {
         $this->define_constants();
