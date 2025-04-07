@@ -3,18 +3,18 @@ jQuery(document).ready(function($) {
 	var currRequest = null;
 
 	// Frontend Chosen selects
-	if ( $().select2 ) {
+	// if ( $().select2 ) {
 
-		$( 'select.checkout_chosen_select:not(.old_chosen), .form-row .select:not(.old_chosen)' ).filter( ':not(.enhanced)' ).each( function() {
+	// 	$( 'select.checkout_chosen_select:not(.old_chosen), .form-row .select:not(.old_chosen)' ).filter( ':not(.enhanced)' ).each( function() {
 
-			$( this ).select2( {
+	// 		$( this ).select2( {
 
-				minimumResultsForSearch: 10,
-				allowClear:  true,
-				placeholder: $( this ).data( 'placeholder' )
-			} ).addClass( 'enhanced' );
-		});
-	}
+	// 			minimumResultsForSearch: 10,
+	// 			allowClear:  true,
+	// 			placeholder: $( this ).data( 'placeholder' )
+	// 		} ).addClass( 'enhanced' );
+	// 	});
+	// }
 
 	$( '.checkout-date-picker' ).datepicker({
 		numberOfMonths: 1,
