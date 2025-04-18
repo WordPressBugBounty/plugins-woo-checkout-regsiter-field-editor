@@ -54,7 +54,9 @@ input.hasDatepicker {
 .select2-selection--single .select2-selection__clear {
   display: none !important;
 }
-
+body{
+  overflow-x: hidden !important;
+}
 .custom-checkbox-style{
 padding-top: 10px;
 }

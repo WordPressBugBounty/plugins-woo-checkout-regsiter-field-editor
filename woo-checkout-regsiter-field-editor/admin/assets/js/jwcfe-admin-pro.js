@@ -1067,8 +1067,8 @@ var jwcfe_settings = (function ($, window, document) {
 	
 
 	_fieldTypeChangeListner = function fieldTypeChangeListner(elm) {
-
 		var type = $(elm).val();
+
 		var form = $(elm).closest('form');
 		showAllFields(form);
 		if (type === 'select' || type === 'multiselect' ||  type === 'checkboxgroup') {

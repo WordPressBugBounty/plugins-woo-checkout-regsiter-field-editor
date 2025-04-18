@@ -479,7 +479,19 @@ if (!empty($sections)) {
 					$f_rules_ajax = !empty($_POST['f_rules_ajax'])? $_POST['f_rules_ajax'] : '';
 
 
-					$f_label_class  = !empty($_POST['f_label_class']) ? $_POST['f_label_class'] : array();
+					// $f_label_class  = !empty($_POST['f_label_class']) ? $_POST['f_label_class'] : array();
+					$f_label_class_raw = $_POST['f_label_class'] ?? [];
+
+					if (is_array($f_label_class_raw)) {
+						$f_label_class = array_filter($f_label_class_raw, function ($val) {
+							return !empty($val) && $val !== 'undefined';
+						});
+					} elseif (is_string($f_label_class_raw) && $f_label_class_raw !== 'undefined') {
+						$f_label_class = [$f_label_class_raw];
+					} else {
+						$f_label_class = [];
+					}
+					
 					$f_class       = !empty($_POST['f_class']) ? $_POST['f_class'] : array();
 					$f_required    = !empty($_POST['f_required']) ? $_POST['f_required'] : array();
 					$f_is_include    = !empty($_POST['f_is_include']) ? $_POST['f_is_include'] : array();

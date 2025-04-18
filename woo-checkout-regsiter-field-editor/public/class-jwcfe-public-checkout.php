@@ -540,70 +540,146 @@ if (!class_exists('JWCFE_Public_Checkout')) :
 							return $field;
 						
 							break;
-					case 'multiselect':
-								$customer_user_id = get_current_user_id(); 
-								$customer_orders = wc_get_orders(array(
-									'meta_key' => '_customer_user',
-									'meta_value' => $customer_user_id,
-									'posts_per_page' => 1,
-									'orderby' => 'ID',
-									'orderby' => 'DESC'
-								));
+					// case 'multiselect':
+					// 			$customer_user_id = get_current_user_id(); 
+					// 			$customer_orders = wc_get_orders(array(
+					// 				'meta_key' => '_customer_user',
+					// 				'meta_value' => $customer_user_id,
+					// 				'posts_per_page' => 1,
+					// 				'orderby' => 'ID',
+					// 				'orderby' => 'DESC'
+					// 			));
 								
-								// Initialize selected values as an array
-								$selectedVals = array();
+					// 			// Initialize selected values as an array
+					// 			$selectedVals = array();
 							
-								// Retrieve selected values from customer orders
-								foreach ($customer_orders as $order) {
-									$order_id = method_exists($order, 'get_id') ? $order->get_id() : $order->id;
+					// 			// Retrieve selected values from customer orders
+					// 			foreach ($customer_orders as $order) {
+					// 				$order_id = method_exists($order, 'get_id') ? $order->get_id() : $order->id;
 							
-									$order = wc_get_order($order_id);
-									$valArr = $order->get_meta($key, true);
+					// 				$order = wc_get_order($order_id);
+					// 				$valArr = $order->get_meta($key, true);
 							
-									if (!empty($valArr) && is_array($valArr)) {
-										// Merge existing values into selectedVals array
-										$selectedVals = array_merge($selectedVals, $valArr);
-									}
-								}
+					// 				if (!empty($valArr) && is_array($valArr)) {
+					// 					// Merge existing values into selectedVals array
+					// 					$selectedVals = array_merge($selectedVals, $valArr);
+					// 				}
+					// 			}
 							
-								// Handle previous values stored in session
-								$session_values = WC()->session->get($key, array()); // Retrieve values from the session
-								if (!empty($session_values) && is_array($session_values)) {
-									$selectedVals = array_merge($selectedVals, $session_values); // Merge with selected values from orders
-								}
+					// 			// Handle previous values stored in session
+					// 			$session_values = WC()->session->get($key, array()); // Retrieve values from the session
+					// 			if (!empty($session_values) && is_array($session_values)) {
+					// 				$selectedVals = array_merge($selectedVals, $session_values); // Merge with selected values from orders
+					// 			}
 							
-								$options = '';
-								if (!empty($args['options_json'])) {
-									foreach ($args['options_json'] as $option) {
-										// Check if the option key is in selected values
-										$isSelected = in_array($option['key'], $selectedVals) ? 'selected' : '';
-										$options .= '<option value="' . esc_attr($option['key']) . '" ' . $isSelected . '>' . esc_html($option['text']) . '</option>';
-									}
+					// 			$options = '';
+					// 			if (!empty($args['options_json'])) {
+					// 				foreach ($args['options_json'] as $option) {
+					// 					// Check if the option key is in selected values
+					// 					$isSelected = in_array($option['key'], $selectedVals) ? 'selected' : '';
+					// 					$options .= '<option value="' . esc_attr($option['key']) . '" ' . $isSelected . '>' . esc_html($option['text']) . '</option>';
+					// 				}
 							
-									$field = '<p class="form-row ' . esc_attr(implode(' ', $args['class'])) . '" id="' . esc_attr($key) . '_field">';
+					// 				$field = '<p class="form-row ' . esc_attr(implode(' ', $args['class'])) . '" id="' . esc_attr($key) . '_field">';
 							
-									if ($args['label']) {
-										$fieldLabel = $args['label'];
-										$field .= '<label for="' . esc_attr($args['id']) . '" class="' . implode(' ', $args['label_class']) . '">' . esc_html($args['label']) . $required . $tooltip . '</label>';
-									}
-									$class = '';
+					// 				if ($args['label']) {
+					// 					$fieldLabel = $args['label'];
+					// 					$field .= '<label for="' . esc_attr($args['id']) . '" class="' . implode(' ', $args['label_class']) . '">' . esc_html($args['label']) . $required . $tooltip . '</label>';
+					// 				}
+					// 				$class = '';
 							
-									$field .= '<select data-placeholder="' . esc_attr__('Select some options', 'jwcfe') . '" multiple="multiple"';
+					// 				$field .= '<select data-placeholder="' . esc_attr__('Select some options', 'jwcfe') . '" multiple="multiple"';
 							
-									if (!empty($args['custom_attributes']) && is_array($args['custom_attributes'])) {
-										foreach ($args['custom_attributes'] as $customattr_key => $customattr_val) {
-											$field .= ' ' . esc_attr($customattr_key) . '="' . esc_attr($customattr_val) . '" ';
-										}
-									}
+					// 				if (!empty($args['custom_attributes']) && is_array($args['custom_attributes'])) {
+					// 					foreach ($args['custom_attributes'] as $customattr_key => $customattr_val) {
+					// 						$field .= ' ' . esc_attr($customattr_key) . '="' . esc_attr($customattr_val) . '" ';
+					// 					}
+					// 				}
 							
-									$field .= 'name="' . esc_attr($key) . '[]" id="' . esc_attr($key) . '" class="checkout_chosen_select select wc-enhanced-select ' . esc_attr($class) . '">';
+					// 				$field .= 'name="' . esc_attr($key) . '[]" id="' . esc_attr($key) . '" class="checkout_chosen_select select wc-enhanced-select ' . esc_attr($class) . '">';
 									
-									$field .= $options; // Add options to the select field
-									$field .= '</select></p>' . $after;
-								}
-								return $field;
+					// 				$field .= $options; // Add options to the select field
+					// 				$field .= '</select></p>' . $after;
+					// 			}
+					// 			return $field;
 							
-							break;
+					// 		break;
+					case 'multiselect':
+						$customer_user_id = get_current_user_id(); 
+						$customer_orders = wc_get_orders(array(
+							'meta_key' => '_customer_user',
+							'meta_value' => $customer_user_id,
+							'posts_per_page' => 1,
+							'orderby' => 'ID',
+							'orderby' => 'DESC'
+						));
+						
+						// Initialize selected values as an array
+						$selectedVals = array();
+					
+						// Retrieve selected values from customer orders
+						foreach ($customer_orders as $order) {
+							$order_id = method_exists($order, 'get_id') ? $order->get_id() : $order->id;
+					
+							$order = wc_get_order($order_id);
+							$valArr = $order->get_meta($key, true);
+					
+							if (!empty($valArr) && is_array($valArr)) {
+								// Merge existing values into selectedVals array
+								$selectedVals = array_merge($selectedVals, $valArr);
+							}
+						}
+					
+						// Handle previous values stored in session
+						$session_values = WC()->session->get($key, array()); // Retrieve values from the session
+						if (!empty($session_values) && is_array($session_values)) {
+							$selectedVals = array_merge($selectedVals, $session_values); // Merge with selected values from orders
+						}
+					
+						$options = '';
+						if (!empty($args['options_json'])) {
+							foreach ($args['options_json'] as $option) {
+								// Check if the option key is in selected values
+								$isSelected = in_array($option['key'], $selectedVals) ? 'selected' : '';
+								$options .= '<option value="' . esc_attr($option['key']) . '" ' . $isSelected . '>' . esc_html($option['text']) . '</option>';
+							}
+					
+							$field = '<p class="form-row ' . esc_attr(implode(' ', $args['class'])) . '" id="' . esc_attr($key) . '_field">';
+					
+							if ($args['label']) {
+								$fieldLabel = $args['label'];
+								$field .= '<label for="' . esc_attr($args['id']) . '" class="' . implode(' ', $args['label_class']) . '">' . esc_html($args['label']) . $required . $tooltip . '</label>';
+							}
+							$class = '';
+					
+							$field .= '<select data-placeholder="' . esc_attr__('Select some options', 'jwcfe') . '" multiple="multiple"';
+					
+							if (!empty($args['custom_attributes']) && is_array($args['custom_attributes'])) {
+								foreach ($args['custom_attributes'] as $customattr_key => $customattr_val) {
+									$field .= ' ' . esc_attr($customattr_key) . '="' . esc_attr($customattr_val) . '" ';
+								}
+							}
+					
+							$field .= 'name="' . esc_attr($key) . '[]" id="' . esc_attr($key) . '" class="checkout_chosen_select select wc-enhanced-select ' . esc_attr($class) . '">';
+							
+							// $field .= $options; // Add options to the select field
+							// $field .= '</select></p>' . $after;
+							$field .= '>' . $options . '</select></p>';
+
+							// Initialize Select2
+							$field .= '<script>
+								jQuery(document).ready(function($) {
+									$("select#' . esc_attr($key) . '").select2({
+										placeholder: "' . esc_attr__('Select some options', 'jwcfe') . '",
+										width: "100%"
+									});
+								});
+							</script>';
+						}
+						return $field;
+					
+					break;
+			
 					case 'date':
 								$fieldLabel = '';
 								$field = '';
@@ -765,9 +841,13 @@ if (!class_exists('JWCFE_Public_Checkout')) :
 						
 					case 'select':
 								$options = '<option selected value>' . __('Please Select', 'jwcfe') . '</option>';
-								$selectedVal = WC()->session->get($key, ''); // Get value from session
+								// $selectedVal = WC()->session->get($key, ''); // Get value from session
 								
-								// Get the current user ID and orders
+								if ( is_callable( [ WC()->session, 'get' ] ) ) {
+									$selectedVal = WC()->session->get( $key, '' );
+								} else {
+									$selectedVal = '';
+								}								// Get the current user ID and orders
 								$customer_user_id = get_current_user_id();
 								$customer_orders = wc_get_orders([
 									'meta_key' => '_customer_user',
@@ -801,8 +881,10 @@ if (!class_exists('JWCFE_Public_Checkout')) :
 									foreach ($args['options_json'] as $option) {
 										if (isset($option['key'], $option['text'])) { // Check if 'key' and 'text' exist
 											$selectedOptions = selected($selectedVal, $option['key'], false); // Use session or order value
-											$option_value = !empty($display_value) ? esc_attr($display_value) : esc_attr($option['key']);
-											$options .= '<option ' . $selectedOptions . ' value="' . $option_value . '">' . esc_html($option['text']) . '</option>';
+											// $option_value = !empty($display_value) ? esc_attr($display_value) : esc_attr($option['key']);
+											// $options .= '<option ' . $selectedOptions . ' value="' . $option_value . '">' . esc_html($option['text']) . '</option>';
+											$options .= '<option ' . $selectedOptions . ' value="' . esc_attr($option['key']) . '">' . esc_html($option['text']) . '</option>';
+
 										}
 									}
 								}
@@ -1071,7 +1153,22 @@ if (!class_exists('JWCFE_Public_Checkout')) :
 			if ($args['label']) {
 				$fieldLabel = $args['label'];
 		
-				$field .= '<label for="' . esc_attr($args['id']) . '" class="' . implode(' ', $args['label_class']) . '">' . esc_html($args['label']) . $required . $tooltip . '</label>';
+				// $field .= '<label for="' . esc_attr($args['id']) . '" class="' . implode(' ', $args['label_class']) . '">' . esc_html($args['label']) . $required . $tooltip . '</label>';
+				$label_classes = '';
+				if (empty($label_classes)) {
+					$label_classes = 'form-label'; // or whatever class you want as default
+				}
+				
+				if (!empty($args['label_class'])) {
+					if (is_array($args['label_class'])) {
+						$label_classes = implode(' ', $args['label_class']);
+					} elseif (is_string($args['label_class'])) {
+						$label_classes = esc_attr($args['label_class']);
+					}
+				}
+				$field .= '<label for="' . esc_attr($args['id']) . '" class="' . esc_attr($label_classes) . '">' . esc_html($args['label']) . $required . $tooltip . '</label>';
+				// error_log(print_r($args, true));
+				
 			}
 		
 			// Add the input field with the previous or default value
