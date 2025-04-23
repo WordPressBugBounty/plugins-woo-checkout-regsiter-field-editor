@@ -724,6 +724,13 @@ if (!class_exists('JWCFE_Admin_Settings_Fields')) :
                                                             <label for="showinorder">Display in orders Detail</label>
                                                         </td>
                                                     </tr>
+                                                    <tr class="checkbox-row">
+                                                        <td class="checkbox-cell">
+                                                            <input type="checkbox" name="fshowinemail" value="email" id="showinemail" checked />
+                                                            <label for="showinemail">Display in Emails</label>
+                                                        </td>
+                                                    </tr>
+                                                    
                                                 </tbody>
                                             </table>
 
@@ -815,7 +822,9 @@ if (!class_exists('JWCFE_Admin_Settings_Fields')) :
                 <th colspan="7">
                     <button type="button" class="button button-primary" onclick="openNewFieldForm('<?php echo $section; ?>')"><?php _e('+ Add new field', 'jwcfe'); ?></button>
 
-                    <button type="button" class="button" onclick="removeSelectedFields()"><?php _e('Remove', 'jwcfe'); ?></button>
+                    <!-- <button type="button" class="button" onclick="removeSelectedFields()"><?php _e('Remove', 'jwcfe'); ?></button> -->
+                    <input type="submit" class="button" name="save_fields" value="<?php _e('Remove', 'jwcfe'); ?>" onclick="removeSelectedFields()">
+
                     <button type="button" class="button" onclick="enableSelectedFields()"><?php _e('Show', 'jwcfe'); ?></button>
                     <button type="button" class="button" onclick="disableSelectedFields()"><?php _e('Hide', 'jwcfe'); ?></button>
                 </th>

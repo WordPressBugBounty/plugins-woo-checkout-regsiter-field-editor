@@ -37,7 +37,7 @@ if (!class_exists('JWCFE_Admin')) :
 			);
 		}
 
-		
+		  
 
 		public function enqueue_admin_scripts() {
 		    wp_enqueue_style('jwcfe-newstyle', JWCFE_ASSETS_URL_ADMIN . 'css/jwcfe-newstyle.css', array(), $this->version);
@@ -180,6 +180,37 @@ if (!class_exists('JWCFE_Admin')) :
     }
 
     return $default_section;
+}
+
+public function compatibility_warning(){
+	?>
+	<div id="th_block_warning" style="border: 1px solid #002fb2; padding: 8px; background-color: #002fb2; color: #fff; border-radius: 5px;">
+		<div style="display: flex; align-items: center;">
+			<div style="padding-right: 10px; border-right: 1px solid; text-align: center; display: flex;">
+				<!-- <svg width="20" height="20" viewBox="0 0 16 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+					<path d="M9.65703 0H0.496145C0.221904 0 0 0.208925 0 0.467124V2.30211C0 2.55966 0.221904 2.76924 0.496145 2.76924H9.65773C9.93127 2.76924 10.1539 2.56031 10.1539 2.30211V0.467124C10.1539 0.209582 9.93197 0 9.65773 0H9.65703Z" fill="white"/>
+					<path d="M14.737 4.61539H3.72396C3.45206 4.61539 3.2308 4.82431 3.2308 5.08251V6.9175C3.2308 7.17504 3.45137 7.38462 3.72396 7.38462H14.7377C15.0096 7.38462 15.2308 7.1757 15.2308 6.9175V5.08251C15.2308 4.82497 15.0103 4.61539 14.7377 4.61539H14.737Z" fill="white"/>
+					<path d="M14.7172 9.23077H12.0522C11.769 9.23077 11.5386 9.4397 11.5386 9.6979V11.5329C11.5386 11.7904 11.7683 12 12.0522 12H14.7172C15.0004 12 15.2309 11.7911 15.2309 11.5329V9.6979C15.2309 9.44036 15.0012 9.23077 14.7172 9.23077Z" fill="white"/>
+					<path d="M9.64009 9.23077H6.97526C6.69202 9.23077 6.46152 9.4397 6.46152 9.6979V11.5329C6.46152 11.7904 6.69129 12 6.97526 12H9.64009C9.92333 12 10.1538 11.7911 10.1538 11.5329V9.6979C10.1538 9.44036 9.92406 9.23077 9.64009 9.23077Z" fill="white"/>
+					<path d="M14.7172 0H12.0522C11.769 0 11.5386 0.208925 11.5386 0.467124V2.30211C11.5386 2.55966 11.7683 2.76924 12.0522 2.76924H14.7172C15.0004 2.76924 15.2309 2.56031 15.2309 2.30211V0.467124C15.2309 0.209582 15.0012 0 14.7172 0Z" fill="white"/>
+				</svg> -->
+				<img src="<?php echo plugin_dir_url(__FILE__) . 'assets/logo icon-01.svg'; ?>" alt="Plugin Logo" style="width: 20px; height: 20px;" />
+
+			</div>
+			<div style="padding-left: 10px;">
+				<span>
+					<?php
+						echo wp_kses_post( 
+							__("Our Checkout and Register Editor is now compatible with the WooCommerce Checkout Block. This is just the first release, more features are coming soon. If you're using Block Checkout, make sure to switch to the Block Checkout Fields tab, otherwise, your changes won’t be reflected. Have questions or need help? Reach out to our <a href='https://jcodex.com/support/' style='color: #ffffff; text-decoration: none; font-weight: 700;' onmouseover=\"this.style.textDecoration='none'; this.style.color='#ffffff';\" onmouseout=\"this.style.color='#ffffff'\">Support team</a>.")
+						);
+						
+						
+					?>
+				</span>
+			</div>
+		</div>
+	</div>
+	<?php
 }
 
 		public function get_all_variations_of_product()
@@ -332,6 +363,8 @@ if (!class_exists('JWCFE_Admin')) :
 			// 		echo '</li>';
 			// 	}
 			// 	echo '</ul>';
+			$this->compatibility_warning();
+
 			$tabs = array(
 				'fields' => 'Checkout & Account Fields',
 				'block'  => 'Block Checkout Fields'
@@ -906,7 +939,7 @@ if (!empty($sections)) {
 							if ($result == true) {
 								echo '<div class="updated"><p>' . esc_html__('Your changes were saved.', 'jwcfe') . '</p></div>';
 							} else {
-								echo '<div class="error"><p> ' . esc_html__('Your changes were not saved due to an error (or you made none!).', 'jwcfe') . '</p></div>';
+								echo '<div class="success"><p> ' . esc_html__("Your changes have been successfully saved. There's nothing more to save.", 'jwcfe') . '</p></div>';
 							}
 						} else {
 							wp_die('Security check failed. Please try again or contact support for assistance.', 'Security Error');
@@ -1002,7 +1035,7 @@ if (!empty($sections)) {
 					if ($result == true) {
 						echo '<div class="updated"><p>' . esc_html__('Your changes were saved.', 'jwcfe') . '</p></div>';
 					} else {
-						echo '<div class="error"><p> ' . esc_html__('Your changes were not saved due to an error (or you made none!).', 'jwcfe') . '</p></div>';
+						echo '<div class="success"><p> ' . esc_html__("Your changes have been successfully saved. There's nothing more to save.", 'jwcfe') . '</p></div>';
 					}
 				} else {
 					wp_die('Security check failed. Please try again or contact support for assistance.', 'Security Error');
