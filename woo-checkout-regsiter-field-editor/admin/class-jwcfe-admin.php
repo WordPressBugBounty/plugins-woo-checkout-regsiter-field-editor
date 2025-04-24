@@ -163,55 +163,55 @@ if (!class_exists('JWCFE_Admin')) :
 		// 	return $default_section;
 		// }
 		public function get_current_section()
-{
-    $tab = $this->get_current_tab();
-    
-    // Define sections based on the selected tab
-    $sections_by_tab = array(
-        'fields' => array('billing', 'shipping', 'additional', 'account'),
-        'block'  => array('billing', 'shipping', 'additional'),
-    );
+		{
+			$tab = $this->get_current_tab();
+			
+			// Define sections based on the selected tab
+			$sections_by_tab = array(
+				'fields' => array('billing', 'shipping', 'additional', 'account'),
+				'block'  => array('billing', 'shipping', 'additional'),
+			);
 
-    $default_section = 'billing'; // Default section
-    $sections = isset($sections_by_tab[$tab]) ? $sections_by_tab[$tab] : array();
+			$default_section = 'billing'; // Default section
+			$sections = isset($sections_by_tab[$tab]) ? $sections_by_tab[$tab] : array();
 
-    if (isset($_GET['section']) && in_array($_GET['section'], $sections)) {
-        return sanitize_text_field($_GET['section']);
-    }
+			if (isset($_GET['section']) && in_array($_GET['section'], $sections)) {
+				return sanitize_text_field($_GET['section']);
+			}
 
-    return $default_section;
-}
+			return $default_section;
+		}
 
-public function compatibility_warning(){
-	?>
-	<div id="th_block_warning" style="border: 1px solid #002fb2; padding: 8px; background-color: #002fb2; color: #fff; border-radius: 5px;">
-		<div style="display: flex; align-items: center;">
-			<div style="padding-right: 10px; border-right: 1px solid; text-align: center; display: flex;">
-				<!-- <svg width="20" height="20" viewBox="0 0 16 12" fill="none" xmlns="http://www.w3.org/2000/svg">
-					<path d="M9.65703 0H0.496145C0.221904 0 0 0.208925 0 0.467124V2.30211C0 2.55966 0.221904 2.76924 0.496145 2.76924H9.65773C9.93127 2.76924 10.1539 2.56031 10.1539 2.30211V0.467124C10.1539 0.209582 9.93197 0 9.65773 0H9.65703Z" fill="white"/>
-					<path d="M14.737 4.61539H3.72396C3.45206 4.61539 3.2308 4.82431 3.2308 5.08251V6.9175C3.2308 7.17504 3.45137 7.38462 3.72396 7.38462H14.7377C15.0096 7.38462 15.2308 7.1757 15.2308 6.9175V5.08251C15.2308 4.82497 15.0103 4.61539 14.7377 4.61539H14.737Z" fill="white"/>
-					<path d="M14.7172 9.23077H12.0522C11.769 9.23077 11.5386 9.4397 11.5386 9.6979V11.5329C11.5386 11.7904 11.7683 12 12.0522 12H14.7172C15.0004 12 15.2309 11.7911 15.2309 11.5329V9.6979C15.2309 9.44036 15.0012 9.23077 14.7172 9.23077Z" fill="white"/>
-					<path d="M9.64009 9.23077H6.97526C6.69202 9.23077 6.46152 9.4397 6.46152 9.6979V11.5329C6.46152 11.7904 6.69129 12 6.97526 12H9.64009C9.92333 12 10.1538 11.7911 10.1538 11.5329V9.6979C10.1538 9.44036 9.92406 9.23077 9.64009 9.23077Z" fill="white"/>
-					<path d="M14.7172 0H12.0522C11.769 0 11.5386 0.208925 11.5386 0.467124V2.30211C11.5386 2.55966 11.7683 2.76924 12.0522 2.76924H14.7172C15.0004 2.76924 15.2309 2.56031 15.2309 2.30211V0.467124C15.2309 0.209582 15.0012 0 14.7172 0Z" fill="white"/>
-				</svg> -->
-				<img src="<?php echo plugin_dir_url(__FILE__) . 'assets/logo icon-01.svg'; ?>" alt="Plugin Logo" style="width: 20px; height: 20px;" />
+		public function compatibility_warning(){
+			?>
+			<div id="th_block_warning" style="border: 1px solid #002fb2; padding: 8px; background-color: #002fb2; color: #fff; border-radius: 5px;">
+				<div style="display: flex; align-items: center;">
+					<div style="padding-right: 10px; border-right: 1px solid; text-align: center; display: flex;">
+						<!-- <svg width="20" height="20" viewBox="0 0 16 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+							<path d="M9.65703 0H0.496145C0.221904 0 0 0.208925 0 0.467124V2.30211C0 2.55966 0.221904 2.76924 0.496145 2.76924H9.65773C9.93127 2.76924 10.1539 2.56031 10.1539 2.30211V0.467124C10.1539 0.209582 9.93197 0 9.65773 0H9.65703Z" fill="white"/>
+							<path d="M14.737 4.61539H3.72396C3.45206 4.61539 3.2308 4.82431 3.2308 5.08251V6.9175C3.2308 7.17504 3.45137 7.38462 3.72396 7.38462H14.7377C15.0096 7.38462 15.2308 7.1757 15.2308 6.9175V5.08251C15.2308 4.82497 15.0103 4.61539 14.7377 4.61539H14.737Z" fill="white"/>
+							<path d="M14.7172 9.23077H12.0522C11.769 9.23077 11.5386 9.4397 11.5386 9.6979V11.5329C11.5386 11.7904 11.7683 12 12.0522 12H14.7172C15.0004 12 15.2309 11.7911 15.2309 11.5329V9.6979C15.2309 9.44036 15.0012 9.23077 14.7172 9.23077Z" fill="white"/>
+							<path d="M9.64009 9.23077H6.97526C6.69202 9.23077 6.46152 9.4397 6.46152 9.6979V11.5329C6.46152 11.7904 6.69129 12 6.97526 12H9.64009C9.92333 12 10.1538 11.7911 10.1538 11.5329V9.6979C10.1538 9.44036 9.92406 9.23077 9.64009 9.23077Z" fill="white"/>
+							<path d="M14.7172 0H12.0522C11.769 0 11.5386 0.208925 11.5386 0.467124V2.30211C11.5386 2.55966 11.7683 2.76924 12.0522 2.76924H14.7172C15.0004 2.76924 15.2309 2.56031 15.2309 2.30211V0.467124C15.2309 0.209582 15.0012 0 14.7172 0Z" fill="white"/>
+						</svg> -->
+						<img src="<?php echo plugin_dir_url(__FILE__) . 'assets/logo icon-01.svg'; ?>" alt="Plugin Logo" style="width: 20px; height: 20px;" />
 
+					</div>
+					<div style="padding-left: 10px;">
+						<span>
+							<?php
+								echo wp_kses_post( 
+									__("Our Checkout and Register Editor is now compatible with the WooCommerce Checkout Block. This is just the first release, more features are coming soon. If you're using Block Checkout, make sure to switch to the Block Checkout Fields tab, otherwise, your changes won’t be reflected. Have questions or need help? Reach out to our <a href='https://jcodex.com/support/' style='color: #ffffff; text-decoration: none; font-weight: 700;' onmouseover=\"this.style.textDecoration='none'; this.style.color='#ffffff';\" onmouseout=\"this.style.color='#ffffff'\">Support team</a>.")
+								);
+								
+								
+							?>
+						</span>
+					</div>
+				</div>
 			</div>
-			<div style="padding-left: 10px;">
-				<span>
-					<?php
-						echo wp_kses_post( 
-							__("Our Checkout and Register Editor is now compatible with the WooCommerce Checkout Block. This is just the first release, more features are coming soon. If you're using Block Checkout, make sure to switch to the Block Checkout Fields tab, otherwise, your changes won’t be reflected. Have questions or need help? Reach out to our <a href='https://jcodex.com/support/' style='color: #ffffff; text-decoration: none; font-weight: 700;' onmouseover=\"this.style.textDecoration='none'; this.style.color='#ffffff';\" onmouseout=\"this.style.color='#ffffff'\">Support team</a>.")
-						);
-						
-						
-					?>
-				</span>
-			</div>
-		</div>
-	</div>
-	<?php
-}
+			<?php
+		}
 
 		public function get_all_variations_of_product()
 		{
@@ -365,96 +365,115 @@ public function compatibility_warning(){
 			// 	echo '</ul>';
 			$this->compatibility_warning();
 
+			// Define tabs - now with Accounts as a separate tab
 			$tabs = array(
-				'fields' => 'Checkout & Account Fields',
-				'block'  => 'Block Checkout Fields'
+				'block'    => 'Block Checkout Fields',
+				'fields'   => 'Classic Checkout Fields',
+				'accounts' => 'My Account & Register Form Fields'
 			);
 			
-			$allowed_tabs = array_keys($tabs); // Use keys directly
-			$tab = isset($_GET['tab']) && in_array($_GET['tab'], $allowed_tabs) ? sanitize_text_field($_GET['tab']) : 'fields';
+			$allowed_tabs = array_keys($tabs);
+			$tab = isset($_GET['tab']) && in_array($_GET['tab'], $allowed_tabs) 
+				? sanitize_text_field($_GET['tab']) 
+				: 'block';  // Default to block tab
 			
+			// Define sections for each tab
 			$sections = array();
-			$section  = '';
-			
 			if ($tab === 'fields') {
-				$sections = array('billing', 'shipping', 'additional', 'account');
+				$sections = array('billing', 'shipping', 'additional');
 			} elseif ($tab === 'block') {
 				$sections = array('billing', 'shipping', 'additional');
+			} elseif ($tab === 'accounts') {
+				$sections = array('account');  // Only account section for accounts tab
 			}
 			
-			// Validate the section
-			if (isset($_GET['section']) && in_array($_GET['section'], $sections)) {
-				$section = sanitize_text_field($_GET['section']);
+			// Validate section
+			$section = isset($_GET['section']) ? sanitize_text_field($_GET['section']) : '';
+			if (!in_array($section, $sections)) {
+				// Redirect to first section if invalid/empty
+				if (!empty($sections)) {
+					$first_section = reset($sections);
+					wp_safe_redirect(admin_url(
+						'admin.php?page=jwcfe_checkout_register_editor&tab=' . $tab . '&section=' . $first_section
+					));
+					exit;
+				}
 			}
-			
+		
+			// Render tabs
 			echo '<h2 class="nav-tab-wrapper woo-nav-tab-wrapper">';
 			foreach ($tabs as $key => $value) {
 				$active = ($key == $tab) ? 'nav-tab-active' : '';
-				echo '<a class="nav-tab ' . esc_attr($active) . '" href="' . esc_url(admin_url('admin.php?page=jwcfe_checkout_register_editor&tab=' . $key)) . '">' . esc_html($value) . '</a>';
+				$url = 'admin.php?page=jwcfe_checkout_register_editor&tab=' . $key;
+				
+				// Add first section for new tabs
+				if ($key === 'accounts') {
+					$url .= '&section=account';
+				}
+				
+				echo '<a class="nav-tab ' . esc_attr($active) . '" href="' . esc_url(admin_url($url)) . '">' 
+					. esc_html($value) . '</a>';
 			}
 			echo '</h2>';
-			
+		
+			// Render sections
 			// if (!empty($sections)) {
 			// 	echo '<ul class="jwcfe-sections">';
-			// 	$size = count($sections);
-			// 	$i = 0;
 			// 	foreach ($sections as $key) {
-			// 		$i++;
-			// 		$active = ($key == $section) ? 'current' : '';
-			// 		$url = 'admin.php?page=jwcfe_checkout_register_editor&tab=' . $tab . '&section=' . $key;
+			// 		$active = ($key === $section) ? 'current' : '';
+			// 		$url = 'admin.php?page=jwcfe_checkout_register_editor&tab=' . esc_attr($tab) . '&section=' . esc_attr($key);
 					
-			// 		echo '<li>';
-			
-			// 		// Customize display text only for the "block" tab
-			// 		if ($tab === 'block') {
-			// 			$display_text = ($key === 'billing') ? 'Contact Information' :
-			// 				(($key === 'shipping') ? 'Address' :
-			// 				(($key === 'additional') ? 'Additional Information' : ucwords($key) . ' Fields'));
-			// 		} else {
-			// 			// Default display text for other tabs
-			// 			$display_text = ($key === 'billing') ? 'Billing Fields' :
-			// 				(($key === 'shipping') ? 'Shipping Fields' :
-			// 				(($key === 'additional') ? 'Additional Fields' : ucwords($key) . ' Fields'));
-			// 		}
-			
-			// 		echo '<a href="' . esc_url(admin_url($url)) . '" class="' . esc_attr($active) . '" >' . esc_html__($display_text, 'jwcfe') . ' <span class="circle"></span></a>'; 
-			// 		echo ($size > $i) ? '' : '';
-			// 		echo '</li>';
+			// 		$display_text = match(true) {
+			// 			$tab === 'block' => match($key) {
+			// 				'billing'    => 'Contact Information',
+			// 				'shipping'   => 'Address',
+			// 				'additional' => 'Additional Information',
+			// 				default      => ucwords($key)
+			// 			},
+			// 			$tab === 'accounts' => 'Account Fields',  // Specific label for accounts tab
+			// 			default => match($key) {
+			// 				'billing'    => 'Billing Fields',
+			// 				'shipping'   => 'Shipping Fields',
+			// 				'additional' => 'Additional Fields',
+			// 				default      => ucwords($key) . ' Fields'
+			// 			}
+			// 		};
+		
+			// 		echo '<li><a href="' . esc_url(admin_url($url)) . '" class="' . esc_attr($active) . '">' 
+			// 			. esc_html__($display_text, 'jwcfe') 
+			// 			. ' <span class="circle"></span></a></li>';
 			// 	}
 			// 	echo '</ul>';
 			// }
-			$section = $this->get_current_section(); // Get the current section
-
-if (!empty($sections)) {
-    echo '<ul class="jwcfe-sections">';
-    foreach ($sections as $key) {
-        $active = ($key === $section) ? 'current' : ''; // Assign "current" class if active
-        $url = 'admin.php?page=jwcfe_checkout_register_editor&tab=' . esc_attr($tab) . '&section=' . esc_attr($key);
-
-        echo '<li>';
-        
-        // Customize display text only for the "block" tab
-        if ($tab === 'block') {
-            $display_text = ($key === 'billing') ? 'Contact Information' :
-                (($key === 'shipping') ? 'Address' :
-                (($key === 'additional') ? 'Additional Information' : ucwords($key) . ' Fields'));
-        } else {
-            // Default display text for other tabs
-            $display_text = ($key === 'billing') ? 'Billing Fields' :
-                (($key === 'shipping') ? 'Shipping Fields' :
-                (($key === 'additional') ? 'Additional Fields' : ucwords($key) . ' Fields'));
-        }
-
-        echo '<a href="' . esc_url(admin_url($url)) . '" class="' . esc_attr($active) . '">' . 
-                esc_html__($display_text, 'jwcfe') . 
-                ' <span class="circle"></span>' . 
-             '</a>';
-        
-        echo '</li>';
-    }
-    echo '</ul>';
-}
-
+			if (!empty($sections) && $tab !== 'accounts') {
+				echo '<ul class="jwcfe-sections">';
+				foreach ($sections as $key) {
+					$active = ($key === $section) ? 'current' : '';
+					$url = 'admin.php?page=jwcfe_checkout_register_editor&tab=' . esc_attr($tab) . '&section=' . esc_attr($key);
+			
+					$display_text = match(true) {
+						$tab === 'block' => match($key) {
+							'billing'    => 'Contact Information',
+							'shipping'   => 'Address',
+							'additional' => 'Additional Information',
+							default      => ucwords($key)
+						},
+						$tab === 'accounts' => 'Account Fields',
+						default => match($key) {
+							'billing'    => 'Billing Fields',
+							'shipping'   => 'Shipping Fields',
+							'additional' => 'Additional Fields',
+							default      => ucwords($key) . ' Fields'
+						}
+					};
+			
+					echo '<li><a href="' . esc_url(admin_url($url)) . '" class="' . esc_attr($active) . '">' 
+						. esc_html__($display_text, 'jwcfe') 
+						. ' <span class="circle"></span></a></li>';
+				}
+				echo '</ul>';
+			}
+			
 		}
 
 

@@ -58,8 +58,75 @@ if (!class_exists('JWCFE_Admin_Settings_Fields')) :
                 $supress_field_modification = false;
             
                 // Display premium message with image link
-                echo '<div class="premium-message"><a href="https://jcodex.com/plugins/woocommerce-custom-checkout-field-editor/">';
-                echo '<img src="' . plugins_url('/assets/css/account_sec.jpg', __FILE__) . '"></a></div>';
+                // echo '<div class="premium-message">
+                //     <a href="https://jcodex.com/plugins/woocommerce-custom-checkout-field-editor/">';
+                
+                //         echo '<img style="height: 100%; width: 65%;border-radius: 24px;" 
+                //                 src="' . plugins_url('/assets/css/my-account-banner-03.jpg', __FILE__) . '">
+                
+                //     </a>
+                // </div>';
+                // echo '<div class="premium-message">
+                //     <a href="https://jcodex.com/plugins/woocommerce-custom-checkout-field-editor/">';
+                
+                //         echo '<img style="height: 100%; width: 35%;border-radius: 24px;" 
+                //                 src="' . plugins_url('/assets/css/my-account-banner-04.jpg', __FILE__) . '">
+                
+                //     </a>
+                // </div>';
+                echo '<div class="premium-container">'; // New wrapper container
+                    echo '<div class="premium-message">';
+                        echo '<a href="https://jcodex.com/plugins/woocommerce-custom-checkout-field-editor/">';
+                            echo '<img style="
+                    height: auto;
+                    width: 100%;
+                    border-radius: 24px;
+                " src="' . plugins_url('/assets/css/my-account-banner-03.jpg', __FILE__) . '">';
+                        echo '</a>';
+                    echo '</div>';
+                    echo '<div class="premium-message">';
+                        echo '<a href="https://jcodex.com/plugins/woocommerce-custom-checkout-field-editor/">';
+                            echo '<img style="
+                    height: 94%;
+                    width: 100%;
+                    border-radius: 24px;
+                " src="' . plugins_url('/assets/css/my-account-banner-06.jpg', __FILE__) . '">';
+                        echo '</a>';
+                    echo '</div>';
+                echo '</div>';
+
+                // Add this CSS to your stylesheet
+                echo '<style>
+                .premium-container {
+                    display: grid;
+                    grid-template-columns: 65% 35%;
+                    gap: 15px;
+                    width: 100%;
+                    max-width: 100%;
+                    margin: 0 auto;
+                }
+
+                .premium-message {
+                    position: relative;
+                    overflow: hidden;
+                }
+
+                .premium-message img {
+                    width: 100%;
+                    height: 100%;
+                    border-radius: 24px;
+                }
+
+                @media (max-width: 768px) {
+                    .premium-container {
+                        grid-template-columns: 1fr;
+                    }
+                    
+                    .premium-message img {
+                        width: 100% !important;
+                    }
+                }
+                </style>';
             
                 // Display new and edit field forms
                 $this->jwcfe_new_field_form_pp();

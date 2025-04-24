@@ -3,7 +3,7 @@
  * Plugin Name: Checkout Fields Editor For WooCommerce (My Account)
  * Description: Customize WooCommerce checkout and my account page edit woocommerce checkout fields (Add, Edit, Delete and re-arrange fields). best checkout fields editor plugin for woocommerce.
  * Author:      Jcodex
- * Version:     2.4.2
+ * Version:     2.4.3
  * Author URI:  https://www.jcodex.com
  * Plugin URI:  https://jcodex.com/plugins
  * Text Domain: jwcfe
@@ -64,7 +64,21 @@ if (!defined('JWCFE_URL')) {
         
         add_option( 'jwcfe_activation_redirect', true );
     }
-
+    add_filter('plugin_action_links_' . plugin_basename(__FILE__), 'jwcfe_add_plugin_action_links');
+    function jwcfe_add_plugin_action_links($links) {
+        // Add Settings link
+        $settings_url = admin_url('admin.php?page=jwcfe_checkout_register_editor');
+        $settings_link = '<a href="' . esc_url($settings_url) . '">' . __('Settings', 'jwcfe') . '</a>';
+        
+        // Add Get Pro link
+        $pro_url = 'https://jcodex.com/plugins/woocommerce-custom-checkout-field-editor/';
+        $pro_link = '<a href="' . esc_url($pro_url) . '" style="color: #46b450; font-weight: bold;" target="_blank">' . __('Get Pro', 'jwcfe') . '</a>';
+        
+        // Add both links to the action links array
+        array_push($links, $settings_link, $pro_link);
+        
+        return $links;
+    }
 
     function jwcfe_activation_redirect() {
         if (is_plugin_active('woocommerce/woocommerce.php')) {
@@ -107,14 +121,14 @@ if (!defined('JWCFE_URL')) {
     });
     
 
-function plugin_add_get_pro_button($links) {
-    
-    $pro_url = 'https://jcodex.com/plugins/woocommerce-custom-checkout-field-editor/';
-    $pro_link = '<a href="' . esc_url($pro_url) . '" style="color: #46b450; font-weight: bold;" target="_blank">' . __('Get Pro', 'jwcfe') . '</a>';
-    $links[] = $pro_link;
+            // function plugin_add_get_pro_button($links) {
+                
+            //     $pro_url = 'https://jcodex.com/plugins/woocommerce-custom-checkout-field-editor/';
+            //     $pro_link = '<a href="' . esc_url($pro_url) . '" style="color: #46b450; font-weight: bold;" target="_blank">' . __('Get Pro', 'jwcfe') . '</a>';
+            //     $links[] = $pro_link;
 
-    return $links;
-}
+            //     return $links;
+            // }
 
 			// // Hook in
             // add_filter( 'woocommerce_checkout_fields' , 'custom_override_checkout_fields' );
@@ -126,14 +140,14 @@ function plugin_add_get_pro_button($links) {
             
             //     return $fields;
             // }
-            add_filter('plugin_row_meta', 'jwcfe_add_get_pro_plugin_meta_link', 10, 2);
-            function jwcfe_add_get_pro_plugin_meta_link($links, $file) {
-                if ($file === plugin_basename(__FILE__)) {
-                    $pro_url = 'https://jcodex.com/plugins/woocommerce-custom-checkout-field-editor/';
-                    $links[] = '<a href="' . esc_url($pro_url) . '" style="color:#46b450;font-weight:600;" target="_blank">' . __('Get Pro', 'jwcfe') . '</a>';
-                }
-                return $links;
-            }
+            // add_filter('plugin_row_meta', 'jwcfe_add_get_pro_plugin_meta_link', 10, 2);
+            // function jwcfe_add_get_pro_plugin_meta_link($links, $file) {
+            //     if ($file === plugin_basename(__FILE__)) {
+            //         $pro_url = 'https://jcodex.com/plugins/woocommerce-custom-checkout-field-editor/';
+            //         $links[] = '<a href="' . esc_url($pro_url) . '" style="color:#46b450;font-weight:600;" target="_blank">' . __('Get Pro', 'jwcfe') . '</a>';
+            //     }
+            //     return $links;
+            // }
         
         
         // Show feedback popup on plugin deactivation
@@ -425,65 +439,65 @@ function plugin_add_get_pro_button($links) {
             //             wp_die();
             // }   
             add_action('wp_ajax_jwcfe_send_feedback', 'jwcfe_send_feedback_callback');
-function jwcfe_send_feedback_callback() {
-    check_ajax_referer('jwcfe_feedback_nonce');
+            function jwcfe_send_feedback_callback() {
+                check_ajax_referer('jwcfe_feedback_nonce');
 
-    $data = array(
-        'reason'      => sanitize_text_field($_POST['reason']),
-        'other'       => sanitize_textarea_field($_POST['other_reason']),
-        'user_email'  => wp_get_current_user()->user_email,
-        'site_name'   => get_bloginfo('name'),
-        'site_url'    => site_url(),
-        'timestamp'   => current_time('mysql')
-    );
+                $data = array(
+                    'reason'      => sanitize_text_field($_POST['reason']),
+                    'other'       => sanitize_textarea_field($_POST['other_reason']),
+                    'user_email'  => wp_get_current_user()->user_email,
+                    'site_name'   => get_bloginfo('name'),
+                    'site_url'    => site_url(),
+                    'timestamp'   => current_time('mysql')
+                );
 
-    // Schedule background email (delay: 1 minute for reliability)
-    wp_schedule_single_event(time() + 60, 'jwcfe_send_feedback_email', array($data));
+                // Schedule background email (delay: 1 minute for reliability)
+                wp_schedule_single_event(time() + 60, 'jwcfe_send_feedback_email', array($data));
 
-    // Send quick response
-    wp_send_json_success('Feedback submitted successfully. Thank you!');
-}
-add_action('jwcfe_send_feedback_email', 'jwcfe_send_feedback_email_callback');
-function jwcfe_send_feedback_email_callback($data) {
-    $email_content = '
-    <!DOCTYPE html>
-    <html>
-    <head><meta charset="UTF-8"></head>
-    <body style="padding:20px; background:#f5f5f5; font-family:sans-serif;">
-        <table width="100%" cellspacing="0" cellpadding="0" style="background:#fff; padding:30px; border-radius:8px;">
-            <tr><td><h2 style="margin:0 0 10px 0;">' . esc_html($data['site_name']) . '</h2>
-            <p>Plugin Deactivation Feedback</p></td></tr>
-            <tr><td style="padding-top:15px;"><strong>User Email:</strong> ' . esc_html($data['user_email']) . '</td></tr>
-            <tr><td style="padding-top:10px;"><strong>Reason:</strong> ' . esc_html($data['reason']) . '</td></tr>';
+                // Send quick response
+                wp_send_json_success('Feedback submitted successfully. Thank you!');
+            }
+            add_action('jwcfe_send_feedback_email', 'jwcfe_send_feedback_email_callback');
+            function jwcfe_send_feedback_email_callback($data) {
+                $email_content = '
+                <!DOCTYPE html>
+                <html>
+                <head><meta charset="UTF-8"></head>
+                <body style="padding:20px; background:#f5f5f5; font-family:sans-serif;">
+                    <table width="100%" cellspacing="0" cellpadding="0" style="background:#fff; padding:30px; border-radius:8px;">
+                        <tr><td><h2 style="margin:0 0 10px 0;">' . esc_html($data['site_name']) . '</h2>
+                        <p>Plugin Deactivation Feedback</p></td></tr>
+                        <tr><td style="padding-top:15px;"><strong>User Email:</strong> ' . esc_html($data['user_email']) . '</td></tr>
+                        <tr><td style="padding-top:10px;"><strong>Reason:</strong> ' . esc_html($data['reason']) . '</td></tr>';
 
-    if (!empty($data['other'])) {
-        $email_content .= '<tr><td style="padding-top:10px;"><strong>Additional Comments:</strong><br>' .
-                          nl2br(esc_html($data['other'])) . '</td></tr>';
-    }
+                if (!empty($data['other'])) {
+                    $email_content .= '<tr><td style="padding-top:10px;"><strong>Additional Comments:</strong><br>' .
+                                    nl2br(esc_html($data['other'])) . '</td></tr>';
+                }
 
-    $email_content .= '
-            <tr><td style="padding-top:20px; font-size:12px; color:#666;">
-                Sent on ' . esc_html($data['timestamp']) . '<br>
-                Site: <a href="' . esc_url($data['site_url']) . '">' . esc_html($data['site_url']) . '</a><br>
-                <em>This is an automated email. Do not reply.</em>
-            </td></tr>
-        </table>
-    </body>
-    </html>';
+                $email_content .= '
+                        <tr><td style="padding-top:20px; font-size:12px; color:#666;">
+                            Sent on ' . esc_html($data['timestamp']) . '<br>
+                            Site: <a href="' . esc_url($data['site_url']) . '">' . esc_html($data['site_url']) . '</a><br>
+                            <em>This is an automated email. Do not reply.</em>
+                        </td></tr>
+                    </table>
+                </body>
+                </html>';
 
-    $headers = array(
-        'Content-Type: text/html; charset=UTF-8',
-        'From: ' . sanitize_text_field($data['site_name']) . ' <' . sanitize_email(get_option('admin_email')) . '>',
-        'Reply-To: ' . sanitize_email(get_option('admin_email'))
-    );
+                $headers = array(
+                    'Content-Type: text/html; charset=UTF-8',
+                    'From: ' . sanitize_text_field($data['site_name']) . ' <' . sanitize_email(get_option('admin_email')) . '>',
+                    'Reply-To: ' . sanitize_email(get_option('admin_email'))
+                );
 
-    wp_mail(
-        'support@jcodex.com', // Change to your support email
-        'Plugin Deactivation Feedback: ' . esc_html($data['site_name']),
-        $email_content,
-        $headers
-    );
-}
+                wp_mail(
+                    'support@jcodex.com', // Change to your support email
+                    'Plugin Deactivation Feedback: ' . esc_html($data['site_name']),
+                    $email_content,
+                    $headers
+                );
+            }
    
 
            
