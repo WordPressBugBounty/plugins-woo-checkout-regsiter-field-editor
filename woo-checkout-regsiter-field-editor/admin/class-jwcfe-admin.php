@@ -201,7 +201,7 @@ if (!class_exists('JWCFE_Admin')) :
 						<span>
 							<?php
 								echo wp_kses_post( 
-									__("Our Checkout and Register Editor is now compatible with the WooCommerce Checkout Block. This is just the first release, more features are coming soon. If you're using Block Checkout, make sure to switch to the Block Checkout Fields tab, otherwise, your changes won’t be reflected. Have questions or need help? Reach out to our <a href='https://jcodex.com/support/' style='color: #ffffff; text-decoration: none; font-weight: 700;' onmouseover=\"this.style.textDecoration='none'; this.style.color='#ffffff';\" onmouseout=\"this.style.color='#ffffff'\">Support team</a>.")
+									__("Our Checkout and Register Editor is now fully compatible with the WooCommerce Checkout Block! This is just the beginning, more powerful features are on the way.If you're using the Block-based Checkout, be sure to navigate to the Block Checkout Fields tab to apply your changes. Otherwise, your customizations won’t appear.Need assistance or have questions? Our <a href='https://jcodex.com/support/' style='color: #ffffff; text-decoration: none; font-weight: 700;' onmouseover=\"this.style.textDecoration='none'; this.style.color='#ffffff';\" onmouseout=\"this.style.color='#ffffff'\">Support team</a>  is here to help, don’t hesitate to reach out!.")
 								);
 								
 								

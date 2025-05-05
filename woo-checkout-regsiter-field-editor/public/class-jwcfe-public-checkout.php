@@ -186,7 +186,7 @@ if (!class_exists('JWCFE_Public_Checkout')) :
 								break;
 		
 							default:
-								error_log("Unsupported field type: " . $field_type);
+								// error_log("Unsupported field type: " . $field_type);
 						}
 					}
 				}
@@ -1721,9 +1721,11 @@ if (!class_exists('JWCFE_Public_Checkout')) :
 			foreach ($fields as $key => $options) {
 		
 				if (isset($options['show_in_email']) && $options['show_in_email']) {
-					$value = $this->fetch_order_meta_value($order, $key, $options['type']);
+					// $value = $this->fetch_order_meta_value($order, $key, $options['type']);
 		
-					
+					$type = isset($options['type']) ? $options['type'] : null;
+					$value = $this->fetch_order_meta_value($order, $key, $type);
+										
 					if (!empty($value)) {
 						$label = (isset($options['label']) && $options['label'] ? $options['label'] : $key);
 						$fields_to_display[] = [

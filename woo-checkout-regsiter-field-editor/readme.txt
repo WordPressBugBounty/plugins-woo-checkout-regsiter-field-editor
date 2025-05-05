@@ -3,9 +3,9 @@ Contributors: jcodex, junaidit
 Donate link: https://www.paypal.com/donate/?hosted_button_id=QD4H8N3QVLLML
 Tags: WooCommerce Checkout Field, Checkout Manager, Checkout form editor, My Account Fields, WooCommerce Checkout Editor
 Requires at least: 4.9
-Tested up to: 6.7.2
+Tested up to: 6.8.1
 Requires PHP: 5.6
-Stable tag: 2.4.3
+Stable tag: 2.4.4
 License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
