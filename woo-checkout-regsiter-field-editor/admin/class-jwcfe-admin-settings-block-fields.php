@@ -492,13 +492,7 @@ if (!class_exists('JWCFE_Admin_Settings_Block_Fields')) :
                                         <td class="td_placeholder"><?php echo $options['text']; ?></td>
                                         <td class="td_validate"><?php echo $options['validate']; ?></td>
                                         <td class="td_required status"><?php echo ($options['required'] == 1 ? '<span class="dashicons dashicons-saved"></span>' : '-') ?></td>
-                                        <!-- <td class="td_enabled status">
-                                            <label class="pure-material-switch">
-                                                <input type="checkbox" class="toggle-checkbox" <?php echo ($options['enabled'] == 1 ? 'checked' : ''); ?> />
-                                                <span class="label">No</span>
-                                            </label>
-                                            <span class="toggle-label">yes</span>
-                                        </td> -->
+                                      
                                         <td class="td_enabled status">
                                             <label class="pure-material-switch">
                                                 <input type="checkbox" class="toggle-checkbox" 
@@ -509,12 +503,6 @@ if (!class_exists('JWCFE_Admin_Settings_Block_Fields')) :
                                             <span class="toggle-label">yes</span>
                                         </td>
 
-                                        <!-- <td class="td_edit">
-                                            <div class="f_edit_btn" <?php echo ($options['enabled'] == 1 ? '' : 'disabled') ?> onclick="openEditFieldForm(this,<?php echo $i; ?>)">
-                                                <img class="edit-icon" src="<?php echo plugin_dir_url(dirname(__FILE__)) . 'admin/assets/css/pencil.png'; ?>" alt="" width="12" height="14">
-                                                <?php _e('', 'jwcfe'); ?>
-                                            </div>
-                                        </td> -->
                                         <td class="td_edit">
                                             <div class="f_edit_btn <?php echo (in_array($name, [
                                                 'billing_email',  
@@ -540,9 +528,6 @@ if (!class_exists('JWCFE_Admin_Settings_Block_Fields')) :
                 <?php
                 
                 $this->jwcfe_field_popup();
-                // $this->jwcfe_new_field_form_pp();
-                // $this->jwcfe_edit_field_form_pp();
-
                 ?>
 
                 </div>
@@ -688,20 +673,7 @@ if (!class_exists('JWCFE_Admin_Settings_Block_Fields')) :
                                 } else {
                                     $options['show_in_order'] = '0';
                                 }
-                                // $excluded_fields = [
-                                //     'shipping_last_name',
-                                //     'shipping_country',
-                                //     'shipping_address_1',
-                                //     'shipping_city',
-                                //     'shipping_state',
-                                //     'shipping_postcode',
-                                // ];
-                                
-                                // if ($tab == 'block' && in_array($name, $excluded_fields, true)) {
-                                //     $options['required'] = '1'; // Always required
-                                // } else {
-                                //     $options['required'] = isset($options['required']) && $options['required'] == 1 ? '1' : '0';
-                                // }
+                              
                                 
                             ?>
                                 <?php
@@ -766,13 +738,7 @@ if (!class_exists('JWCFE_Admin_Settings_Block_Fields')) :
                                         <td class="td_placeholder"><?php echo $options['text']; ?></td>
                                         <td class="td_validate"><?php echo $options['validate']; ?></td>
                                         <td class="td_required status"><?php echo ($options['required'] == 1 ? '<span class="dashicons dashicons-saved"></span>' : '-') ?></td>
-                                        <!-- <td class="td_enabled status">
-                                            <label class="pure-material-switch">
-                                                <input type="checkbox" class="toggle-checkbox" <?php echo ($options['enabled'] == 1 ? 'checked' : ''); ?> />
-                                                <span class="label">No</span>
-                                            </label>
-                                            <span class="toggle-label">yes</span>
-                                        </td> -->
+                                  
                                         <td class="td_enabled status">
                                             <label class="pure-material-switch">
                                                 <input type="checkbox" class="toggle-checkbox" 
@@ -793,13 +759,6 @@ if (!class_exists('JWCFE_Admin_Settings_Block_Fields')) :
                                             </label>
                                             <span class="toggle-label">yes</span>
                                         </td>
-
-                                        <!-- <td class="td_edit">
-                                            <div class="f_edit_btn" <?php echo ($options['enabled'] == 1 ? '' : 'disabled') ?> onclick="openEditFieldForm(this,<?php echo $i; ?>)">
-                                                <img class="edit-icon" src="<?php echo plugin_dir_url(dirname(__FILE__)) . 'admin/assets/css/pencil.png'; ?>" alt="" width="12" height="14">
-                                                <?php _e('', 'jwcfe'); ?>
-                                            </div>
-                                        </td> -->
                                         <td class="td_edit">
                                             <div class="f_edit_btn <?php echo (in_array($name, [
                                                 'shipping_first_name', 
@@ -839,8 +798,6 @@ if (!class_exists('JWCFE_Admin_Settings_Block_Fields')) :
                 <?php
                 
                 $this->jwcfe_field_popup();
-                // $this->jwcfe_new_field_form_pp();
-                // $this->jwcfe_edit_field_form_pp();
 
                 ?>
 
@@ -851,12 +808,7 @@ if (!class_exists('JWCFE_Admin_Settings_Block_Fields')) :
 		}
         function reset_checkout_fields()
 		{
-            // delete_option('jwcfe_account_label');
-			// delete_option('jwcfe_account_sync_fields');
-			// delete_option('jwcfe_wc_fields_account');
-			// delete_option('jwcfe_wc_fields_billing');
-			// delete_option('jwcfe_wc_fields_shipping');
-			// delete_option('jwcfe_wc_fields_additional');
+          
             delete_option('jwcfe_wc_fields_block_billing');
             delete_option('jwcfe_wc_fields_block_shipping');
             delete_option('jwcfe_wc_fields_block_additional');
@@ -883,7 +835,7 @@ if (!class_exists('JWCFE_Admin_Settings_Block_Fields')) :
                             <div class="jwcfe_tabs" class="jwcfe-tabs">
                             <div class="jwcfemodal-content-main-div" style="position: sticky;top: 0;z-index: 1000;">
                                 <div class="jwcfemodal-content-div">
-                                    <span class="jwcfecloseBtn">&times;</span>
+                                    <span class="jwcfecloseBtn" onclick="closejwcfeModal()">&times;</span>
                                     <h2 class="ui-dialog-title"><?php echo $formTitle; ?></h2>
                                 </div>
                                 <ul style="position: sticky;top: 0;z-index: 1000;">
@@ -933,7 +885,12 @@ if (!class_exists('JWCFE_Admin_Settings_Block_Fields')) :
                                                             <input type="text" name="flabel" placeholder="<?php esc_attr_e('eg. new_field', 'jwcfe'); ?>" />
                                                         </div>
                                                     </div>
-
+                                                    <!-- <div class="rowheading" style="display: flex; align-items: center;">
+                                                        <div class="fieldlabel"  style="width: 40%; margin-right: 10px;"><?php esc_html_e('Heading Text:', 'jwcfe'); ?></div>
+                                                        <div>
+                                                            <input type="text" name="flabel" placeholder="<?php esc_attr_e('Enter Your Heading Text', 'jwcfe'); ?>" />
+                                                        </div>
+                                                    </div> -->
                                                     <div class="rowMaxlength" style="display: flex; align-items: center;">
                                                         <div class="fieldlabel" style="width: 40%; margin-right: 10px;"><?php esc_html_e('Character limit:', 'jwcfe'); ?></div>
                                                         <div><input type="number" name="fmaxlength" style="" /></div>

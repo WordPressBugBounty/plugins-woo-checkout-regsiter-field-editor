@@ -26,6 +26,7 @@ class JWCFE_Helper {
 			
 				if($tab==='fields'){
 					$fields = array_filter(get_option('jwcfe_wc_fields_'. $key, array()));
+
 					if(empty($fields) || sizeof($fields) == 0){
 						if($key === 'billing' || $key === 'shipping'){
 							$fields = WC()->countries->get_address_fields(WC()->countries->get_base_country(), $key . '_');
@@ -127,142 +128,7 @@ class JWCFE_Helper {
 					
 				}
 				
-				// else if($tab==='block'){
-				// 	$fields = maybe_unserialize(get_option('jwcfe_wc_fields_block_' . $key, array()));
-				// 	print_r($fields);
-
-				// 	if (!is_array($fields)) {
-				// 		$fields = [];
-				// 	}
-					
-				// 	$fields = array_filter($fields);
-				// 	echo (sizeof($fields));
-				// 	if(empty($fields) || sizeof($fields) == 0){
-				// 		if($key === 'billing' || $key === 'shipping'){
-				// 			$fields = WC()->countries->get_address_fields(WC()->countries->get_base_country(), $key . '_');
-				// 		} else if($key === 'additional'){
-		
-				// 			$fields = array(
-		
-				// 				'order_comments' => array(
-				// 					'type'        => 'textarea',
-				// 					'class'       => array('notes'),
-				// 					'label'       => esc_html__('Order Notes', 'jwcfe'),
-				// 					'placeholder' => _x('Notes about your order, e.g. special notes for delivery.', 'placeholder', 'jwcfe')
-				// 				)
-				// 			);
-				// 		}
-				// 			else if($key === 'account'){
-		
-				// 			$fields = array(
-				// 				'account_username' => array(
-				// 					'type' => 'text',
-				// 					'label' => esc_html__('Email address', 'jwcfe')
-				// 				),
-		
-				// 				'account_password' => array(
-				// 					'type' => 'password',
-				// 					'label' => esc_html__('Password', 'jwcfe')
-				// 				)
-				// 			);
-				// 		}
-				// 	}
-				// 	return $fields;
-				// }	
-					
-
-			// if(empty($fields) || sizeof($fields) == 0){
-			// 	if($key === 'billing' || $key === 'shipping'){
-			// 		$fields = WC()->countries->get_address_fields(WC()->countries->get_base_country(), $key . '_');
-			// 	} else if($key === 'additional'){
-
-			// 		$fields = array(
-
-			// 			'order_comments' => array(
-			// 				'type'        => 'textarea',
-			// 				'class'       => array('notes'),
-			// 				'label'       => esc_html__('Order Notes', 'jwcfe'),
-			// 				'placeholder' => _x('Notes about your order, e.g. special notes for delivery.', 'placeholder', 'jwcfe')
-			// 			)
-			// 		);
-			// 	}
-			// 		else if($key === 'account'){
-
-			// 		$fields = array(
-			// 			'account_username' => array(
-			// 				'type' => 'text',
-			// 				'label' => esc_html__('Email address', 'jwcfe')
-			// 			),
-
-			// 			'account_password' => array(
-			// 				'type' => 'password',
-			// 				'label' => esc_html__('Password', 'jwcfe')
-			// 			)
-			// 		);
-			// 	}
-			// }
-			// return $fields;
 		}
-		// public static function get_fields($key) {
-		// 	$tab = self::get_current_tab();
-			
-		// 	// For Free Version (Block Tab) - Never access Pro's "fields" data
-		// 	if ($tab === 'block') {
-		// 		$fields = maybe_unserialize(get_option('jwcfe_wc_fields_block_' . $key, array()));
-		// 		$fields = is_array($fields) ? array_filter($fields) : [];
-				
-		// 		// Only load default fields if empty - don't fallback to Pro data
-		// 		if (empty($fields)) {
-		// 			if ($key === 'billing' || $key === 'shipping') {
-		// 				$fields = WC()->countries->get_address_fields(WC()->countries->get_base_country(), $key . '_');
-		// 			} else if ($key === 'additional') {
-		// 				$fields = [
-		// 					'order_comments' => [
-		// 						'type'        => 'textarea',
-		// 						'class'       => ['notes'],
-		// 						'label'       => esc_html__('Order Notes', 'jwcfe'),
-		// 						'placeholder' => _x('Notes about your order...', 'placeholder', 'jwcfe')
-		// 					]
-		// 				];
-		// 			} else if ($key === 'account') {
-		// 				$fields = [
-		// 					'account_username' => ['type' => 'text', 'label' => esc_html__('Email address', 'jwcfe')],
-		// 					'account_password' => ['type' => 'password', 'label' => esc_html__('Password', 'jwcfe')]
-		// 				];
-		// 			}
-		// 		}
-		// 		return $fields;
-		// 	}
-		
-		// 	// For Pro Version (Fields Tab) - Never access Block data
-		// 	if ($tab === 'fields') {
-		// 		$fields = array_filter(get_option('jwcfe_wc_fields_' . $key, []));
-				
-		// 		// Load default fields only if no custom fields exist
-		// 		if (empty($fields)) {
-		// 			if ($key === 'billing' || $key === 'shipping') {
-		// 				$fields = WC()->countries->get_address_fields(WC()->countries->get_base_country(), $key . '_');
-		// 			} else if ($key === 'additional') {
-		// 				$fields = [
-		// 					'order_comments' => [
-		// 						'type'        => 'textarea',
-		// 						'class'       => ['notes'],
-		// 						'label'       => esc_html__('Order Notes', 'jwcfe'),
-		// 						'placeholder' => _x('Notes about your order...', 'placeholder', 'jwcfe')
-		// 					]
-		// 				];
-		// 			} else if ($key === 'account') {
-		// 				$fields = [
-		// 					'account_username' => ['type' => 'text', 'label' => esc_html__('Email address', 'jwcfe')],
-		// 					'account_password' => ['type' => 'password', 'label' => esc_html__('Password', 'jwcfe')]
-		// 				];
-		// 			}
-		// 		}
-		// 		return $fields;
-		// 	}
-		
-		// 	return [];
-		// }
 	
 		public static function jwcfe_woocommerce_version_check( $version = '3.0' ) {
 		if ( function_exists( 'jwcfe_is_woocommerce_active' ) && jwcfe_is_woocommerce_active() ) {

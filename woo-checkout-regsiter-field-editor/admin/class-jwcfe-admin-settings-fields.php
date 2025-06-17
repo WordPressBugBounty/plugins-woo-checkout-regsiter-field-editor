@@ -58,22 +58,7 @@ if (!class_exists('JWCFE_Admin_Settings_Fields')) :
                 $supress_field_modification = false;
             
                 // Display premium message with image link
-                // echo '<div class="premium-message">
-                //     <a href="https://jcodex.com/plugins/woocommerce-custom-checkout-field-editor/">';
                 
-                //         echo '<img style="height: 100%; width: 65%;border-radius: 24px;" 
-                //                 src="' . plugins_url('/assets/css/my-account-banner-03.jpg', __FILE__) . '">
-                
-                //     </a>
-                // </div>';
-                // echo '<div class="premium-message">
-                //     <a href="https://jcodex.com/plugins/woocommerce-custom-checkout-field-editor/">';
-                
-                //         echo '<img style="height: 100%; width: 35%;border-radius: 24px;" 
-                //                 src="' . plugins_url('/assets/css/my-account-banner-04.jpg', __FILE__) . '">
-                
-                //     </a>
-                // </div>';
                 echo '<div class="premium-container">'; // New wrapper container
                     echo '<div class="premium-message">';
                         echo '<a href="https://jcodex.com/plugins/woocommerce-custom-checkout-field-editor/">';
@@ -82,15 +67,6 @@ if (!class_exists('JWCFE_Admin_Settings_Fields')) :
                     width: 100%;
                     border-radius: 24px;
                 " src="' . plugins_url('/assets/css/my-account-banner-03.jpg', __FILE__) . '">';
-                        echo '</a>';
-                    echo '</div>';
-                    echo '<div class="premium-message">';
-                        echo '<a href="https://jcodex.com/plugins/woocommerce-custom-checkout-field-editor/">';
-                            echo '<img style="
-                    height: 94%;
-                    width: 100%;
-                    border-radius: 24px;
-                " src="' . plugins_url('/assets/css/my-account-banner-06.jpg', __FILE__) . '">';
                         echo '</a>';
                     echo '</div>';
                 echo '</div>';
@@ -194,6 +170,9 @@ if (!class_exists('JWCFE_Admin_Settings_Fields')) :
                                 if (!isset($options['rules'])) {
                                     $options['rules'] = '';
                                 }
+                                if (!isset($options['texteditor'])) {
+                                    $options['texteditor'] = '';
+                                }
                                 if (!isset($options['rules_action'])) {
                                     $options['rules_action'] = '';
                                 }
@@ -283,6 +262,9 @@ if (!class_exists('JWCFE_Admin_Settings_Fields')) :
                                         <input type="hidden" name="f_type[<?php echo $i; ?>]" class="f_type" value="<?php echo $options['type']; ?>" />
                                         <input type="hidden" name="f_label[<?php echo $i; ?>]" class="f_label" value="<?php echo htmlspecialchars($options['label']); ?>" />
                                         <input type="hidden" name="f_text[<?php echo $i; ?>]" class="f_text" value="<?php echo stripcslashes(stripcslashes($options['text'])); ?>" />
+                                                                                
+                                        <input type="hidden" name="f_texteditor[<?php echo $i; ?>]" class="f_texteditor" value="<?php echo isset($options['texteditor']) ? stripslashes($options['texteditor']) : ''; ?>" />
+
                                         <input type="hidden" name="f_extoptions[<?php echo $i; ?>]" class="f_extoptions" value="<?php echo ($options['extoptions']) ?>" />
                                         <input type="hidden" name="f_access[<?php echo $i; ?>]" class="f_access" value="<?php echo ($options['access']) ?>" />
                                         <?php if (isset($options['maxlength'])) { ?>
@@ -300,6 +282,7 @@ if (!class_exists('JWCFE_Admin_Settings_Fields')) :
                                         <input type="hidden" name="f_options[<?php echo $i; ?>]" class="f_options" value="<?php echo ($options['options_json']); ?>" />
                                         <input type="hidden" name="f_class[<?php echo $i; ?>]" class="f_class" value="<?php echo $options['class']; ?>" />
                                         <input type="hidden" name="f_label_class[<?php echo $i; ?>]" class="f_label_class" value="<?php echo $options['label_class']; ?>" />
+
                                         <input type="hidden" name="f_required[<?php echo $i; ?>]" class="f_required" value="<?php echo ($options['required']); ?>" />
                                         <input type="hidden" name="f_is_include[<?php echo $i; ?>]" class="f_is_include" value="<?php echo ($options['is_include']); ?>" />
                                         <input type="hidden" name="f_enabled[<?php echo $i; ?>]" class="f_enabled" value="<?php echo ($options['enabled']); ?>" />
@@ -312,7 +295,40 @@ if (!class_exists('JWCFE_Admin_Settings_Fields')) :
                                         <td class="td_select"><input type="checkbox" name="select_field" /></td>
                                         <td class="td_name"><?php echo esc_attr($name); ?></td>
                                         <td class="td_type"><?php echo $options['type']; ?></td>
-                                        <td class="td_label"><?php echo $options['label']; ?></td>
+                                        <!-- <td class="td_label"><?php echo $options['label']; ?></td> -->
+                                    <td class="td_label">
+                                        <?php
+                                        if ($options['type'] === 'paragraph') {
+                                            $allowed_tags = array(
+                                                'p' => array(),
+                                                'br' => array(),
+                                                'strong' => array(),
+                                                'em' => array(),
+                                                'ul' => array(),
+                                                'ol' => array(),
+                                                'i' => array(), 
+                                                'li' => array(),
+                                                'a' => array(
+                                                    'href' => array(),
+                                                    'title' => array(),
+                                                    'target' => array()
+                                                ),
+                                                'span' => array(
+                                                    'style' => array()
+                                                ),
+                                                'div' => array(
+                                                    'class' => array(),
+                                                    'style' => array()
+                                                ),
+                                            );
+                                            echo !empty($options['texteditor']) ? wp_kses(stripslashes($options['texteditor']), $allowed_tags) : '<em>No content</em>';
+                                        } else {
+                                            echo esc_html($options['label']);
+                                        }
+                                        ?>
+                                    </td>
+
+
                                         <td class="td_placeholder"><?php echo $options['text']; ?></td>
                                         <td class="td_validate"><?php echo $options['validate']; ?></td>
                                         <td class="td_required status"><?php echo ($options['required'] == 1 ? '<span class="dashicons dashicons-saved"></span>' : '-') ?></td>
@@ -384,7 +400,6 @@ if (!class_exists('JWCFE_Admin_Settings_Fields')) :
 				'text'          => 'Text',
 				'number'        => 'Number',
 				'password'      => 'Password',
-				'hidden'        => 'Hidden',
 				'email'         => 'Email',
 				'phone'         => 'Phone',
 				'textarea'      => 'Textarea',
@@ -418,22 +433,14 @@ if (!class_exists('JWCFE_Admin_Settings_Fields')) :
             <div id="jwcfeModal" class="jwcfemodal" style="display: none;">
             
                 <div class="jwcfemodal-content">
-                    <!-- <div class="jwcfemodal-content-main-div">
-                        <div class="jwcfemodal-content-div">
-                            <span class="jwcfecloseBtn">&times;</span>
-                            <h2 class="ui-dialog-title"><?php echo $formTitle; ?></h2>
-                        </div>
-                    </div> -->
+                    
                     <div id="jwcfe_new_field_form_pp" title="<?php echo esc_html($formTitle); ?>" class="<?php echo $addClass; ?> jwcfe_popup_wrapper">
                         <form method="POST" id="jwcfe_new_field_form" action="">
                             <div class="jwcfe_tabs" class="jwcfe-tabs">
-                                <!-- <ul>
-                                    <li><a href="#tab-1"><?php echo esc_html__('General Settings', 'jwcfe'); ?></a></li>
-                                    <span class="circle1"></span>
-                                </ul> -->
+                               
                                 <div class="jwcfemodal-content-main-div" style="position: sticky;top: 0;z-index: 1000;">
                                 <div class="jwcfemodal-content-div">
-                                    <span class="jwcfecloseBtn">&times;</span>
+                                    <span class="jwcfecloseBtn" onclick="closejwcfeModal()">&times;</span>
                                     <h2 class="ui-dialog-title"><?php echo $formTitle; ?></h2>
                                 </div>
                                 <ul style="position: sticky;top: 0;z-index: 1000;">
@@ -451,7 +458,7 @@ if (!class_exists('JWCFE_Admin_Settings_Fields')) :
                                                     <div class="rowfield" style="display: flex; align-items: center;">
                                                             <div id="fieldlabel" style="width: 40%; margin-right: 10px;"><?php esc_html_e('Field Type:', 'jwcfe'); ?></div>
                                                         <div>
-                                                            <select name="ftype" style="" onchange="jwcfeFieldTypeChangeListner(this)">
+                                                            <select name="ftype"  onchange="jwcfeFieldTypeChangeListner(this)">
                                                                 <?php foreach ($field_types as $value => $label) {
                                                                 ?>
 
@@ -474,12 +481,29 @@ if (!class_exists('JWCFE_Admin_Settings_Fields')) :
                                                     </div>
 
                                                     <div class="rowLabel" style="display: flex; align-items: center;">
-                                                        <div class="fieldlabel"  style="width: 40%; margin-right: 10px;"><?php esc_html_e('Label of Field:', 'jwcfe'); ?></div>
+                                                        <div class="fieldlabel" id="fieldLabelText"   style="width: 40%; margin-right: 10px;"><?php esc_html_e('Label of Field:', 'jwcfe'); ?></div>
                                                         <div>
                                                             <input type="text" name="flabel" placeholder="<?php esc_attr_e('eg. new_field', 'jwcfe'); ?>" />
                                                         </div>
                                                     </div>
 
+
+                                                   <div class="texteditor" style="display: flex; align-items: center;">
+                                                        <div class="fieldlabel" style="width: 40%; margin-right: 10px;">
+                                                            <?php esc_html_e('Paragraph text:', 'jwcfe'); ?>
+                                                        </div>
+                                                        <div style="width: 100%;">
+                                                            <textarea name="ftexteditor" id="flabel_editor" class="label-rich-editor"></textarea>
+                                                        </div>
+                                                    </div>
+
+
+                                                    <!-- <div class="rowheading" style="display: flex; align-items: center;">
+                                                        <div class="fieldlabel"  style="width: 40%; margin-right: 10px;" ><?php esc_html_e('Heading Text:', 'jwcfe'); ?></div>
+                                                        <div>
+                                                            <input type="text" name="flabel" placeholder="<?php esc_attr_e('Enter Your Heading Text', 'jwcfe'); ?>"  style="width: 299px;margin-bottom:10px;"/>
+                                                        </div>
+                                                    </div> -->
                                                     <div class="rowMaxlength" style="display: flex; align-items: center;">
                                                         <div class="fieldlabel" style="width: 40%; margin-right: 10px;"><?php esc_html_e('Character limit:', 'jwcfe'); ?></div>
                                                         <div><input type="number" name="fmaxlength" style="" /></div>
@@ -497,10 +521,7 @@ if (!class_exists('JWCFE_Admin_Settings_Fields')) :
                                                             </select>
                                                         </div>
                                                     </div>
-                                                    <!-- <div class="rowDescription" style="display: flex; align-items: center;">
-                                                        <div class="fieldlabel" style="width: 40%; margin-right: 10px;"><?php esc_html_e('Description:', 'jwcfe'); ?></div>
-                                                        <div><textarea class="custom-textarea-css" type="text" name="ftext" placeholder=""></textarea></div>
-                                                    </div> -->
+                                                    
                                                     <div class="rowDescription" style="display: flex; align-items: center;">
                                                         <div class="fieldlabel" style="width: 40%; margin-right: 10px;"><?php esc_html_e('Description:', 'jwcfe'); ?></div>
                                                         <div>
@@ -573,92 +594,6 @@ if (!class_exists('JWCFE_Admin_Settings_Fields')) :
                                                 </div>
                                             </div>
 
-                                            <!-- <div class="vl"></div> -->
-                                            <!-- <div class="jwcfe_right_col">
-                                                <div class="jwcfe_right_col_child_div">
-                                                    <div class="rowPlaceholder">
-                                                        <div class="fieldlabel"><?php esc_html_e('Placeholder:', 'jwcfe'); ?></div>
-                                                        <div><input type="text" name="fplaceholder" placeholder="<?php esc_attr_e('eg. new_field', 'jwcfe'); ?>" style="" /></div>
-                                                    </div>
-                                                    <div class="rowValidate">
-                                                        <div class="fieldlabel"><?php esc_html_e('Validation:', 'jwcfe'); ?></div>
-                                                        <div class="validationtxt">
-                                                            <select multiple="multiple" name="fvalidate" placeholder="<?php esc_attr_e('Selecgt Validations', 'jwcfe'); ?>" class="jwcfe-enhanced-multi-select" style="width:  300px !important;height: 40px;">
-                                                                <option value="email"><?php esc_html_e('Email', 'jwcfe'); ?></option>
-                                                                <option value="phone"><?php esc_html_e('Phone', 'jwcfe'); ?></option>
-                                                            </select>
-                                                        </div>
-                                                    </div>
-                                                    <div class="rowDescription">
-                                                        <div class="fieldlabel"><?php esc_html_e('Description:', 'jwcfe'); ?></div>
-                                                        <div><textarea class="custom-textarea-css" type="text" name="ftext" placeholder=""></textarea></div>
-                                                    </div>
-                                                    <div class="rowClass">
-                                                        <div class="fieldlabel"><?php esc_html_e('Field Width:', 'jwcfe'); ?></div>
-                                                        <div class="fieldtxt">
-                                                            <select name="fclass" style="">
-                                                                <option value="form-row-wide"><?php esc_html_e('Full-Width', 'jwcfe'); ?></option>
-                                                                <option value="form-row-first"><?php esc_html_e('Half-Width', 'jwcfe'); ?></option>
-                                                            </select>
-                                                        </div>
-                                                    </div>
-
-                                                    <div class="rowTimepicker">
-                                                        <div class="fieldlabel"><?php esc_html_e('Min. Time:', 'jwcfe'); ?><br><span class="thpladmin-subtitle"><?php esc_html_e('ex: 12:30am', 'jwcfe'); ?></span>
-                                                        </div>
-                                                        <div width="32%"><input type="text" name="i_min_time" value="12:00am" style=""></div>
-                                                    </div>
-
-                                                    <div class="rowTimepicker">
-                                                        <div width="15%"><?php esc_html_e('Max. Time:', 'jwcfe'); ?> <br><span class="thpladmin-subtitle"><?php esc_html_e('ex: 11:30pm', 'jwcfe'); ?></span>
-                                                        </div>
-                                                        <div width="32%"><input type="text" name="i_max_time" value="11:30pm" style=""></div>
-                                                    </div>
-                                                    <div class="rowTimepicker">
-                                                        <div class="fieldlabel"><?php esc_html_e('Time Format:', 'jwcfe'); ?></div>
-                                                        <div width="32%"><select name="i_time_format" value="h:i A" style="">
-                                                                <option value="h:i A" selected=""><?php esc_html_e('12-hour format', 'jwcfe'); ?></option>
-                                                                <option value="H:i"><?php esc_html_e('24-hour format', 'jwcfe'); ?></option>
-                                                            </select></div>
-                                                    </div>
-
-                                                    <div class="rowTimepicker">
-                                                        <div width="15%"><?php esc_html_e('Time Step:', 'jwcfe'); ?> <br><span class="thpladmin-subtitle"><?php esc_html_e('In minutes, ex: 30', 'jwcfe'); ?></span>
-                                                        </div>
-                                                        <div width="32%"><input type="text" name="i_time_step" value="30" style=""></div>
-                                                    </div>
-
-                                                    <div class="rowExtoptions">
-                                                        <div class="fieldlabel"><?php esc_html_e('Allowed file types:', 'jwcfe'); ?><font color="red"><?php echo esc_html__('*', 'jwcfe'); ?></font>
-                                                        </div>
-                                                        <div>
-                                                            <select multiple="multiple" name="fextoptions" placeholder="<?php esc_attr_e('Select file types', 'jwcfe'); ?>" class="jwcfe-enhanced-multi-select" style="width: 300px; height:40px;">
-                                                                <option value="jpg"><?php esc_html_e('Jpeg', 'jwcfe'); ?></option>
-                                                                <option value="png"><?php esc_html_e('Png', 'jwcfe'); ?></option>
-                                                                <option value="gif"><?php esc_html_e('Gif', 'jwcfe'); ?></option>
-                                                                <option value="doc"><?php esc_html_e('Doc', 'jwcfe'); ?></option>
-                                                                <option value="pdf"><?php esc_html_e('PDF', 'jwcfe'); ?></option>
-                                                                <option value="txt"><?php esc_html_e('Text', 'jwcfe'); ?></option>
-                                                                <option value="ppt"><?php esc_html_e('PPT', 'jwcfe'); ?></option>
-                                                            </select>
-                                                        </div>
-                                                    </div>
-
-                                                    <div class="rowLabel1">
-                                                        <div class="fieldlabel"><?php esc_html_e('Label of Field:', 'jwcfe'); ?></div>
-                                                        <div><input type="text" name="flabel" placeholder="<?php esc_attr_e('eg. new_field', 'jwcfe'); ?>" />
-                                                        </div>
-                                                    </div>
-
-                                                    <div class="rowDescription2">
-                                                        <div class="fieldlabel"><?php esc_html_e('Description:', 'jwcfe'); ?></div>
-                                                        <div><textarea class="" type="text" name="ftext" placeholder=""></textarea>
-                                                        </div>
-                                                    </div>
-
-                                                </div>
-                                            </div> -->
-
                                             <?php
 
                                             if (isset($_GET['section']) && $_GET['section'] == 'account') {
@@ -674,30 +609,7 @@ if (!class_exists('JWCFE_Admin_Settings_Fields')) :
                                             }
                                             ?>
 
-                                            <!-- <div class="rowOptions" style="display: none;">
-                                                <div class="fieldlabel"><?php esc_html_e('Options:', 'jwcfe'); ?><font color="red"><?php echo esc_html__('*', 'jwcfe'); ?></font>
-                                                </div>
-                                                <div class="jwcfe_options ">
-                                                    <div class="jwcfe-option-list thpladmin-dynamic-row-table custom-jwcfe-options">
-                                                        <div class="ui-sortable">
-                                                            <div class="jwcfe-opt-container custom-scroll-option">
-                                                                <div class="jwcfe-opt-row">
-                                                                    <div style="width:280px;"><input type="text" name="i_options_key[]" placeholder="<?php esc_attr_e('Option Value', 'jwcfe'); ?>" style="width:280px;"></div>
-                                                                    <div style="width:280px;"><input type="text" name="i_options_text[]" placeholder="<?php esc_attr_e('Option Text', 'jwcfe'); ?>" style="width:280px;"></div>
-
-                                                                    <div class="action-cell"><a href="javascript:void(0)" onclick="jwcfeAddNewOptionRow(this)" class="btn btn-blue" title="Add new option">+</a></div>
-
-                                                                    <div class="action-cell"><a href="javascript:void(0)" onclick="jwcfeRemoveOptionRow(this)" class="btn btn-red" title="Remove option">x</a></div>
-
-                                                                    <div class="action-cell sort ui-sortable-handle">
-                                                                        <span class="btn btn-tiny sort ui-jwcf-sortable-handle" onclick="jwcfe_handler_OptionRow(this)" title="Drag to sort">⇅</span>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div> -->
+                                           
 
                                             <div class="rowOptions" style="display: none;">
                                                 <div class="fieldlabel">
@@ -736,39 +648,7 @@ if (!class_exists('JWCFE_Admin_Settings_Fields')) :
                                                 </div>
                                             </div>
 
-                                            <!-- <div class="popup_footer">
-                                                
-                                                <div class="rowRequired">
-                                                    <div class="reqjwcfe">
-                                                        <input type="checkbox" name="frequired" id="requiredechk" value="yes" checked />
-                                                        <label for="requiredechk">Required</label>
-                                                    </div>
-                                                </div>
-                                                <div class="rowRequired">
-                                                    <div class="reqjwcfe">
-                                                        <input type="checkbox" name="fenabled" id="enabledchk" value="yes" checked />
-                                                        <label for="enabledchk">show/hide</label>
-                                                    </div>
-                                                </div>
-                                                <div class="rowShowInEmail">
-                                                    <div style="display: flex; align-items: center;">
-                                                        <input type="checkbox" name="fshowinemail" value="email" id="showinemail" checked />
-                                                        <label for="showinemail">Display in Emails</label>
-                                                    </div>
-                                                </div>
-                                                <div class="rowShowInOrder">
-                                                    <div style="display: flex; align-items: center;">
-                                                        <input type="checkbox" name="fshowinorder" value="order-review" id="showinorder" checked />
-                                                        <label for="showinorder">Display in orders Detail</label>
-                                                    </div>
-                                                </div>
-                                                <div class="popup_container">
-                                                    <div>
-                                                        <input type="checkbox" name="fisinclude" id="isincludechk" value="yes" checked />
-                                                        <label for="isincludechk"><?php esc_html_e('Do Not Include in Today’s Payment Total', 'jwcfe'); ?></label>
-                                                    </div>
-                                                </div>
-                                            </div> -->
+                                         
                                             <table class="checkbox-table">
                                                 <tbody style="margin-left: 19px;">
                                                    

@@ -802,6 +802,7 @@ table.wc_shipping tr:nth-child(odd) td {
     /*margin: 5px 15px 2px;*/
     padding: 12px 12px 12px;
 }
+
 .success {
     border-left-color: #51d636;
     background: #fff;
@@ -1601,7 +1602,7 @@ form#jwcfe_new_field_form #jwcfe_field_editor_form_new {
     display: flex !important;
     flex-wrap: wrap;
     width: 100% !important;
-    height: 73px;
+    height: auto !important;
     overflow: auto;
 }
 

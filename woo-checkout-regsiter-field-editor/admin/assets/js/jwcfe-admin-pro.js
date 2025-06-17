@@ -1,43 +1,3 @@
-// document.addEventListener("DOMContentLoaded", function () {
-//     const urlParams = new URLSearchParams(window.location.search);
-//     const tab = urlParams.get("tab");
-//     const section = urlParams.get("section");
-
-//     if (tab === "block" && section === "additional") {
-//         const elements = document.querySelectorAll(".row_0");
-//         elements.forEach(el => el.style.display = "none");
-//     }
-// });
-// document.addEventListener("DOMContentLoaded", function () {
-//     const urlParams = new URLSearchParams(window.location.search);
-//     const tab = urlParams.get("tab");
-//     const section = urlParams.get("section");
-
-//     if (tab === "block" && section === "additional") {
-//         const elements = document.querySelectorAll(".row_0");
-
-//         elements.forEach(el => el.style.display = "none");
-//         // Check if any row_0 elements exist after hiding
-//         // if (elements.length === 1) {
-// 		// 	console.log('dasdasd');
-
-//         //     showNoFieldsMessage();
-//         // }
-//     }
-
-//     function showNoFieldsMessage() {
-// 		const container = document.querySelector(".ui-sortable");
-// 		console.log("Container found:", container);
-	
-// 		if (container) {
-// 			const message = document.createElement("p");
-// 			message.textContent = "No checkout fields found. Click on Add Field button to create new fields.";
-			
-// 			container.appendChild(message);
-// 		}
-// 	}
-	
-// });
 document.addEventListener("DOMContentLoaded", function () {
     const urlParams = new URLSearchParams(window.location.search);
     const tab = urlParams.get("tab");
@@ -61,7 +21,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
     function showNoFieldsMessage() {
         const table = document.querySelector(".ui-sortable");
-        console.log("Table found:", table);
 
         if (table && !document.querySelector(".no-fields-message")) {
             const messageRow = document.createElement("tr");
@@ -100,9 +59,6 @@ var jwcfe_settings = (function ($, window, document) {
 
 	var OPTION_ROW_HTML = '<div class="jwcfe-opt-row">';
 
-	// OPTION_ROW_HTML += '<div style="width:280px;"><input type="text" name="i_options_key[]" placeholder="Option Value" style="width280px;"/></div>';
-
-	// OPTION_ROW_HTML += '<div style="width:280px;"><input type="text" name="i_options_text[]" placeholder="Option Text" style="width:280px;"/></div>';
 	
 	OPTION_ROW_HTML += '<div style="width:280px;"><input type="text" name="i_options_key[]" placeholder="Option Value" style="width:280px;" value="Default Option Value"/></div>';
 	OPTION_ROW_HTML += '<div style="width:280px;"><input type="text" name="i_options_text[]" placeholder="Option Text" style="width:280px;" value="Default Option Text"/></div>';
@@ -234,39 +190,94 @@ var jwcfe_settings = (function ($, window, document) {
 
 
 
-	_openNewFieldForm = function openNewFieldForm(tabName) {
-	    if (tabName == 'billing' || tabName == 'shipping' || tabName == 'additional' || tabName == 'account') {
-	        tabName = tabName + '_';
-	    }
+	// _openNewFieldForm = function openNewFieldForm(tabName) {
+	//     if (tabName == 'billing' || tabName == 'shipping' || tabName == 'additional' || tabName == 'account') {
+	//         tabName = tabName + '_';
+	//     }
 
-		// clear all form
-		$("#jwcfe_new_field_form_pp form")[0].reset();
-		// $("#jwcfe_new_field_form_pp form ul li:first a").click();
-		$("#jwcfe_new_field_form_pp form ul li:first a").trigger("click");
-
-	    var form = $("#jwcfe_new_field_form_pp");
+	// 	// clear all form
+	// 	$("#jwcfe_new_field_form_pp form")[0].reset();
 		
-		// enable field 
-		form.find("input[name=fname]").prop('disabled', false).css({
-			'color': '',
-			'background-color': '',
-			'border-color': ''
-		});
+	// 	// $("#jwcfe_new_field_form_pp form ul li:first a").click();
+	// 	$("#jwcfe_new_field_form_pp form ul li:first a").trigger("click");
 
-	    form.find("select[name=ftype]").trigger('change');  // Replaces .change() with .trigger('change')
-	    form.find("select[name=fclass]").val('form-row-wide');
+	//     var form = $("#jwcfe_new_field_form_pp");
+		
+	// 	// enable field 
+	// 	form.find("input[name=fname]").prop('disabled', false).css({
+	// 		'color': '',
+	// 		'background-color': '',
+	// 		'border-color': ''
+	// 	});
+
+	//     form.find("select[name=ftype]").trigger('change');  // Replaces .change() with .trigger('change')
+	//     form.find("select[name=fclass]").val('form-row-wide');
 	    
-		$("#btnaddfield").html('Add New Field');
-		$("#btnaddfield").attr('data-type','add');
-		$("#btnaddfield").removeAttr('data-rowId');
+	// 	$("#btnaddfield").html('Add New Field');
+	// 	$("#btnaddfield").attr('data-type','add');
+	// 	$("#btnaddfield").removeAttr('data-rowId');
 
-		$('#jwcfe_new_field_form').find('.jwcfe-enhanced-multi-variations').remove();
-		$('#jwcfe_new_field_form').find('select[name="i_rule_operator"], select[name="i_rule_operand_type"]').val("").trigger('change');
-		$('#jwcfe_new_field_form').find('input[name="i_rule_operand"]').val("");
-		$('#jwcfe_new_field_form #jwcfe-tab-rules_new').find('.jwcfe_rule .jwcfe_condition_set_row:not(:first)').remove();
+	// 	$('#jwcfe_new_field_form').find('.jwcfe-enhanced-multi-variations').remove();
+	// 	$('#jwcfe_new_field_form').find('select[name="i_rule_operator"], select[name="i_rule_operand_type"]').val("").trigger('change');
+	// 	$('#jwcfe_new_field_form').find('input[name="i_rule_operand"]').val("");
+	// 	$('#jwcfe_new_field_form #jwcfe-tab-rules_new').find('.jwcfe_rule .jwcfe_condition_set_row:not(:first)').remove();
 
-	    openjwcfeModal();
+	//     openjwcfeModal();
+	// }
+	_openNewFieldForm = function openNewFieldForm(tabName) {
+	if (tabName == 'billing' || tabName == 'shipping' || tabName == 'additional' || tabName == 'account') {
+		tabName = tabName + '_';
 	}
+
+	// clear all form
+	$("#jwcfe_new_field_form_pp form")[0].reset();
+
+	// 🔽 Clear option inputs manually (this is what you need)
+	var form = $("#jwcfe_new_field_form_pp");
+	form.find('.jwcfe_options .jwcfe-opt-container').html(`
+		<div class="jwcfe-opt-row">
+			<div style="width:280px;">
+				<input type="text" name="i_options_key[]" placeholder="Option Value" style="width:280px;" value="Default Option Value">
+			</div>
+			<div style="width:280px;">
+				<input type="text" name="i_options_text[]" placeholder="Option Text" style="width:280px;" value="Default Option Text">
+			</div>
+			<div class="action-cell">
+				<a href="javascript:void(0)" onclick="jwcfeAddNewOptionRow(this)" class="btn btn-blue" title="Add new option">+</a>
+			</div>
+			<div class="action-cell">
+				<a href="javascript:void(0)" onclick="jwcfeRemoveOptionRow(this)" class="btn btn-red" title="Remove option">x</a>
+			</div>
+			<div class="action-cell sort ui-sortable-handle">
+				<span class="btn btn-tiny sort ui-jwcf-sortable-handle" onclick="jwcfe_handler_OptionRow(this)" title="Drag to sort">⇅</span>
+			</div>
+		</div>
+	`);
+
+	// reset tab and default field values
+	$("#jwcfe_new_field_form_pp form ul li:first a").trigger("click");
+
+	form.find("input[name=fname]").prop('disabled', false).css({
+		'color': '',
+		'background-color': '',
+		'border-color': ''
+	});
+
+	form.find("select[name=ftype]").trigger('change');
+	form.find("select[name=fclass]").val('form-row-wide');
+
+	$("#btnaddfield").html('Add New Field');
+	$("#btnaddfield").attr('data-type','add');
+	$("#btnaddfield").removeAttr('data-rowId');
+
+	$('#jwcfe_new_field_form').find('.jwcfe-enhanced-multi-variations').remove();
+	$('#jwcfe_new_field_form').find('select[name="i_rule_operator"], select[name="i_rule_operand_type"]').val("").trigger('change');
+	$('#jwcfe_new_field_form').find('input[name="i_rule_operand"]').val("");
+	$('#jwcfe_new_field_form #jwcfe-tab-rules_new').find('.jwcfe_rule .jwcfe_condition_set_row:not(:first)').remove();
+
+	openjwcfeModal();
+}
+
 
 	$(document).find("#btnaddfield").on('click', function(e) {
 		var type = $(this).attr('data-type');
@@ -297,10 +308,15 @@ var jwcfe_settings = (function ($, window, document) {
 	});
 
 	function jwcfe_add_new_row(form) {
+		if (typeof tinymce !== 'undefined' && tinymce.get('flabel_editor')) {
+			tinymce.get('flabel_editor').save();
+		}
+
 		var name = $(form).find("input[name=fname]").val();
 		var type = $(form).find("select[name=ftype]").val();
 		var label = $(form).find("input[name=flabel]").val();
 		var text = $(form).find("textarea[name=ftext]").val();
+		var texteditor = $(form).find("textarea[name=ftexteditor]").val();
 		var placeholder = $(form).find("input[name=fplaceholder]").val();
 		var min_time = $(form).find("input[name=i_min_time]").val();
 		var max_time = $(form).find("input[name=i_max_time]").val();
@@ -372,6 +388,7 @@ var jwcfe_settings = (function ($, window, document) {
 		newRow += '<input type="hidden" name="f_label[' + index + ']" class="f_label" value="' + label + '" />';
 
 		newRow += '<input type="hidden" name="f_text[' + index + ']" class="f_text" value="' + text + '" />';
+		newRow += '<input type="hidden" name="f_texteditor[' + index + ']" class="f_texteditor" value="' + (texteditor || '').replace(/"/g, "\\'") + '" />';
 
 		newRow += '<input type="hidden" name="f_placeholder[' + index + ']" class="f_placeholder" value="' + placeholder + '" />';
 		newRow += '<input type="hidden" name="f_maxlength[' + index + ']" class="f_maxlength" value="' + maxlength + '" />';
@@ -500,6 +517,9 @@ var jwcfe_settings = (function ($, window, document) {
 		var type = row.find(".f_type").val();
 		var label = row.find(".f_label").val();
 		var text = row.find(".f_text").val();
+
+		var texteditor = row.find(".f_texteditor").val();
+
 		var placeholder = row.find(".f_placeholder").val();
 
 		var min_time = row.find(".i_min_time").val();
@@ -553,6 +573,7 @@ var jwcfe_settings = (function ($, window, document) {
 		form.find("input[name=fplaceholder]").val(placeholder);
 		form.find("input[name=fmaxlength]").val(maxlength);
 
+		form.find("textarea[name=ftexteditor]").val(texteditor);
 
 		var optionsJson = row.find(".f_options").val();
 		populate_options_list(form, optionsJson);
@@ -658,6 +679,8 @@ var jwcfe_settings = (function ($, window, document) {
 
 		var label = $(form).find("input[name=flabel]").val();
 		var text = $(form).find("textarea[name=ftext]").val();
+		var texteditor = $(form).find("textarea[name=ftexteditor]").val();
+
 		var placeholder = $(form).find("input[name=fplaceholder]").val();
 		var min_time = $(form).find("input[name=i_min_time]").val();
 		var max_time = $(form).find("input[name=i_max_time]").val();
@@ -708,6 +731,8 @@ var jwcfe_settings = (function ($, window, document) {
 		row.find(".f_type").val(type);
 		row.find(".f_label").val(label);
 		row.find(".f_text").val(text);
+		row.find(".f_texteditor").val(texteditor);
+
 		row.find(".f_placeholder").val(placeholder);
 		row.find(".i_min_time").val(min_time);
 		row.find(".i_max_time").val(max_time);
@@ -864,7 +889,10 @@ var jwcfe_settings = (function ($, window, document) {
 		// Listen for close click from button 
 		var btncancel = document.getElementsByClassName('btncancel')[0];
 		btncancel.addEventListener('click', closejwcfeModal);
-
+const closeBtn = document.querySelector('.jwcfecloseBtn');
+    if (closeBtn) {
+        closeBtn.addEventListener('click', closejwcfeModal);
+    }
 
 	/*------------------------------------
 
@@ -898,73 +926,7 @@ var jwcfe_settings = (function ($, window, document) {
 		//optionsJson = optionsJson.replace(/"/g, "'");
 		return optionsJson;
 	}
-	// Function to handle keydown event for selecting text with Ctrl + A
-	// function enableSelectAllInputFields() {
-	// 	// Target all input fields with name "i_options_key[]" and "i_options_text[]"
-	// 	const inputs = document.querySelectorAll('input[name="i_options_key[]"], input[name="i_options_text[]"]');
-
-	// 	inputs.forEach(input => {
-	// 		input.addEventListener('keydown', function(event) {
-	// 			if (event.ctrlKey && event.key === 'a') { // Check for Ctrl + A
-	// 				event.preventDefault(); // Prevent default behavior
-	// 				this.select(); // Select the text in the input field
-	// 			}
-	// 		});
-	// 	});
-	// }
-
-
-	// function populate_options_list(elm, optionsJson) {
-
-	// 	var optionsHtml = "";
-
-	// 	if (optionsJson) {
-	// 		try {
-	// 			optionsJson = decodeURIComponent(optionsJson);
-	// 			var optionsList = $.parseJSON(optionsJson);
-
-	// 			if (optionsList) {
-
-	// 				jQuery.each(optionsList, function () {
-
-						
-
-	// 					var newkey = this.key.split('+').join(' ');
-
-	// 					var newtxt = this.text.split('+').join(' ');
-
-	// 					var html = '<div class="jwcfe-opt-row">';
-
-	// 					html += '<div style="width:280px;"><input type="text" name="i_options_key[]" value="' + newkey + '" placeholder="Option Value" style="width:280px;"/></div>';
-
-	// 					html += '<div style="width:280px;"><input type="text" name="i_options_text[]" value="' + newtxt + '" placeholder="Option Text" style="width:280px;"/></div>';
-
-	// 					html += '<div class="action-cell"><a href="javascript:void(0)" onclick="jwcfeAddNewOptionRow(this)" class="btn btn-blue" title="Add new option">+</a></div>';
-
-	// 					html += '<div class="action-cell"><a href="javascript:void(0)" onclick="jwcfeRemoveOptionRow(this)" class="btn btn-red"  title="Remove option">x</a></div>';
-
-	// 					html += '<div class="action-cell sort ui-sortable-handle">';
-	// 					html += '<span class="btn btn-tiny sort ui-jwcf-sortable-handle"  onclick="jwcfe_handler_OptionRow(this)" title="Drag to sort">⇅</span>';
-	// 					html += '</div>';
-
-	// 					html += '</div>';
-	// 					optionsHtml += html;
-	// 				});
-	// 			}
-	// 		} catch (err) {
-	// 			alert(err);
-	// 		}
-	// 	}
-
-
-	// 	var optionsTable = $(elm).find(".jwcfe-option-list .jwcfe-opt-container");
-	// 	if (optionsHtml) {
-	// 		optionsTable.html(optionsHtml);
-	// 	} else {
-	// 		optionsTable.html(OPTION_ROW_HTML);
-	// 	}
-	// 	enableSelectAllInputFields();
-	// }
+	
 	document.addEventListener('DOMContentLoaded', function() {
 		enableSelectAllInputFields(); // Ensure binding is applied when the DOM is ready
 	});
@@ -1070,7 +1032,17 @@ var jwcfe_settings = (function ($, window, document) {
 		var type = $(elm).val();
 
 		var form = $(elm).closest('form');
+		form.find('#fieldLabelText').text('Label of Field:');
+
+
 		showAllFields(form);
+		var requiredCheckboxRow = $('#requiredechk').closest('.checkbox-row');
+	
+			if (type === 'paragraph' || type === 'heading'|| type === 'hidden' ) {
+			requiredCheckboxRow.hide(); // Hide the required checkbox row
+			$('#requiredechk').prop('checked', false); // Uncheck it
+		}
+
 		if (type === 'select' || type === 'multiselect' ||  type === 'checkboxgroup') {
 			form.find('.rowValidate').hide();
 			form.find('.rowPricing').hide();
@@ -1083,7 +1055,9 @@ var jwcfe_settings = (function ($, window, document) {
 			form.find('.rowClass').show();
 			form.find('.pricetxt').hide();
 			form.find('.taxtxt').hide();
-			
+			form.find('.rowDescription2').hide();
+			form.find('.texteditor').hide();
+
 			form.find('.rowLabel1').appendTo('.jwcfe_left_col_child_div');
 
 		}
@@ -1101,6 +1075,7 @@ var jwcfe_settings = (function ($, window, document) {
 			form.find('.pricetxt').hide();
 			form.find('.taxtxt').hide();
 			form.find('.rowDescription2').hide();
+			form.find('.texteditor').hide();
 
 			
 		}
@@ -1114,7 +1089,9 @@ var jwcfe_settings = (function ($, window, document) {
 			form.find('.rowClass').show();
 			form.find('.pricetxt').hide();
 			form.find('.taxtxt').hide();
+			form.find('.texteditor').hide();
 			
+
 		}
 		else if (type === 'checkbox') {
 			form.find('.rowDescription2').hide();
@@ -1127,6 +1104,7 @@ var jwcfe_settings = (function ($, window, document) {
 			form.find('.rowPlaceholder').hide();
 			form.find('.rowDescription').show();
 			form.find('.rowClass').show(); //this is for field width
+			form.find('.texteditor').hide();
 
 		}
 		else if (type === 'textarea') {
@@ -1136,6 +1114,7 @@ var jwcfe_settings = (function ($, window, document) {
 			form.find('.rowOptions').hide();
 			form.find('.rowMaxlength').hide();
 			form.find('.rowValidate').hide();
+			form.find('.texteditor').hide();
 
 		}
 		else if (type === 'hidden') {
@@ -1153,11 +1132,16 @@ var jwcfe_settings = (function ($, window, document) {
 			form.find('.rowLabel1').hide();
 			// form.find('.rowName').hide();
 			form.find('.rowLabel').hide();
+			form.find('.texteditor').hide();
 
 
 		}
 		else if (type === 'heading') {
 			form.find('.rowDescription2').hide();
+			form.find('.rowLabel').show();
+			// form.find('.rowheading').show();
+    		form.find('#fieldLabelText').text('Heading Text:');
+			form.find('.rowLabel1').hide();
 
 			form.find('.rowRequired').hide();
 			form.find('.rowAccess').hide();
@@ -1166,25 +1150,42 @@ var jwcfe_settings = (function ($, window, document) {
 			form.find('.rowCustomText').hide();
 			form.find('.rowOptions').hide();
 			form.find('.rowPlaceholder').hide();
-			form.find('.rowDescription').show();
-			form.find('.rowClass').show(); //this is for field width
+			form.find('.rowDescription').hide();
+			form.find('.rowClass').hide(); //this is for field width
+			form.find('.texteditor').hide();
 
 		}
 		else if (type === 'paragraph') {
-			form.find('.rowDescription2').hide();
+    form.find('#fieldLabelText').text('Paragraph Text:');
+    form.find('.rowLabel').hide();
+    form.find('.texteditor').show(); // <-- show the texteditor
 
-			form.find('.rowRequired').hide();
-			form.find('.rowAccess').hide();
-			form.find('.rowMaxlength').hide();
-			form.find('.rowValidate').hide();
-			form.find('.rowCustomText').hide();
-			form.find('.rowOptions').hide();
-			form.find('.rowPlaceholder').show();
-			form.find('.rowDescription').show();
-			form.find('.rowClass').show(); //this is for field width
+    form.find('.rowDescription2').hide();
+    form.find('.rowRequired').hide();
+    form.find('.rowAccess').hide();
+    form.find('.rowMaxlength').hide();
+    form.find('.rowValidate').hide();
+    form.find('.rowCustomText').hide();
+    form.find('.rowOptions').hide();
+    form.find('.rowPlaceholder').hide();
+    form.find('.rowDescription').hide();
+    form.find('.rowClass').hide(); // for field width
+    form.find('.rowLabel1').hide();
 
+    if (typeof tinymce !== 'undefined' && !tinymce.get('flabel_editor')) {
+        wp.editor.initialize('flabel_editor', {
+            tinymce: {
+                wpautop: true,
+                plugins: 'lists,paste,link',
+                toolbar1: 'bold italic bullist numlist link',
+                menubar: false,
+                statusbar: false
+            },
+            quicktags: false
+        });
+    }
+		}
 
-		} 
 		else if (type === 'email') {
 			form.find('.rowLabel1').hide();
 			form.find('.rowDescription2').hide();
@@ -1194,6 +1195,7 @@ var jwcfe_settings = (function ($, window, document) {
 			form.find('.rowValidate').show();
 			form.find('.rowClass').show();
 			form.find('.rowDescription2').hide();
+			form.find('.texteditor').hide();
 
 		} 
 		else if (type === 'phone') {
@@ -1205,6 +1207,7 @@ var jwcfe_settings = (function ($, window, document) {
 			form.find('.rowValidate').show();
 			form.find('.rowClass').show();
 			form.find('.rowDescription2').hide();
+			form.find('.texteditor').hide();
 
 		} 
 		else if (type === 'password') {
@@ -1220,6 +1223,7 @@ var jwcfe_settings = (function ($, window, document) {
 			form.find('.rowDescription2').hide();
 			form.find('.rowPlaceholder').hide();
 
+			form.find('.texteditor').hide();
 
 		} 
 		else if (type === 'timepicker') {
@@ -1233,6 +1237,7 @@ var jwcfe_settings = (function ($, window, document) {
 			form.find('.rowDescription').show();
 			form.find('.rowClass').show(); //this is for field width
 			form.find('.rowDescription2').hide();
+			form.find('.texteditor').hide();
 
 		} 
 		else if (type === 'date') {
@@ -1247,7 +1252,8 @@ var jwcfe_settings = (function ($, window, document) {
 			form.find('.rowClass').show(); //this is for field width
 			form.find('.rowDescription2').hide();
 
-			
+				form.find('.texteditor').hide();
+		
 		} 
 		else if (type === 'month') {
 			form.find('.rowRequired').hide();
@@ -1260,6 +1266,7 @@ var jwcfe_settings = (function ($, window, document) {
 			form.find('.rowDescription').show();
 			form.find('.rowClass').show(); //this is for field width
 			form.find('.rowDescription2').hide();
+			form.find('.texteditor').hide();
 
 
 		} 
@@ -1274,6 +1281,7 @@ var jwcfe_settings = (function ($, window, document) {
 			form.find('.rowDescription').show();
 			form.find('.rowClass').show(); //this is for field width
 			form.find('.rowDescription2').hide();
+			form.find('.texteditor').hide();
 
 
 
@@ -1285,12 +1293,14 @@ var jwcfe_settings = (function ($, window, document) {
 			form.find('.rowMaxlength').show();
 			form.find('.rowValidate').hide();
 			form.find('.rowDescription2').hide();
+			form.find('.texteditor').hide();
 
 
 		} 
 		else {
 			form.find('.rowOptions').hide();
 			form.find('.rowCustomText').hide();
+			
 		}
 
 		$('.accountdialog form .rowPricing').hide();
@@ -1300,8 +1310,10 @@ var jwcfe_settings = (function ($, window, document) {
 	_fieldTypeChangeListnerblock = function fieldTypeChangeListnerblock(elm) {
 		var type = $(elm).val();
 		var form = $(elm).closest('form');
+
 		showAllFields(form);
-	
+			form.find('#fieldLabelText').text('Label of Field:');
+
 		// Fix for hiding the required checkbox when type is 'checkbox'
 		var requiredCheckboxRow = $('#requiredechk').closest('.checkbox-row');
 	

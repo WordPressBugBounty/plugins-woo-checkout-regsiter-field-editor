@@ -1,15 +1,16 @@
 <?php
 /**
- * Plugin Name: Checkout Fields Editor For WooCommerce (My Account)
+ * Plugin Name: Checkout Field Editor for Woocommerce - Checkout Manager
  * Description: Customize WooCommerce checkout and my account page edit woocommerce checkout fields (Add, Edit, Delete and re-arrange fields). best checkout fields editor plugin for woocommerce.
  * Author:      Jcodex
- * Version:     2.4.4
+ * Version:     2.4.5
  * Author URI:  https://www.jcodex.com
  * Plugin URI:  https://jcodex.com/plugins
  * Text Domain: jwcfe
  * Domain Path: /languages/
  * WC requires at least: 3.0.0
  * WC tested up to: 9.8.2
+ * Requires Plugins:  woocommerce
  *
  * Copyright (C) 2018-2024 Jcodex Inc.
  *
@@ -33,7 +34,7 @@ if (!defined('ABSPATH')) {
 }
 // Avoid defining constants if they are already defined.
 if (!defined('JWCFE_VERSION')) {
-    define('JWCFE_VERSION', '3.5.2');
+    define('JWCFE_VERSION', '2.4.5');
 }
 
 if (!defined('JWCFE_BASE_NAME')) {
@@ -58,6 +59,11 @@ if (!defined('JWCFE_URL')) {
 
     function jwcfe_activate() {
 
+        if (!class_exists( 'WooCommerce' )) {
+            deactivate_plugins( JWCFE_BASE_NAME );
+            wp_die( __( "WooCommerce is required for this plugin to work properly. Please activate WooCommerce.", 'jwcfe' ), "", array( 'back_link' => 1 ) );
+        }
+        
         if (is_plugin_active('woo-checkout-regsiter-field-editor-pro/main.php')) {
             deactivate_plugins('woo-checkout-regsiter-field-editor-pro/main.php');
         }

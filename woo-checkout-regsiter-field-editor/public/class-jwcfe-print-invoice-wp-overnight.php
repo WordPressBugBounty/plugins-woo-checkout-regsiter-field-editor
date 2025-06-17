@@ -10,7 +10,6 @@ class JWCFE_Print_Invoice_WP_Overnight {
         // Hook to add custom fields to the PDF invoice and packing slip
         add_action( 'wpo_wcpdf_after_order_details', array( $this, 'jwcfe_add_custom_fields_to_pdf' ), 10, 2 );
         add_action( 'wpo_wcpdf_after_order_data', array( $this, 'jwcfe_add_invoice_fields_to_pdf' ), 10, 2 );
-        // add_action( 'wpo_wcpdf_after_order_data', array( $this, 'jwcfe_add_packing_slip_fields_to_pdf' ), 10, 2 );
     }
 
     /**
@@ -114,44 +113,7 @@ class JWCFE_Print_Invoice_WP_Overnight {
      * @param WC_Order $order The order object.
      */
     
-    // public function jwcfe_add_packing_slip_fields_to_pdf($document_type, $order) {
-    //     if ('packing-slip' === $document_type) {
-    //         // Check if the checkbox is enabled
-    //         $is_checkbox_enabled = get_option('pdf', ''); // Retrieve the saved checkbox value
-    //         if ($is_checkbox_enabled !== '1') {
-    //             return; // Exit if the checkbox is not checked
-    //         }
-    
-    //         // Get the selected custom fields for the packing slip
-    //         $selected_packingslip_fields = get_option('jwcfe_selected_packingslip_fields', array());
-    
-    //         // Ensure we have an array of fields
-    //         if (is_array($selected_packingslip_fields) || !empty($selected_packingslip_fields)) {
-    //             // Loop through the selected fields and display them if they exist in the order meta
-    //             // foreach ($selected_packingslip_fields as $field) {
-    //             //     $custom_field_value = $order->get_meta($field); // Get the value from order meta
-    //             //     if ($custom_field_value) {
-    //             //         echo '<p style="padding-top: 5px !important;"><strong>' . esc_html($field) . ':</strong> ' . esc_html($custom_field_value) . '</p>';
-    //             //     }
-                    
-    //             // }
-    //             $counter = 0; // Initialize a counter
-    //             foreach ($selected_packingslip_fields as $field) {
-    //                 $custom_field_value = $order->get_meta($field); // Get the value from order meta
-    //                 if ($custom_field_value) {
-    //                     // Check if it's the first iteration
-    //                     if ($counter === 0) {
-    //                         echo '<p style="padding-top: 8px !important;"><strong>' . esc_html($field) . ':</strong> ' . esc_html($custom_field_value) . '</p>';
-    //                     } else {
-    //                         echo '<p><strong>' . esc_html($field) . ':</strong> ' . esc_html($custom_field_value) . '</p>';
-    //                     }
-    //                     $counter++; // Increment the counter
-    //                 }
-    //             }
-
-    //         }
-    //     }
-    // }
+ 
     
 }
 

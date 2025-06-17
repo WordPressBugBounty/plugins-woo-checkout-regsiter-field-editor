@@ -64,6 +64,7 @@ if (!class_exists('JWCFE_Public_Checkout')) :
 
 			add_filter('woocommerce_form_field_heading', array($this, 'jwcfe_checkout_fields_heading_field'), 10, 4);
 			add_filter('woocommerce_form_field_customcontent', array($this, 'jwcfe_checkout_fields_customcontent_field'), 10, 4);
+			
 			add_filter('woocommerce_form_field_paragraph', array($this, 'jwcfe_checkout_fields_pro_paragraph_field'), 10, 4);
 			
 
@@ -444,38 +445,42 @@ if (!class_exists('JWCFE_Public_Checkout')) :
 						$field .= '</fieldset></div>' . $after;
 						return $field;
 						break;
+					
 					case 'checkbox':
-							$field = '';
-							$field = '<div class="form-row custom-checkbox-field ' . esc_attr(implode(' ', $args['class'])) . '" id="' . esc_attr($key) . '_field">';
-							
-							$field .= '<fieldset>';
-							
-							$field .= '<div class="checkbox-wrapper custom-checkboxes">';
-							$field .= '<label for="' . esc_attr($args['id']) . '" style="margin-bottom: 0;">';
-							
-							// Get the previous value from the session
-							$session = WC()->session;
-							$previous_value = $session ? $session->get($key, '') : '';						
-							// Determine if the checkbox should be checked
-							$is_checked = (!empty($previous_value) || (!empty($args['checked']) && $args['checked'] === true));
+						$field = '';
+						$field = '<div class="form-row custom-checkbox-field ' . esc_attr(implode(' ', $args['class'])) . '" id="' . esc_attr($key) . '_field">';
 						
-							$field .= '<input type="checkbox" class="jwcfe-price-field" id="' . esc_attr($args['id']) . '" name="' . esc_attr($key) . '" value="' . esc_attr($key) . '"';
-							
-							// Set the checked attribute based on the previous value or the args
-							if ($is_checked) {
-								$field .= ' checked="checked"';
-							}
+						$field .= '<fieldset>';
+						$field .= '<div class="checkbox-wrapper custom-checkboxes">';
 						
-							$field .= ' />';
-							$field .= esc_html($args['label']) . $required . $tooltip;
-							$field .= '</label>';
-							$field .= '</div>'; 
-							
-							$field .= '</fieldset></div>' . $after;
-							
-							return $field;
+						// Get the previous value from the session
+						$session = WC()->session;
+						$previous_value = $session ? $session->get($key, '') : '';
 						
-							break;
+						// Determine if the checkbox should be checked
+						$is_checked = (!empty($previous_value) || (!empty($args['checked']) && $args['checked'] === true));
+
+						// Begin label with styling
+						$field .= '<label for="' . esc_attr($args['id']) . '" class="jwcfe-checkbox-label">';
+						
+						// Checkbox input
+						$field .= '<input type="checkbox" class="jwcfe-price-field" id="' . esc_attr($args['id']) . '" name="' . esc_attr($key) . '" value="' . esc_attr($key) . '"';
+						if ($is_checked) {
+							$field .= ' checked="checked"';
+						}
+						$field .= ' />';
+						
+						// Label text
+						$field .= '<span>' . esc_html($args['label']) . $required . $tooltip . '</span>';
+						$field .= '</label>'; // end label
+						
+						$field .= '</div>'; // end checkbox-wrapper
+						$field .= '</fieldset></div>' . $after;
+						
+						return $field;
+
+						break;
+
 					case 'month':
 								$fieldLabel = '';
 								$field = '<p class="form-row ' . esc_attr(implode(' ', $args['class'])) . '" id="' . esc_attr($key) . '_field">';
@@ -540,70 +545,6 @@ if (!class_exists('JWCFE_Public_Checkout')) :
 							return $field;
 						
 							break;
-					// case 'multiselect':
-					// 			$customer_user_id = get_current_user_id(); 
-					// 			$customer_orders = wc_get_orders(array(
-					// 				'meta_key' => '_customer_user',
-					// 				'meta_value' => $customer_user_id,
-					// 				'posts_per_page' => 1,
-					// 				'orderby' => 'ID',
-					// 				'orderby' => 'DESC'
-					// 			));
-								
-					// 			// Initialize selected values as an array
-					// 			$selectedVals = array();
-							
-					// 			// Retrieve selected values from customer orders
-					// 			foreach ($customer_orders as $order) {
-					// 				$order_id = method_exists($order, 'get_id') ? $order->get_id() : $order->id;
-							
-					// 				$order = wc_get_order($order_id);
-					// 				$valArr = $order->get_meta($key, true);
-							
-					// 				if (!empty($valArr) && is_array($valArr)) {
-					// 					// Merge existing values into selectedVals array
-					// 					$selectedVals = array_merge($selectedVals, $valArr);
-					// 				}
-					// 			}
-							
-					// 			// Handle previous values stored in session
-					// 			$session_values = WC()->session->get($key, array()); // Retrieve values from the session
-					// 			if (!empty($session_values) && is_array($session_values)) {
-					// 				$selectedVals = array_merge($selectedVals, $session_values); // Merge with selected values from orders
-					// 			}
-							
-					// 			$options = '';
-					// 			if (!empty($args['options_json'])) {
-					// 				foreach ($args['options_json'] as $option) {
-					// 					// Check if the option key is in selected values
-					// 					$isSelected = in_array($option['key'], $selectedVals) ? 'selected' : '';
-					// 					$options .= '<option value="' . esc_attr($option['key']) . '" ' . $isSelected . '>' . esc_html($option['text']) . '</option>';
-					// 				}
-							
-					// 				$field = '<p class="form-row ' . esc_attr(implode(' ', $args['class'])) . '" id="' . esc_attr($key) . '_field">';
-							
-					// 				if ($args['label']) {
-					// 					$fieldLabel = $args['label'];
-					// 					$field .= '<label for="' . esc_attr($args['id']) . '" class="' . implode(' ', $args['label_class']) . '">' . esc_html($args['label']) . $required . $tooltip . '</label>';
-					// 				}
-					// 				$class = '';
-							
-					// 				$field .= '<select data-placeholder="' . esc_attr__('Select some options', 'jwcfe') . '" multiple="multiple"';
-							
-					// 				if (!empty($args['custom_attributes']) && is_array($args['custom_attributes'])) {
-					// 					foreach ($args['custom_attributes'] as $customattr_key => $customattr_val) {
-					// 						$field .= ' ' . esc_attr($customattr_key) . '="' . esc_attr($customattr_val) . '" ';
-					// 					}
-					// 				}
-							
-					// 				$field .= 'name="' . esc_attr($key) . '[]" id="' . esc_attr($key) . '" class="checkout_chosen_select select wc-enhanced-select ' . esc_attr($class) . '">';
-									
-					// 				$field .= $options; // Add options to the select field
-					// 				$field .= '</select></p>' . $after;
-					// 			}
-					// 			return $field;
-							
-					// 		break;
 					case 'multiselect':
 						$customer_user_id = get_current_user_id(); 
 						$customer_orders = wc_get_orders(array(
@@ -881,8 +822,6 @@ if (!class_exists('JWCFE_Public_Checkout')) :
 									foreach ($args['options_json'] as $option) {
 										if (isset($option['key'], $option['text'])) { // Check if 'key' and 'text' exist
 											$selectedOptions = selected($selectedVal, $option['key'], false); // Use session or order value
-											// $option_value = !empty($display_value) ? esc_attr($display_value) : esc_attr($option['key']);
-											// $options .= '<option ' . $selectedOptions . ' value="' . $option_value . '">' . esc_html($option['text']) . '</option>';
 											$options .= '<option ' . $selectedOptions . ' value="' . esc_attr($option['key']) . '">' . esc_html($option['text']) . '</option>';
 
 										}
@@ -1122,11 +1061,11 @@ if (!class_exists('JWCFE_Public_Checkout')) :
 
 		
 		public function jwcfe_checkout_fields_heading_field($field, $key, $args, $value) {
-			if ((!empty($args['clear']))) $after = '';
+			if (!empty($args['clear'])) $after = '';
 			else $after = '';
-			
+
 			$data_validations = '';
-			
+
 			if ($args['required']) {
 				$args['class'][] = 'validate-required';
 				$data_validations = 'validate-required';
@@ -1134,31 +1073,20 @@ if (!class_exists('JWCFE_Public_Checkout')) :
 			} else {
 				$required = '';
 			}
-			
-			$args['maxlength'] = ($args['maxlength']) ? 'maxlength="' . absint($args['maxlength']) . '"' : '';
-			
-		
-			
-			$singleq = "'";
+
 			$fieldLabel = '';
-			
+
 			// Get the previous value from session
 			$session = WC()->session;
 			$previous_value = $session ? $session->get($key, '') : '';
-			$display_value = !empty($previous_value) ? $previous_value : $value; // Use session value if available
-			
+			$display_value = !empty($previous_value) ? $previous_value : $value;
+
 			// Start building the field HTML
-			$field = '<p class="form-row ' . esc_attr(implode(' ', $args['class'])) . '" id="' . esc_attr($key) . '_field"  data-validations="' . $data_validations . '" >';
+			$field = '<div class="form-row ' . esc_attr(implode(' ', $args['class'])) . '" id="' . esc_attr($key) . '_field" data-validations="' . $data_validations . '">';
 			$tooltip = $this->generate_tooltip($args['text']);
+
 			if ($args['label']) {
-				$fieldLabel = $args['label'];
-		
-				// $field .= '<label for="' . esc_attr($args['id']) . '" class="' . implode(' ', $args['label_class']) . '">' . esc_html($args['label']) . $required . $tooltip . '</label>';
-				$label_classes = '';
-				if (empty($label_classes)) {
-					$label_classes = 'form-label'; // or whatever class you want as default
-				}
-				
+				$label_classes = 'form-label';
 				if (!empty($args['label_class'])) {
 					if (is_array($args['label_class'])) {
 						$label_classes = implode(' ', $args['label_class']);
@@ -1166,28 +1094,18 @@ if (!class_exists('JWCFE_Public_Checkout')) :
 						$label_classes = esc_attr($args['label_class']);
 					}
 				}
+
 				$field .= '<label for="' . esc_attr($args['id']) . '" class="' . esc_attr($label_classes) . '">' . esc_html($args['label']) . $required . $tooltip . '</label>';
-				// error_log(print_r($args, true));
-				
 			}
-		
-			// Add the input field with the previous or default value
-			$field .= '<input type="text" class="input-text ' . esc_attr(implode(' ', $args['input_class'])) . '" name="' . esc_attr($args['id']) . '" id="' . esc_attr($args['id']) . '"';
-		
-			if (!empty($args['custom_attributes']) && is_array($args['custom_attributes'])) {
-				foreach ($args['custom_attributes'] as $customattr_key => $customattr_val) {
-					$field .= ' ' . esc_attr($customattr_key) . '="' . esc_attr($customattr_val) . '" ';
-				}
-			}
-		
-			// Set the placeholder and value
-			$field .= 'placeholder="Enter your text" ' . $args['maxlength'] . ' value="' . esc_attr($display_value) . '" />'; // Use display_value here
-		
-			$field .= '</p>' . $after;
-		
+
+			// 🔁 Replace input with H4 heading
+			$field .= '<h4 class="checkout-heading">' . esc_html($display_value) . '</h4>';
+
+			$field .= '</div>' . $after;
+
 			return $field;
 		}
-		
+
 		/**
 		 * jwcfe_checkout_fields_custom_field function.
 		 *
@@ -1270,19 +1188,9 @@ if (!class_exists('JWCFE_Public_Checkout')) :
 		
 			$args['maxlength'] = ($args['maxlength']) ? 'maxlength="' . absint($args['maxlength']) . '"' : '';
 		
-			
-			$fieldLabel = '';
-		
-			$field = '<p class="form-row ' . esc_attr(implode(' ', $args['class'])) . '" id="' . esc_attr($key) . '_field"  data-validations="' . $data_validations . '" >';
-			$tooltip = $this->generate_tooltip($args['text']);
-			if ($args['label']) {
-				$fieldLabel = $args['label'];
+			$field = '<div class="form-row ' . esc_attr(implode(' ', $args['class'])) . '" id="' . esc_attr($key) . '_field"  data-validations="' . $data_validations . '" >';
 				
-			// Add mouseover and mouseout events for the tooltip
-				$field .= '<label for="' . esc_attr($args['id']) . '" class="' . implode(' ', $args['label_class']) . '">' . $args['label'] . $required . $tooltip . '</label>';
-			}
-		
-			$field .= '<input type="text" class="input-text ' . esc_attr(implode(' ', $args['input_class'])) . '" name="' . esc_attr($args['id']) . '" id="' . esc_attr($args['id']) . '"';
+			$field .= '<div class="jwcfe-paragraph-content">' . wp_kses_post($args['texteditor']) . '</div>';
 		
 			if (!empty($args['custom_attributes']) && is_array($args['custom_attributes'])) {
 				foreach ($args['custom_attributes'] as $customattr_key => $customattr_val) {
@@ -1291,14 +1199,14 @@ if (!class_exists('JWCFE_Public_Checkout')) :
 			}
 		
 			// Use the value that we have ensured is from session or posted data
-			$field .= 'placeholder="Write some text" ' . $args['maxlength'] . ' value="' . esc_attr($display_value) . '" />';
 		
-			$field .= '</p>' . $after;
+			$field .= '</div>' . $after;
 		
 		
 			return $field;
 		}
-		
+
+
 		
 		/** Save Data function. */
 
@@ -1478,54 +1386,7 @@ if (!class_exists('JWCFE_Public_Checkout')) :
 				);
 			}
 		}
-		// public function jwcfe_billing_fields_lite_paid($fields, $country)
-		// {
-		// 	global $supress_field_modification;
-		// 	if ($supress_field_modification) {
-		// 		return $fields;
-		// 	}
-		// 	if (is_wc_endpoint_url('edit-address')) {
-		// 		return $fields;
-		// 	} else {
-		// 		$fields_set = array();
 		
-		// 		// Get Block tab fields
-		// 		$block_fields = get_option('jwcfe_wc_fields_block');
-		// 	error_log($block_fields)
-		// 		if (get_option('jwcfe_account_sync_fields') && get_option('jwcfe_account_sync_fields') == "on") {
-		// 			// Existing account and billing fields handling
-		// 			if (is_array(get_option('jwcfe_wc_fields_account'))) {
-		// 				foreach (get_option('jwcfe_wc_fields_account') as $name => $field) {
-		// 					if ($name == 'account_username' || $name == 'account_password') continue;
-		// 					if (isset($field['type']) && $field['type'] === 'hidden') $field['required'] = 0;
-		// 					if (isset($field['type']) && $field['type'] === 'heading') $field['required'] = 0;
-		// 					if (isset($field['type']) && $field['type'] === 'customcontent') $field['required'] = 0;
-		// 					if (isset($field['type']) && $field['type'] === 'file' && WC()->session->get($name)) $field['required'] = 0;
-		// 					$fields_set[$name] = $field;
-		// 				}
-		// 			}
-		
-		// 			$billing_fields = get_option('jwcfe_wc_fields_billing');
-		// 			if ($billing_fields && is_array($billing_fields)) {
-		// 				$fields_set = array_merge($billing_fields, $fields_set);
-		// 			}
-		// 		} else {
-		// 			$fields_set = get_option('jwcfe_wc_fields_billing');
-		// 		}
-		
-		// 		// Merge Block fields
-		// 		if ($block_fields && is_array($block_fields)) {
-		// 			$fields_set = array_merge($fields_set, $block_fields);
-		// 		}
-		
-		// 		return $this->jwcfe_prepare_address_fields_paid(
-		// 			$fields_set,
-		// 			$fields,
-		// 			'billing',
-		// 			$country
-		// 		);
-		// 	}
-		// }
 		/**
 		 * wc_checkout_fields_modify_shipping_fields function.
 		 *
@@ -1643,6 +1504,8 @@ if (!class_exists('JWCFE_Public_Checkout')) :
 					// Prepare new field
 					$new_field = $original_fields && isset($original_fields[$name]) ? $original_fields[$name] : $field;
 					$new_field['label'] = isset($field['label']) ? $field['label'] : '';
+					$new_field['texteditor'] = isset($field['texteditor']) ? $field['texteditor'] : '';
+
 					$new_field['placeholder'] = isset($field['placeholder']) ? $field['placeholder'] : '';
 					$new_field['class'] = isset($field['class']) && is_array($field['class']) ? $field['class'] : array();
 					$new_field['validate'] = isset($field['validate']) && is_array($field['validate']) ? $field['validate'] : array();
@@ -1716,6 +1579,10 @@ if (!class_exists('JWCFE_Public_Checkout')) :
 				
 			// Retrieve order
 			$order = wc_get_order($order->get_id());
+			
+			if(!$order){
+				return;
+			}
 		
 			// Loop through all custom fields to check if they should be displayed
 			foreach ($fields as $key => $options) {

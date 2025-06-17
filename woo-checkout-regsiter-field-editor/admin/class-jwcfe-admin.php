@@ -41,6 +41,7 @@ if (!class_exists('JWCFE_Admin')) :
 
 		public function enqueue_admin_scripts() {
 		    wp_enqueue_style('jwcfe-newstyle', JWCFE_ASSETS_URL_ADMIN . 'css/jwcfe-newstyle.css', array(), $this->version);
+    wp_enqueue_editor();
 
 		    $deps = array('jquery', 'jquery-ui-tabs', 'jquery-ui-dialog', 'jquery-ui-sortable', 'woocommerce_admin', 'select2', 'jquery-tiptip');
 
@@ -85,8 +86,8 @@ if (!class_exists('JWCFE_Admin')) :
 		{
 			$this->screen_id = add_submenu_page(
 				'woocommerce',
-				esc_html__('WooCommerce Checkout & Register Form Editor', 'jwcfe'),
-				esc_html__('Checkout & Register Editor', 'jwcfe'),
+				esc_html__('Checkout Field Editor for Woocommerce - Checkout Manager', 'jwcfe'),
+				esc_html__('Checkout Form Editor', 'jwcfe'),
 				'manage_woocommerce',
 				'jwcfe_checkout_register_editor',
 				array($this, 'the_editor')
@@ -120,21 +121,6 @@ if (!class_exists('JWCFE_Admin')) :
 		}
 		
 
-		// public function get_current_tab()
-		// {
-		// 	return isset($_GET['tab']) ? esc_attr($_GET['tab']) : 'fields';
-		// }
-
-
-		// public function get_current_section()
-		// {
-		// 	$tab = $this->get_current_tab();
-		// 	$section = '';
-		// 	if ($tab === 'fields') {
-		// 		$section = isset($_GET['section']) ? esc_attr($_GET['section']) : 'billing';
-		// 	}
-		// 	return $section;
-		// }
 		public function get_current_tab()
 		{
 			$allowed_tabs = array('fields', 'block'); // Define allowed tabs
@@ -143,25 +129,7 @@ if (!class_exists('JWCFE_Admin')) :
 			return in_array($tab, $allowed_tabs) ? $tab : 'fields';
 		}
 		
-		// public function get_current_section()
-		// {
-		// 	$tab = $this->get_current_tab();
-			
-		// 	// Define sections based on the selected tab
-		// 	$sections_by_tab = array(
-		// 		'fields' => array('billing', 'shipping', 'additional', 'account'),
-		// 		'block'  => array('billing', 'shipping', 'additional'),
-		// 	);
-		
-		// 	$default_section = 'billing'; // Default section
-		// 	$sections = isset($sections_by_tab[$tab]) ? $sections_by_tab[$tab] : array();
-		
-		// 	if (isset($_GET['section']) && in_array($_GET['section'], $sections)) {
-		// 		return sanitize_text_field($_GET['section']);
-		// 	}
-		
-		// 	return $default_section;
-		// }
+	
 		public function get_current_section()
 		{
 			$tab = $this->get_current_tab();
@@ -184,41 +152,24 @@ if (!class_exists('JWCFE_Admin')) :
 
 		public function compatibility_warning(){
 			?>
-			<div id="th_block_warning" style="border: 1px solid #002fb2; padding: 8px; background-color: #002fb2; color: #fff; border-radius: 5px;">
-				<div style="display: flex; align-items: center;">
-					<div style="padding-right: 10px; border-right: 1px solid; text-align: center; display: flex;">
-						<!-- <svg width="20" height="20" viewBox="0 0 16 12" fill="none" xmlns="http://www.w3.org/2000/svg">
-							<path d="M9.65703 0H0.496145C0.221904 0 0 0.208925 0 0.467124V2.30211C0 2.55966 0.221904 2.76924 0.496145 2.76924H9.65773C9.93127 2.76924 10.1539 2.56031 10.1539 2.30211V0.467124C10.1539 0.209582 9.93197 0 9.65773 0H9.65703Z" fill="white"/>
-							<path d="M14.737 4.61539H3.72396C3.45206 4.61539 3.2308 4.82431 3.2308 5.08251V6.9175C3.2308 7.17504 3.45137 7.38462 3.72396 7.38462H14.7377C15.0096 7.38462 15.2308 7.1757 15.2308 6.9175V5.08251C15.2308 4.82497 15.0103 4.61539 14.7377 4.61539H14.737Z" fill="white"/>
-							<path d="M14.7172 9.23077H12.0522C11.769 9.23077 11.5386 9.4397 11.5386 9.6979V11.5329C11.5386 11.7904 11.7683 12 12.0522 12H14.7172C15.0004 12 15.2309 11.7911 15.2309 11.5329V9.6979C15.2309 9.44036 15.0012 9.23077 14.7172 9.23077Z" fill="white"/>
-							<path d="M9.64009 9.23077H6.97526C6.69202 9.23077 6.46152 9.4397 6.46152 9.6979V11.5329C6.46152 11.7904 6.69129 12 6.97526 12H9.64009C9.92333 12 10.1538 11.7911 10.1538 11.5329V9.6979C10.1538 9.44036 9.92406 9.23077 9.64009 9.23077Z" fill="white"/>
-							<path d="M14.7172 0H12.0522C11.769 0 11.5386 0.208925 11.5386 0.467124V2.30211C11.5386 2.55966 11.7683 2.76924 12.0522 2.76924H14.7172C15.0004 2.76924 15.2309 2.56031 15.2309 2.30211V0.467124C15.2309 0.209582 15.0012 0 14.7172 0Z" fill="white"/>
-						</svg> -->
-						<img src="<?php echo plugin_dir_url(__FILE__) . 'assets/logo icon-01.svg'; ?>" alt="Plugin Logo" style="width: 20px; height: 20px;" />
+				<div>
+					
+					<a href="https://jcodex.com/plugins/woocommerce-custom-checkout-field-editor/" target="_blank" style="display: block; width: 100%;">
+						<img src="<?php echo plugin_dir_url(__FILE__) . 'assets/promo-banner.png'; ?>" alt="Banner Image" style="width: 100%; height: auto; display: block;" />
+					</a>
 
-					</div>
-					<div style="padding-left: 10px;">
-						<span>
-							<?php
-								echo wp_kses_post( 
-									__("Our Checkout and Register Editor is now fully compatible with the WooCommerce Checkout Block! This is just the beginning, more powerful features are on the way.If you're using the Block-based Checkout, be sure to navigate to the Block Checkout Fields tab to apply your changes. Otherwise, your customizations won’t appear.Need assistance or have questions? Our <a href='https://jcodex.com/support/' style='color: #ffffff; text-decoration: none; font-weight: 700;' onmouseover=\"this.style.textDecoration='none'; this.style.color='#ffffff';\" onmouseout=\"this.style.color='#ffffff'\">Support team</a>  is here to help, don’t hesitate to reach out!.")
-								);
-								
-								
-							?>
-						</span>
-					</div>
 				</div>
-			</div>
 			<?php
 		}
 
+
 		public function get_all_variations_of_product()
 		{
+			$attributes_dropdown = '';
 			if (isset($_POST['pID']) && is_array($_POST['pID']) && count($_POST['pID']) >= 1) {
 				$product_ids = $_POST['pID'];
 				$selected_variations = $_POST['selected_variations'];
-                $attributes_dropdown = '';
+                
                 foreach ($product_ids as $product_id) {
                     $product = wc_get_product($product_id);
                     $title = $product->get_name();
@@ -309,60 +260,7 @@ if (!class_exists('JWCFE_Admin')) :
 				</div>
 
 			<?php
-			// $tabs = array('fields' => 'Checkout & Account Fields');
-			// $tab  = isset($_GET['tab']) ? esc_attr($_GET['tab']) : 'fields';
-			// $sections = '';
-			// $section  = '';
-
-			// if ($tab === 'fields') {
-			// 	$sections = array('billing', 'shipping', 'additional', 'account');
-			// 	$section  = isset($_GET['section']) ? esc_attr($_GET['section']) : 'billing';
-			// }
-			// $tabs = array(
-			// 	'fields' => 'Checkout & Account Fields',
-			// 	'block'  => 'Block Checkout Fields'
-			// );
 			
-			// $allowed_tabs = array_keys($tabs); // Use keys directly
-			// $tab = isset($_GET['tab']) && in_array($_GET['tab'], $allowed_tabs) ? sanitize_text_field($_GET['tab']) : 'fields';
-			
-			// $sections = array();
-			// $section  = 'billing';
-			
-			// if ($tab === 'fields') {
-			// 	$sections = array('billing', 'shipping', 'additional', 'account');
-			// } elseif ($tab === 'block') {
-			// 	$sections = array('billing', 'shipping', 'additional');
-			// }
-			
-			// // Validate the section
-			// if (isset($_GET['section']) && in_array($_GET['section'], $sections)) {
-			// 	$section = sanitize_text_field($_GET['section']);
-			// }
-			
-			// echo '<h2 class="nav-tab-wrapper woo-nav-tab-wrapper">';
-
-			// foreach ($tabs as $key => $value) {
-			// 	$active = ($key == $tab) ? 'nav-tab-active' : '';
-			// 	echo '<a class="nav-tab ' . $active . '" href="' . admin_url('admin.php?page=jwcfe_checkout_register_editor&tab=' . $key) . '">' . $value . '</a>';
-			// }
-			// echo '</h2>';
-
-			// if (!empty($sections)) {
-			// 	echo '<ul class="jwcfe-sections">';
-			// 	$size = sizeof($sections);
-			// 	$i = 0;
-			// 	foreach ($sections as $key) {
-			// 		$i++;
-			// 		$active = ($key == $section) ? 'current' : '';
-
-			// 		$url = 'admin.php?page=jwcfe_checkout_register_editor&tab=fields&section=' . $key;
-			// 		echo '<li>';
-			// 		echo '<a href="' . admin_url($url) . '" class="' . $active . '" >' . ucwords($key) . ' ' . esc_html__('Fields', 'jwcfe') . ' <span class="circle"></span></a>';
-			// 		echo ($size > $i) ? '' : '';
-			// 		echo '</li>';
-			// 	}
-			// 	echo '</ul>';
 			$this->compatibility_warning();
 
 			// Define tabs - now with Accounts as a separate tab
@@ -416,35 +314,7 @@ if (!class_exists('JWCFE_Admin')) :
 			}
 			echo '</h2>';
 		
-			// Render sections
-			// if (!empty($sections)) {
-			// 	echo '<ul class="jwcfe-sections">';
-			// 	foreach ($sections as $key) {
-			// 		$active = ($key === $section) ? 'current' : '';
-			// 		$url = 'admin.php?page=jwcfe_checkout_register_editor&tab=' . esc_attr($tab) . '&section=' . esc_attr($key);
-					
-			// 		$display_text = match(true) {
-			// 			$tab === 'block' => match($key) {
-			// 				'billing'    => 'Contact Information',
-			// 				'shipping'   => 'Address',
-			// 				'additional' => 'Additional Information',
-			// 				default      => ucwords($key)
-			// 			},
-			// 			$tab === 'accounts' => 'Account Fields',  // Specific label for accounts tab
-			// 			default => match($key) {
-			// 				'billing'    => 'Billing Fields',
-			// 				'shipping'   => 'Shipping Fields',
-			// 				'additional' => 'Additional Fields',
-			// 				default      => ucwords($key) . ' Fields'
-			// 			}
-			// 		};
 		
-			// 		echo '<li><a href="' . esc_url(admin_url($url)) . '" class="' . esc_attr($active) . '">' 
-			// 			. esc_html__($display_text, 'jwcfe') 
-			// 			. ' <span class="circle"></span></a></li>';
-			// 	}
-			// 	echo '</ul>';
-			// }
 			if (!empty($sections) && $tab !== 'accounts') {
 				echo '<ul class="jwcfe-sections">';
 				foreach ($sections as $key) {
@@ -480,8 +350,6 @@ if (!class_exists('JWCFE_Admin')) :
 		public function save_options($section)
 		{
 			$tab = $this->get_current_tab();
-			// error_log($tab);
-			// if($tab==='fields'){
 				if (isset($_POST['woo_checkout_editor_nonce']) && wp_verify_nonce($_POST['woo_checkout_editor_nonce'], 'woo_checkout_editor_settings')) {
 					// Handle settings saving
 					$o_fields      = JWCFE_Helper::get_fields($section);
@@ -490,7 +358,12 @@ if (!class_exists('JWCFE_Admin')) :
 					$f_names       = !empty($_POST['f_name']) ? $_POST['f_name'] : array();
 					$f_names_new   = !empty($_POST['f_name_new']) ? $_POST['f_name_new'] : array();
 					$f_types       = !empty($_POST['f_type']) ? $_POST['f_type'] : array();
+					
 					$f_labels      = !empty($_POST['f_label']) ? $_POST['f_label'] : array();
+
+					$f_texteditor  = !empty($_POST['f_texteditor']) ? $_POST['f_texteditor'] : array();
+										// var_dump("upper",$f_texteditor);
+
 					$f_extoptions     = !empty($_POST['f_extoptions']) ? $_POST['f_extoptions'] : array();
 					$f_access    = !empty($_POST['f_access']) ? $_POST['f_access'] : array();
 					$f_placeholder = !empty($_POST['f_placeholder']) ? $_POST['f_placeholder'] : array();
@@ -680,6 +553,12 @@ if (!class_exists('JWCFE_Admin')) :
 						$fields[$name]['type']    	  = empty($f_types[$i]) ? $o_type : wc_clean($f_types[$i]);
 						$fields[$name]['label']   	  = empty($f_labels[$i]) ? '' : wp_kses_post(trim(stripslashes($f_labels[$i])));
 						$fields[$name]['text']   	  = empty($f_text[$i]) ? '' : $f_text[$i];
+
+						$fields[$name]['texteditor'] = empty($f_texteditor[$i]) 
+							? '' 
+							: wp_kses($f_texteditor[$i], $allowed_tags);
+						
+						
 						$fields[$name]['access']    = empty($f_access[$i]) ? false : true;
 						$fields[$name]['placeholder'] = empty($f_placeholder[$i]) ? '' : wc_clean(stripslashes($f_placeholder[$i]));
 						$fields[$name]['min_time'] = empty($i_min_time[$i]) ? '' : wc_clean(stripslashes($i_min_time[$i]));
@@ -714,6 +593,8 @@ if (!class_exists('JWCFE_Admin')) :
 						}
 
 						$fields[$name]['label']   	  = $fields[$name]['label'];
+						$fields[$name]['texteditor']   	  = $fields[$name]['texteditor'];
+
 						$fields[$name]['placeholder'] = esc_html__($fields[$name]['placeholder'], 'woocommerce');
 						$fields[$name]['maxlength'] = esc_html__($fields[$name]['maxlength'], 'woocommerce');
 					}
@@ -964,90 +845,6 @@ if (!class_exists('JWCFE_Admin')) :
 							wp_die('Security check failed. Please try again or contact support for assistance.', 'Security Error');
 						}
 					}
-					// else if ($tab === 'block') {
-					// 	if (!isset($section) || !isset($fields) || !is_array($fields)) {
-					// 		error_log("Error: Missing required variables or invalid data for the block tab.");
-					// 		return;
-					// 	}
-					// 	foreach ($fields as $index => &$field_data) { // Handle only select, checkbox, and text fields
-
-					// 		if (!is_array($field_data)) continue;
-						
-					// 		// Extract field type (default to 'text' if missing)
-					// 		$field_type = isset($field_data['type']) ? sanitize_text_field($field_data['type']) : 'text';
-						
-					// 		// Ensure 'options_json' is properly formatted or remove if empty
-					// 		if (isset($field_data['options_json']) && empty($field_data['options_json'][0]['key'])) {
-					// 			unset($field_data['options_json']);
-					// 		}
-						
-					// 		// Convert 'undefined' strings to empty and sanitize inputs
-					// 		foreach (['rules_action', 'rules_action_ajax'] as $key) {
-					// 			if (isset($field_data[$key])) {
-					// 				$field_data[$key] = $field_data[$key] === 'undefined' ? '' : sanitize_text_field($field_data[$key]);
-					// 			}
-					// 		}
-						
-					// 		// Handle only the required field types
-					// 		if (in_array($field_type, ['text', 'checkbox', 'select'])) {
-					// 			switch ($field_type) {
-					// 				case 'text':
-					// 					if (isset($field_data['value'])) {
-					// 						$field_data['value'] = sanitize_text_field($field_data['value']);
-					// 					}
-					// 					break;
-						
-					// 				case 'checkbox':
-										
-					// 					if (isset($field_data['value'])) {
-					// 						$field_data['value'] = ($field_data['value'] === '1' || $field_data['value'] === 'true') ? '1' : '0';
-					// 					}
-					// 					break;
-					// 				case 'select':
-					// 						if (isset($field_data['value'])) {
-					// 							$field_data['value'] = sanitize_text_field($field_data['value']);
-					// 						}
-					// 						if (isset($field_data['options_json']) && is_array($field_data['options_json'])) {
-					// 							foreach ($field_data['options_json'] as &$option) {
-					// 								if (isset($option['key']) && isset($option['value'])) {
-					// 									$option['key'] = sanitize_text_field($option['key']);
-					// 									$option['value'] = sanitize_text_field($option['value']);
-					// 								}
-					// 							}
-					// 							unset($option);
-					// 						}
-					// 						break;
-					// 			}
-					// 		} else {
-					// 			// Ignore other field types
-					// 			error_log("Skipping unsupported field type: " . $field_type);
-					// 		}
-						
-					// 		error_log("Processed Field: " . print_r($field_data, true));
-					// 	}
-					// 	unset($field_data); // Break reference
-						
-					// 	// Prepare option name
-					// 	$option_name = 'jwcfe_wc_fields_block_' . sanitize_key($section);
-					// 	error_log($option_name . ' - ' . maybe_serialize($fields));
-
-					// 	// Use maybe_serialize to handle arrays properly
-					// 	$result = update_option($option_name, maybe_serialize($fields));
-
-					// 	if ($result === false) {
-					// 		error_log("Error updating option for section: " . $section);
-							
-					// 		// Check if the option exists and compare values
-					// 		$current_value = get_option($option_name);
-					// 		if ($current_value === maybe_serialize($fields)) {
-					// 			error_log("No change needed, data is identical.");
-					// 		} else {
-					// 			error_log("Potential database write issue.");
-					// 		}
-					// 	} else {
-					// 		error_log("Successfully updated option for section: " . $section);
-					// 	}
-					// }
 					
 					
 					
