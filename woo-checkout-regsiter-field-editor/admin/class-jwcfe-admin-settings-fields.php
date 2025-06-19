@@ -105,8 +105,8 @@ if (!class_exists('JWCFE_Admin_Settings_Fields')) :
                 </style>';
             
                 // Display new and edit field forms
-                $this->jwcfe_new_field_form_pp();
-                $this->jwcfe_edit_field_form_pp();
+                // $this->jwcfe_new_field_form_pp();
+                // $this->jwcfe_edit_field_form_pp();
             
                 echo '</div>';
                 $this->jwcfe_field_popup();
@@ -355,9 +355,6 @@ if (!class_exists('JWCFE_Admin_Settings_Fields')) :
                 <?php
                 
                 $this->jwcfe_field_popup();
-                // $this->jwcfe_new_field_form_pp();
-                // $this->jwcfe_edit_field_form_pp();
-
                 ?>
 
                 </div>
@@ -456,7 +453,7 @@ if (!class_exists('JWCFE_Admin_Settings_Fields')) :
                                             <div class="">
                                                 <div class="">
                                                     <div class="rowfield" style="display: flex; align-items: center;">
-                                                            <div id="fieldlabel" style="width: 40%; margin-right: 10px;"><?php esc_html_e('Field Type:', 'jwcfe'); ?></div>
+                                                            <div class="fieldlabel" style="width: 40%; margin-right: 10px;"><?php esc_html_e('Field Type:', 'jwcfe'); ?></div>
                                                         <div>
                                                             <select name="ftype"  onchange="jwcfeFieldTypeChangeListner(this)">
                                                                 <?php foreach ($field_types as $value => $label) {
@@ -704,33 +701,7 @@ if (!class_exists('JWCFE_Admin_Settings_Fields')) :
             <?php
 
         }
-		/*
-	 * New field form popup
-	 */
-
-		function jwcfe_new_field_form_pp()
-		{
-
-			$field_types = $this->get_field_types();
-			$formTitle = 'New Checkout Field';
-			$addClass = '';
-
-		}
-
-		/*
-
-	 * New edit field form popup
-
-	 */
-
-		function jwcfe_edit_field_form_pp()
-		{
-
-			$field_types = $this->get_field_types();
-			$formTitle = 'Edit Checkout Field';
-			
-
-		}
+		
 
 		function render_checkout_fields_heading_row()
 		{
@@ -769,8 +740,8 @@ if (!class_exists('JWCFE_Admin_Settings_Fields')) :
                 <th colspan="7">
                     <button type="button" class="button button-primary" onclick="openNewFieldForm('<?php echo $section; ?>')"><?php _e('+ Add new field', 'jwcfe'); ?></button>
 
-                    <!-- <button type="button" class="button" onclick="removeSelectedFields()"><?php _e('Remove', 'jwcfe'); ?></button> -->
-                    <input type="submit" class="button" name="save_fields" value="<?php _e('Remove', 'jwcfe'); ?>" onclick="removeSelectedFields()">
+                    <button type="button" class="button" onclick="removeSelectedFields()"><?php _e('Remove', 'jwcfe'); ?></button>
+            
 
                     <button type="button" class="button" onclick="enableSelectedFields()"><?php _e('Show', 'jwcfe'); ?></button>
                     <button type="button" class="button" onclick="disableSelectedFields()"><?php _e('Hide', 'jwcfe'); ?></button>

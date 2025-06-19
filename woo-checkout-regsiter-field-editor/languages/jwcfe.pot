@@ -1,444 +1,553 @@
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: Checkout Field Manager for WooCommerce (My Account, "
-"Register)\n"
-"Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-02-07 05:59+0000\n"
-"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
-"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
-"Language-Team: \n"
-"Language: \n"
 "Plural-Forms: nplurals=INTEGER; plural=EXPRESSION;\n"
+"Project-Id-Version: Checkout Field Editor for Woocommerce - Checkout "
+"Manager\n"
+"POT-Creation-Date: 2025-06-19 15:59+0500\n"
+"PO-Revision-Date: 2025-06-19 15:58+0500\n"
+"Last-Translator: \n"
+"Language-Team: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Loco https://localise.biz/\n"
-"X-Loco-Version: 2.7.1; wp-6.7.1\n"
-"X-Domain: jwcfe"
+"X-Generator: Poedit 2.2\n"
+"X-Poedit-Basepath: ..\n"
+"X-Poedit-Flags-xgettext: --add-comments=translators:\n"
+"X-Poedit-WPHeader: main.php\n"
+"X-Poedit-SourceCharset: UTF-8\n"
+"X-Poedit-KeywordsList: __;_e;_n:1,2;_x:1,2c;_ex:1,2c;_nx:4c,1,2;esc_attr__;"
+"esc_attr_e;esc_attr_x:1,2c;esc_html__;esc_html_e;esc_html_x:1,2c;_n_noop:1,2;"
+"_nx_noop:3c,1,2;__ngettext_noop:1,2\n"
+"X-Poedit-SearchPath-0: .\n"
+"X-Poedit-SearchPathExcluded-0: *.js\n"
 
-#: admin/class-jwcfe-admin-settings-fields.php:390
-#: admin/class-jwcfe-admin-settings-fields.php:471
-#: admin/class-jwcfe-admin-settings-fields.php:556
-#: admin/class-jwcfe-admin-settings-fields.php:602
-#: admin/class-jwcfe-admin-settings-fields.php:629
+#: admin/class-jwcfe-admin-settings-block-fields.php:815
+#: admin/class-jwcfe-admin-settings-fields.php:381
+msgid "SUCCESS: Checkout fields successfully reset"
+msgstr ""
+
+#: admin/class-jwcfe-admin-settings-block-fields.php:842
+#: admin/class-jwcfe-admin-settings-fields.php:444
+msgid "General Settings"
+msgstr ""
+
+#: admin/class-jwcfe-admin-settings-block-fields.php:857
+#: admin/class-jwcfe-admin-settings-fields.php:456
+msgid "Field Type:"
+msgstr ""
+
+#: admin/class-jwcfe-admin-settings-block-fields.php:871
+#: admin/class-jwcfe-admin-settings-fields.php:470
+msgid "Name:"
+msgstr ""
+
+#: admin/class-jwcfe-admin-settings-block-fields.php:871
+#: admin/class-jwcfe-admin-settings-block-fields.php:950
+#: admin/class-jwcfe-admin-settings-block-fields.php:999
+#: admin/class-jwcfe-admin-settings-fields.php:470
+#: admin/class-jwcfe-admin-settings-fields.php:565
+#: admin/class-jwcfe-admin-settings-fields.php:614
 msgid "*"
 msgstr ""
 
-#: admin/class-jwcfe-admin-settings-fields.php:807
-msgid "+ Add new field"
+#: admin/class-jwcfe-admin-settings-block-fields.php:873
+#: admin/class-jwcfe-admin-settings-block-fields.php:885
+#: admin/class-jwcfe-admin-settings-block-fields.php:900
+#: admin/class-jwcfe-admin-settings-block-fields.php:967
+#: admin/class-jwcfe-admin-settings-fields.php:472
+#: admin/class-jwcfe-admin-settings-fields.php:483
+#: admin/class-jwcfe-admin-settings-fields.php:510
+#: admin/class-jwcfe-admin-settings-fields.php:582
+msgid "eg. new_field"
 msgstr ""
 
-#: admin/class-jwcfe-admin-settings-fields.php:459
-#: admin/class-jwcfe-admin-settings-fields.php:544
+#: admin/class-jwcfe-admin-settings-block-fields.php:875
+#: admin/class-jwcfe-admin-settings-fields.php:474
+msgid "Must be unique for each field"
+msgstr ""
+
+#: admin/class-jwcfe-admin-settings-block-fields.php:883
+#: admin/class-jwcfe-admin-settings-block-fields.php:966
+#: admin/class-jwcfe-admin-settings-fields.php:481
+#: admin/class-jwcfe-admin-settings-fields.php:581
+msgid "Label of Field:"
+msgstr ""
+
+#: admin/class-jwcfe-admin-settings-block-fields.php:889
+#: admin/class-jwcfe-admin-settings-fields.php:499
+msgid "Heading Text:"
+msgstr ""
+
+#: admin/class-jwcfe-admin-settings-block-fields.php:891
+#: admin/class-jwcfe-admin-settings-fields.php:501
+msgid "Enter Your Heading Text"
+msgstr ""
+
+#: admin/class-jwcfe-admin-settings-block-fields.php:895
+#: admin/class-jwcfe-admin-settings-fields.php:505
+msgid "Character limit:"
+msgstr ""
+
+#: admin/class-jwcfe-admin-settings-block-fields.php:899
+#: admin/class-jwcfe-admin-settings-fields.php:509
+msgid "Placeholder:"
+msgstr ""
+
+#: admin/class-jwcfe-admin-settings-block-fields.php:903
+#: admin/class-jwcfe-admin-settings-fields.php:513
+msgid "Validation:"
+msgstr ""
+
+#: admin/class-jwcfe-admin-settings-block-fields.php:905
+#: admin/class-jwcfe-admin-settings-fields.php:515
+msgid "Selecgt Validations"
+msgstr ""
+
+#: admin/class-jwcfe-admin-settings-block-fields.php:906
+#: admin/class-jwcfe-admin-settings-fields.php:516
+msgid "Email"
+msgstr ""
+
+#: admin/class-jwcfe-admin-settings-block-fields.php:907
+#: admin/class-jwcfe-admin-settings-fields.php:517
+msgid "Phone"
+msgstr ""
+
+#: admin/class-jwcfe-admin-settings-block-fields.php:912
+#: admin/class-jwcfe-admin-settings-block-fields.php:972
+#: admin/class-jwcfe-admin-settings-fields.php:523
+#: admin/class-jwcfe-admin-settings-fields.php:587
+msgid "Description:"
+msgstr ""
+
+#: admin/class-jwcfe-admin-settings-block-fields.php:918
+#: admin/class-jwcfe-admin-settings-fields.php:530
+msgid "Field Width:"
+msgstr ""
+
+#: admin/class-jwcfe-admin-settings-block-fields.php:921
+#: admin/class-jwcfe-admin-settings-fields.php:533
+msgid "Full-Width"
+msgstr ""
+
+#: admin/class-jwcfe-admin-settings-block-fields.php:922
+#: admin/class-jwcfe-admin-settings-fields.php:534
+msgid "Half-Width"
+msgstr ""
+
+#: admin/class-jwcfe-admin-settings-block-fields.php:927
+#: admin/class-jwcfe-admin-settings-fields.php:540
+msgid "Min. Time:"
+msgstr ""
+
+#: admin/class-jwcfe-admin-settings-block-fields.php:927
+#: admin/class-jwcfe-admin-settings-fields.php:540
+msgid "ex: 12:30am"
+msgstr ""
+
+#: admin/class-jwcfe-admin-settings-block-fields.php:932
+#: admin/class-jwcfe-admin-settings-fields.php:546
+msgid "Max. Time:"
+msgstr ""
+
+#: admin/class-jwcfe-admin-settings-block-fields.php:932
+#: admin/class-jwcfe-admin-settings-fields.php:546
+msgid "ex: 11:30pm"
+msgstr ""
+
+#: admin/class-jwcfe-admin-settings-block-fields.php:937
+#: admin/class-jwcfe-admin-settings-fields.php:551
+msgid "Time Format:"
+msgstr ""
+
+#: admin/class-jwcfe-admin-settings-block-fields.php:939
+#: admin/class-jwcfe-admin-settings-fields.php:553
 msgid "12-hour format"
 msgstr ""
 
-#: admin/class-jwcfe-admin.php:175
+#: admin/class-jwcfe-admin-settings-block-fields.php:940
+#: admin/class-jwcfe-admin-settings-fields.php:554
+msgid "24-hour format"
+msgstr ""
+
+#: admin/class-jwcfe-admin-settings-block-fields.php:944
+#: admin/class-jwcfe-admin-settings-fields.php:559
+msgid "Time Step:"
+msgstr ""
+
+#: admin/class-jwcfe-admin-settings-block-fields.php:944
+#: admin/class-jwcfe-admin-settings-fields.php:559
+msgid "In minutes, ex: 30"
+msgstr ""
+
+#: admin/class-jwcfe-admin-settings-block-fields.php:950
+#: admin/class-jwcfe-admin-settings-fields.php:565
+msgid "Allowed file types:"
+msgstr ""
+
+#: admin/class-jwcfe-admin-settings-block-fields.php:953
+#: admin/class-jwcfe-admin-settings-fields.php:568
+msgid "Select file types"
+msgstr ""
+
+#: admin/class-jwcfe-admin-settings-block-fields.php:954
+#: admin/class-jwcfe-admin-settings-fields.php:569
+msgid "Jpeg"
+msgstr ""
+
+#: admin/class-jwcfe-admin-settings-block-fields.php:955
+#: admin/class-jwcfe-admin-settings-fields.php:570
+msgid "Png"
+msgstr ""
+
+#: admin/class-jwcfe-admin-settings-block-fields.php:956
+#: admin/class-jwcfe-admin-settings-fields.php:571
+msgid "Gif"
+msgstr ""
+
+#: admin/class-jwcfe-admin-settings-block-fields.php:957
+#: admin/class-jwcfe-admin-settings-fields.php:572
+msgid "Doc"
+msgstr ""
+
+#: admin/class-jwcfe-admin-settings-block-fields.php:958
+#: admin/class-jwcfe-admin-settings-fields.php:573
+msgid "PDF"
+msgstr ""
+
+#: admin/class-jwcfe-admin-settings-block-fields.php:959
+#: admin/class-jwcfe-admin-settings-fields.php:574
+msgid "Text"
+msgstr ""
+
+#: admin/class-jwcfe-admin-settings-block-fields.php:960
+#: admin/class-jwcfe-admin-settings-fields.php:575
+msgid "PPT"
+msgstr ""
+
+#: admin/class-jwcfe-admin-settings-block-fields.php:987
+#: admin/class-jwcfe-admin-settings-fields.php:602
+msgid "User Can't edit this field"
+msgstr ""
+
+#: admin/class-jwcfe-admin-settings-block-fields.php:998
+#: admin/class-jwcfe-admin-settings-fields.php:613
+msgid "Options:"
+msgstr ""
+
+#: admin/class-jwcfe-admin-settings-block-fields.php:1007
+#: admin/class-jwcfe-admin-settings-fields.php:622
+msgid "Option Value"
+msgstr ""
+
+#: admin/class-jwcfe-admin-settings-block-fields.php:1008
+#: admin/class-jwcfe-admin-settings-fields.php:623
+msgid "Default Option Value"
+msgstr ""
+
+#: admin/class-jwcfe-admin-settings-block-fields.php:1011
+#: admin/class-jwcfe-admin-settings-fields.php:626
+msgid "Option Text"
+msgstr ""
+
+#: admin/class-jwcfe-admin-settings-block-fields.php:1012
+#: admin/class-jwcfe-admin-settings-fields.php:627
+msgid "Default Option Text"
+msgstr ""
+
+#: admin/class-jwcfe-admin-settings-block-fields.php:1130
+#: admin/class-jwcfe-admin-settings-fields.php:715
+msgid "Name"
+msgstr ""
+
+#: admin/class-jwcfe-admin-settings-block-fields.php:1132
+#: admin/class-jwcfe-admin-settings-fields.php:717
+msgid "Type"
+msgstr ""
+
+#: admin/class-jwcfe-admin-settings-block-fields.php:1134
+#: admin/class-jwcfe-admin-settings-fields.php:719
+msgid "Label"
+msgstr ""
+
+#: admin/class-jwcfe-admin-settings-block-fields.php:1136
+#: admin/class-jwcfe-admin-settings-fields.php:721
+msgid "Description"
+msgstr ""
+
+#: admin/class-jwcfe-admin-settings-block-fields.php:1138
+#: admin/class-jwcfe-admin-settings-fields.php:723
+msgid "Validation Rules"
+msgstr ""
+
+#: admin/class-jwcfe-admin-settings-block-fields.php:1140
+#: admin/class-jwcfe-admin-settings-fields.php:725
+msgid "Required"
+msgstr ""
+
+#: admin/class-jwcfe-admin-settings-block-fields.php:1142
+#: admin/class-jwcfe-admin-settings-fields.php:727
+msgid "Show / Hide"
+msgstr ""
+
+#: admin/class-jwcfe-admin-settings-block-fields.php:1144
+#: admin/class-jwcfe-admin-settings-fields.php:729
+msgid "Edit"
+msgstr ""
+
+#: admin/class-jwcfe-admin-settings-block-fields.php:1157
+#: admin/class-jwcfe-admin-settings-fields.php:741
+msgid "+ Add new field"
+msgstr ""
+
+#: admin/class-jwcfe-admin-settings-block-fields.php:1159
+#: admin/class-jwcfe-admin-settings-block-fields.php:1160
+#: admin/class-jwcfe-admin-settings-fields.php:743
+msgid "Remove"
+msgstr ""
+
+#: admin/class-jwcfe-admin-settings-block-fields.php:1161
+#: admin/class-jwcfe-admin-settings-fields.php:746
+msgid "Show"
+msgstr ""
+
+#: admin/class-jwcfe-admin-settings-block-fields.php:1162
+#: admin/class-jwcfe-admin-settings-fields.php:747
+msgid "Hide"
+msgstr ""
+
+#: admin/class-jwcfe-admin-settings-block-fields.php:1167
+#: admin/class-jwcfe-admin-settings-fields.php:752
+msgid "Save changes"
+msgstr ""
+
+#: admin/class-jwcfe-admin-settings-block-fields.php:1169
+#: admin/class-jwcfe-admin-settings-fields.php:754
+msgid "Reset to default fields"
+msgstr ""
+
+#: admin/class-jwcfe-admin-settings-fields.php:490
+msgid "Paragraph text:"
+msgstr ""
+
+#. Plugin Name of the plugin/theme
+#: admin/class-jwcfe-admin.php:89
+msgid "Checkout Field Editor for Woocommerce - Checkout Manager"
+msgstr ""
+
+#: admin/class-jwcfe-admin.php:90
+msgid "Checkout Form Editor"
+msgstr ""
+
+#: admin/class-jwcfe-admin.php:100
+msgid "WooCommerce"
+msgstr ""
+
+#: admin/class-jwcfe-admin.php:216
+msgid "Custom Fields WooCommerce Checkout Page Pro Version"
+msgstr ""
+
+#: admin/class-jwcfe-admin.php:217
+msgid ""
+"premium version provides more features to design your checkout and my "
+"account page."
+msgstr ""
+
+#: admin/class-jwcfe-admin.php:220
 msgid ""
 "18 field types are available: 15 input fields one field for title/heading "
 "and one for label."
 msgstr ""
 
-#: admin/class-jwcfe-admin-settings-fields.php:460
-#: admin/class-jwcfe-admin-settings-fields.php:545
-msgid "24-hour format"
+#: admin/class-jwcfe-admin.php:220
+msgid ""
+"Text, Hidden, Password, Textarea, Radio, Checkbox, Select, Multi-select, "
+"Date Picker, Heading, Label"
 msgstr ""
 
-#: admin/class-jwcfe-admin.php:181
+#: admin/class-jwcfe-admin.php:222
+msgid "You can add all of these fields on my account page too."
+msgstr ""
+
+#: admin/class-jwcfe-admin.php:223
+msgid ""
+"You can add more sections in addition to the core sections (billing, "
+"shipping and additional) in checkout page."
+msgstr ""
+
+#: admin/class-jwcfe-admin.php:225
+msgid "You Can Integration of My Account With Checkout page"
+msgstr ""
+
+#: admin/class-jwcfe-admin.php:226
 msgid "Add Conditionally based fields"
 msgstr ""
 
-#: admin/class-jwcfe-admin.php:359
-msgid "Allowed file types input field must be specified for file fields!."
+#: admin/class-jwcfe-admin.php:228
+msgid "See Plugin"
 msgstr ""
 
-#: admin/class-jwcfe-admin-settings-fields.php:471
-#: admin/class-jwcfe-admin-settings-fields.php:556
-msgid "Allowed file types:"
+#: admin/class-jwcfe-admin.php:230
+msgid "Documentation"
 msgstr ""
 
-#: admin/class-jwcfe-admin-settings-fields.php:408
-msgid "Character limit:"
+#: admin/class-jwcfe-admin.php:232
+msgid "You can talk to support any time if you have any queries"
 msgstr ""
 
-#: admin/class-jwcfe-admin.php:75
-msgid "Checkout & Register Editor"
-msgstr ""
-
-#. Name of the plugin
-msgid "Checkout Field Manager for WooCommerce (My Account, Register)"
-msgstr ""
-
-#: admin/class-jwcfe-admin.php:188
+#: admin/class-jwcfe-admin.php:233
 msgid "Click here"
 msgstr ""
 
-#: admin/class-jwcfe-admin.php:171
-msgid "Custom Fields WooCommerce Checkout Page Pro Version"
+#: admin/class-jwcfe-admin.php:236
+msgid "IF you found this plugin helpful,"
 msgstr ""
 
-#. Description of the plugin
+#: admin/class-jwcfe-admin.php:238
+msgid "Donate using PayPal"
+msgstr ""
+
+#: admin/class-jwcfe-admin.php:470 admin/class-jwcfe-admin.php:706
+msgid "Allowed file types input field must be specified for file fields!."
+msgstr ""
+
+#: admin/class-jwcfe-admin.php:840 admin/class-jwcfe-admin.php:852
+msgid "Your changes were saved."
+msgstr ""
+
+#: admin/class-jwcfe-admin.php:842 admin/class-jwcfe-admin.php:854
+msgid ""
+"Your changes have been successfully saved. There's nothing more to save."
+msgstr ""
+
+#: includes/class-jwcfe-helper.php:40 includes/class-jwcfe-helper.php:104
+msgid "Order Notes"
+msgstr ""
+
+#: includes/class-jwcfe-helper.php:41 includes/class-jwcfe-helper.php:105
+msgctxt "placeholder"
+msgid "Notes about your order, e.g. special notes for delivery."
+msgstr ""
+
+#: includes/class-jwcfe-helper.php:50 includes/class-jwcfe-helper.php:75
+#: includes/class-jwcfe-helper.php:112
+msgid "Email address"
+msgstr ""
+
+#: includes/class-jwcfe-helper.php:55 includes/class-jwcfe-helper.php:116
+msgid "Password"
+msgstr ""
+
+#: includes/class-jwcfe-helper.php:90
+msgid "First name"
+msgstr ""
+
+#: includes/class-jwcfe-helper.php:91
+msgid "Last name"
+msgstr ""
+
+#: includes/class-jwcfe-helper.php:92
+msgid "Country / Region"
+msgstr ""
+
+#: includes/class-jwcfe-helper.php:93
+msgid "Street address"
+msgstr ""
+
+#: includes/class-jwcfe-helper.php:94
+msgid "Apartment, suite, unit, etc."
+msgstr ""
+
+#: includes/class-jwcfe-helper.php:95
+msgid "Town / City"
+msgstr ""
+
+#: includes/class-jwcfe-helper.php:96
+msgid "State / County"
+msgstr ""
+
+#: includes/class-jwcfe-helper.php:97
+msgid "Postcode / ZIP"
+msgstr ""
+
+#: includes/email-feedback.php:15
+msgid "Plugin Deactivation Feedback"
+msgstr ""
+
+#: includes/email-feedback.php:26
+msgid "User Email:"
+msgstr ""
+
+#: includes/email-feedback.php:34
+msgid "Deactivation Reason:"
+msgstr ""
+
+#: includes/email-feedback.php:42
+msgid "Additional Comments:"
+msgstr ""
+
+#: includes/email-feedback.php:54
+#, php-format
+msgid "Date: %s"
+msgstr ""
+
+#: includes/email-feedback.php:55
+#, php-format
+msgid "Site: %s"
+msgstr ""
+
+#: includes/email-feedback.php:58
+msgid ""
+"This is an automated notification. Please do not reply directly to this "
+"email."
+msgstr ""
+
+#: main.php:64
+msgid ""
+"WooCommerce is required for this plugin to work properly. Please activate "
+"WooCommerce."
+msgstr ""
+
+#: main.php:78
+msgid "Settings"
+msgstr ""
+
+#: main.php:82
+msgid "Upgrade to Pro"
+msgstr ""
+
+#: public/class-jwcfe-public-checkout.php:413
+#: public/class-jwcfe-public-checkout.php:974
+#: public/class-jwcfe-public-checkout.php:1024
+#: public/class-jwcfe-public-checkout.php:1072
+#: public/class-jwcfe-public-checkout.php:1131
+#: public/class-jwcfe-public-checkout.php:1184
+msgid "required"
+msgstr ""
+
+#: public/class-jwcfe-public-checkout.php:596
+#: public/class-jwcfe-public-checkout.php:614
+msgid "Select some options"
+msgstr ""
+
+#: public/class-jwcfe-public-checkout.php:784
+#: public/class-jwcfe-public-checkout.php:976
+msgid "Please Select"
+msgstr ""
+
+#. Plugin URI of the plugin/theme
+#. Author URI of the plugin/theme
+msgid "https://www.jcodex.com"
+msgstr ""
+
+#. Description of the plugin/theme
 msgid ""
 "Customize WooCommerce checkout and my account page edit woocommerce checkout "
 "fields (Add, Edit, Delete and re-arrange fields). best checkout fields "
 "editor plugin for woocommerce."
 msgstr ""
 
-#: admin/class-jwcfe-admin-settings-fields.php:642
-msgid "Default Option Text"
-msgstr ""
-
-#: admin/class-jwcfe-admin-settings-fields.php:638
-msgid "Default Option Value"
-msgstr ""
-
-#: admin/class-jwcfe-admin-settings-fields.php:787
-msgid "Description"
-msgstr ""
-
-#: admin/class-jwcfe-admin-settings-fields.php:425
-#: admin/class-jwcfe-admin-settings-fields.php:429
-#: admin/class-jwcfe-admin-settings-fields.php:493
-#: admin/class-jwcfe-admin-settings-fields.php:517
-#: admin/class-jwcfe-admin-settings-fields.php:578
-msgid "Description:"
-msgstr ""
-
-#: admin/class-jwcfe-admin-settings-fields.php:692
-msgid "Do Not Include in Today’s Payment Total"
-msgstr ""
-
-#: admin/class-jwcfe-admin-settings-fields.php:478
-#: admin/class-jwcfe-admin-settings-fields.php:563
-msgid "Doc"
-msgstr ""
-
-#: admin/class-jwcfe-admin.php:185
-msgid "Documentation"
-msgstr ""
-
-#: admin/class-jwcfe-admin.php:193
-msgid "Donate using PayPal"
-msgstr ""
-
-#: admin/class-jwcfe-admin-settings-fields.php:795
-msgid "Edit"
-msgstr ""
-
-#: admin/class-jwcfe-admin-settings-fields.php:392
-#: admin/class-jwcfe-admin-settings-fields.php:403
-#: admin/class-jwcfe-admin-settings-fields.php:413
-#: admin/class-jwcfe-admin-settings-fields.php:488
-#: admin/class-jwcfe-admin-settings-fields.php:505
-#: admin/class-jwcfe-admin-settings-fields.php:573
-msgid "eg. new_field"
-msgstr ""
-
-#: admin/class-jwcfe-admin-settings-fields.php:419
-#: admin/class-jwcfe-admin-settings-fields.php:511
-msgid "Email"
-msgstr ""
-
-#: includes/class-jwcfe-helper.php:39
-msgid "Email address"
-msgstr ""
-
-#: admin/class-jwcfe-admin-settings-fields.php:452
-#: admin/class-jwcfe-admin-settings-fields.php:537
-msgid "ex: 11:30pm"
-msgstr ""
-
-#: admin/class-jwcfe-admin-settings-fields.php:446
-#: admin/class-jwcfe-admin-settings-fields.php:531
-msgid "ex: 12:30am"
-msgstr ""
-
-#: admin/class-jwcfe-admin-settings-fields.php:376
-msgid "Field Type:"
-msgstr ""
-
-#: admin/class-jwcfe-admin-settings-fields.php:436
-#: admin/class-jwcfe-admin-settings-fields.php:521
-msgid "Field Width:"
-msgstr ""
-
-#: admin/class-jwcfe-admin.php:246
-msgid "Fields"
-msgstr ""
-
-#: admin/class-jwcfe-admin-settings-fields.php:439
-#: admin/class-jwcfe-admin-settings-fields.php:524
-msgid "Full-Width"
-msgstr ""
-
-#: admin/class-jwcfe-admin-settings-fields.php:364
-msgid "General Settings"
-msgstr ""
-
-#: main.php:113
-msgid "Get Pro"
-msgstr ""
-
-#: admin/class-jwcfe-admin-settings-fields.php:477
-#: admin/class-jwcfe-admin-settings-fields.php:562
-msgid "Gif"
-msgstr ""
-
-#: admin/class-jwcfe-admin-settings-fields.php:440
-#: admin/class-jwcfe-admin-settings-fields.php:525
-msgid "Half-Width"
-msgstr ""
-
-#: admin/class-jwcfe-admin-settings-fields.php:811
-msgid "Hide"
-msgstr ""
-
-#. URI of the plugin
-msgid "https://jcodex.com/plugins"
-msgstr ""
-
-#. Author URI of the plugin
-msgid "https://www.jcodex.com"
-msgstr ""
-
-#: admin/class-jwcfe-admin.php:191
-msgid "IF you found this plugin helpful,"
-msgstr ""
-
-#: admin/class-jwcfe-admin-settings-fields.php:465
-#: admin/class-jwcfe-admin-settings-fields.php:550
-msgid "In minutes, ex: 30"
-msgstr ""
-
-#. Author of the plugin
+#. Author of the plugin/theme
 msgid "Jcodex"
-msgstr ""
-
-#: admin/class-jwcfe-admin-settings-fields.php:475
-#: admin/class-jwcfe-admin-settings-fields.php:560
-msgid "Jpeg"
-msgstr ""
-
-#: admin/class-jwcfe-admin-settings-fields.php:785
-msgid "Label"
-msgstr ""
-
-#: admin/class-jwcfe-admin-settings-fields.php:401
-#: admin/class-jwcfe-admin-settings-fields.php:487
-#: admin/class-jwcfe-admin-settings-fields.php:572
-msgid "Label of Field:"
-msgstr ""
-
-#: admin/class-jwcfe-admin-settings-fields.php:452
-#: admin/class-jwcfe-admin-settings-fields.php:537
-msgid "Max. Time:"
-msgstr ""
-
-#: admin/class-jwcfe-admin-settings-fields.php:446
-#: admin/class-jwcfe-admin-settings-fields.php:531
-msgid "Min. Time:"
-msgstr ""
-
-#: admin/class-jwcfe-admin-settings-fields.php:394
-msgid "Must be unique for each field"
-msgstr ""
-
-#: admin/class-jwcfe-admin-settings-fields.php:781
-msgid "Name"
-msgstr ""
-
-#: admin/class-jwcfe-admin-settings-fields.php:390
-msgid "Name:"
-msgstr ""
-
-#: admin/class-jwcfe-admin-settings-fields.php:610
-#: admin/class-jwcfe-admin-settings-fields.php:641
-msgid "Option Text"
-msgstr ""
-
-#: admin/class-jwcfe-admin-settings-fields.php:609
-#: admin/class-jwcfe-admin-settings-fields.php:637
-msgid "Option Value"
-msgstr ""
-
-#: admin/class-jwcfe-admin-settings-fields.php:602
-#: admin/class-jwcfe-admin-settings-fields.php:628
-msgid "Options:"
-msgstr ""
-
-#: includes/class-jwcfe-helper.php:29
-msgid "Order Notes"
-msgstr ""
-
-#: includes/class-jwcfe-helper.php:44
-msgid "Password"
-msgstr ""
-
-#: admin/class-jwcfe-admin-settings-fields.php:479
-#: admin/class-jwcfe-admin-settings-fields.php:564
-msgid "PDF"
-msgstr ""
-
-#: admin/class-jwcfe-admin-settings-fields.php:420
-#: admin/class-jwcfe-admin-settings-fields.php:512
-msgid "Phone"
-msgstr ""
-
-#: includes/class-jwcfe-helper.php:30
-msgctxt "placeholder"
-msgid "Notes about your order, e.g. special notes for delivery."
-msgstr ""
-
-#: admin/class-jwcfe-admin-settings-fields.php:412
-#: admin/class-jwcfe-admin-settings-fields.php:504
-msgid "Placeholder:"
-msgstr ""
-
-#: public/class-jwcfe-public-checkout.php:635
-#: public/class-jwcfe-public-checkout.php:816
-msgid "Please Select"
-msgstr ""
-
-#: admin/class-jwcfe-admin-settings-fields.php:476
-#: admin/class-jwcfe-admin-settings-fields.php:561
-msgid "Png"
-msgstr ""
-
-#: admin/class-jwcfe-admin-settings-fields.php:481
-#: admin/class-jwcfe-admin-settings-fields.php:566
-msgid "PPT"
-msgstr ""
-
-#: admin/class-jwcfe-admin.php:172
-msgid ""
-"premium version provides more features to design your checkout and my "
-"account page."
-msgstr ""
-
-#: admin/class-jwcfe-admin-settings-fields.php:809
-msgid "Remove"
-msgstr ""
-
-#: admin/class-jwcfe-admin-settings-fields.php:791
-msgid "Required"
-msgstr ""
-
-#: public/class-jwcfe-public-checkout.php:290
-#: public/class-jwcfe-public-checkout.php:814
-#: public/class-jwcfe-public-checkout.php:864
-#: public/class-jwcfe-public-checkout.php:912
-#: public/class-jwcfe-public-checkout.php:976
-#: public/class-jwcfe-public-checkout.php:1028
-msgid "required"
-msgstr ""
-
-#: admin/class-jwcfe-admin-settings-fields.php:818
-msgid "Reset to default fields"
-msgstr ""
-
-#: admin/class-jwcfe-admin-settings-fields.php:816
-msgid "Save changes"
-msgstr ""
-
-#: admin/class-jwcfe-admin.php:183
-msgid "See Plugin"
-msgstr ""
-
-#: admin/class-jwcfe-admin-settings-fields.php:418
-#: admin/class-jwcfe-admin-settings-fields.php:510
-msgid "Selecgt Validations"
-msgstr ""
-
-#: admin/class-jwcfe-admin-settings-fields.php:474
-#: admin/class-jwcfe-admin-settings-fields.php:559
-msgid "Select file types"
-msgstr ""
-
-#: public/class-jwcfe-public-checkout.php:466
-msgid "Select some options"
-msgstr ""
-
-#: admin/class-jwcfe-admin-settings-fields.php:810
-msgid "Show"
-msgstr ""
-
-#: admin/class-jwcfe-admin-settings-fields.php:793
-msgid "Show / Hide"
-msgstr ""
-
-#: admin/class-jwcfe-admin-settings-fields.php:301
-msgid "SUCCESS: Checkout fields successfully reset"
-msgstr ""
-
-#: admin/class-jwcfe-admin-settings-fields.php:480
-#: admin/class-jwcfe-admin-settings-fields.php:565
-msgid "Text"
-msgstr ""
-
-#: admin/class-jwcfe-admin.php:175
-msgid ""
-"Text, Hidden, Password, Textarea, Radio, Checkbox, Select, Multi-select, "
-"Date Picker, Heading, Label"
-msgstr ""
-
-#: admin/class-jwcfe-admin-settings-fields.php:457
-#: admin/class-jwcfe-admin-settings-fields.php:542
-msgid "Time Format:"
-msgstr ""
-
-#: admin/class-jwcfe-admin-settings-fields.php:465
-#: admin/class-jwcfe-admin-settings-fields.php:550
-msgid "Time Step:"
-msgstr ""
-
-#: admin/class-jwcfe-admin-settings-fields.php:783
-msgid "Type"
-msgstr ""
-
-#: admin/class-jwcfe-admin-settings-fields.php:594
-msgid "User Can't edit this field"
-msgstr ""
-
-#: admin/class-jwcfe-admin-settings-fields.php:789
-msgid "Validation Rules"
-msgstr ""
-
-#: admin/class-jwcfe-admin-settings-fields.php:416
-#: admin/class-jwcfe-admin-settings-fields.php:508
-msgid "Validation:"
-msgstr ""
-
-#: admin/class-jwcfe-admin.php:85
-msgid "WooCommerce"
-msgstr ""
-
-#: admin/class-jwcfe-admin.php:74
-msgid "WooCommerce Checkout & Register Form Editor"
-msgstr ""
-
-#: admin/class-jwcfe-admin.php:177
-msgid "You can add all of these fields on my account page too."
-msgstr ""
-
-#: admin/class-jwcfe-admin.php:178
-msgid ""
-"You can add more sections in addition to the core sections (billing, "
-"shipping and additional) in checkout page."
-msgstr ""
-
-#: admin/class-jwcfe-admin.php:180
-msgid "You Can Integration of My Account With Checkout page"
-msgstr ""
-
-#: admin/class-jwcfe-admin.php:187
-msgid "You can talk to support any time if you have any queries"
-msgstr ""
-
-#: admin/class-jwcfe-admin.php:488
-msgid "Your changes were not saved due to an error (or you made none!)."
-msgstr ""
-
-#: admin/class-jwcfe-admin.php:486
-msgid "Your changes were saved."
 msgstr ""

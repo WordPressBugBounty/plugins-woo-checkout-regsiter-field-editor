@@ -5,7 +5,7 @@ Tags: WooCommerce Checkout Field, Checkout Manager, Checkout form editor, My Acc
 Requires at least: 4.9
 Tested up to: 6.8.1
 Requires PHP: 5.6
-Stable tag: 2.4.5
+Stable tag: 2.4.6
 License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
@@ -338,32 +338,11 @@ If your store is growing or you’re running a serious eCommerce business, upgra
 
 == Why Jcodex ==
 
-At Jcodex Technologies, we're not just another plugin developer — we're your growth partner in eCommerce success.  
-We specialize in creating high-performance, conversion-focused solutions for WooCommerce, WordPress, and Shopify that empower store owners to take full control of their online experience without writing a single line of code.
+At Jcodex Technologies, we create powerful, easy-to-use plugins for WordPress and WooCommerce. Our tools help store owners customize and optimize their stores—without writing code.
 
-Here’s why thousands of store owners trust Jcodex:
+With over 10 years of experience, we build high-quality, scalable plugins trusted by thousands of store owners. Each plugin is built for real-world needs like performance, usability, and conversions.
 
-= ✅ Proven Expertise in eCommerce Plugin Development =
-
-With over a decade of experience in WordPress and WooCommerce development, our team knows what it takes to build stable, scalable, and powerful plugins that actually solve real-world problems.  
-Our plugins are used by 100,000+ active stores across the globe to improve conversions, streamline operations, and enhance the customer journey.  
-
-We don’t build plugins for the sake of features — we build them to solve business challenges.
-
-
-== What Our users Say about Us ==
-
-Sarah\_WooShopper
-
-I really like the Checkout Field Editor for WooCommerce by Jcodex. It is very easy to use. I wanted to add some extra fields to my checkout page, and it worked perfectly. This WooCommerce checkout field editor made everything simple. Thank you, Jcodex!
-
-AhmedTechie
-
-Great plugin! The checkout field editor helped me customize my checkout page without coding. I added dropdowns, text fields, and more.
-
-Emily\_ShopifyGirl
-
-I had a great experience with Checkout Field Editor for WooCommerce. It is very beginner-friendly. I used it to remove some unwanted fields and add new ones. I highly recommend this checkout field editor to anyone using WooCommerce.
+Join the growing community that relies on Jcodex to enhance their eCommerce experience and grow their online business.
 
 == Installation ==
 
@@ -375,6 +354,9 @@ You can install this plugin like any other WordPress plugin.
 7. Go to Dashboard:-> WooCommerce -> Checkout Form Editor
 
 == Frequently Asked Questions ==
+Complete help available on the Plugin Page on Website See.
+🔗 [Documentation Guide](https://jcodex.com/docs/woocommerce-custom-checkout-field-editor/)
+🔗 [Jcodex Support](https://jcodex.com/support/)
 
 = Is the plugin compatible with WooCommerce Checkout Blocks? =
 Yes, this plugin works compatible with **WooCommerce Checkout Blocks**. Right now, the block editor supports a few field types, and more options will be added in future updates to enhance functionality.
@@ -417,12 +399,27 @@ Yes, it supports multiple languages. You can translate custom field strings on t
 
 == Screenshots ==
 
-1. Add new field Popup Box
-2. How to add dropdown field using Custom Fields WooCommerce Checkout Page
-3. How your fields will look on front end
-4. All Fields table on plugin page
+1. WooCommerce > Checkout Form Editor > Classic Checkout Fields
+2. WooCommerce > Checkout Form Editor > Block Checkout Fields
+3. Add new Field
+4. 17 field types available
+5. Rearrange fields (change field’s display order)
+6. Edit field properties
+7. Edit existing field
+8. Reset field properties to default (revert all changes)
+9. Click to save changes show hide / eg.
 
 == Changelog ==
+= 2.4.6 =
+--fix buttons layout conflict with wordpress--
+--add new translations in pot domain file--
+--fix css conflicts--
+ 
+= 2.4.5 = 
+--fix heading field issue--
+--custom paragraph content field work correctly now--
+--fix dropdown option layout in the field settings--
+--remove php warning from error log--
 
 = 2.3.9 =
 --layout updated!

@@ -7,7 +7,7 @@
 	font-size: var(--wp--preset--font-size--small);
 	padding: .9rem 1.1rem;
   }
-  .custom-phone-style{
+.custom-phone-style{
 	box-sizing: border-box;
 	width: 100%;
 	margin: 0;
@@ -16,23 +16,8 @@
 	font-size: var(--wp--preset--font-size--small);
 	padding: .9rem 1.1rem;
   }
-  input.select2-search__field {
-	/* border: 2px solid rgb(9, 255, 0); */
-    padding-top: 0px !important;        
-    padding-bottom: 1px !important;      
-    line-height: normal !important;      
-    height: auto !important;            
-	padding-left: 0px !important;
-}
-ul.select2-selection__rendered{
 
-    /* border: 1px solid red;  */
-    /* padding-top: 0px !important; */
-    /* padding-bottom: 1px !important; */
-    line-height: normal !important;
-    height: auto !important;
-}
-  #custom-file-style{
+#custom-file-style{
 	box-sizing: border-box;
     width: 100%;
     margin: 0;
@@ -43,20 +28,8 @@ ul.select2-selection__rendered{
     border-radius: 2px;
     cursor: pointer;
   }
-input.hasDatepicker {
-	background: url("calender.png")  no-repeat right 10px center;
-	background-size: 5%;
-  cursor: pointer;
-  border: 1px solid grey;
-    border-radius: 2px;
-}
 
-.select2-selection--single .select2-selection__clear {
-  display: none !important;
-}
-body{
-  overflow-x: hidden !important;
-}
+
 .custom-checkbox-style{
 padding-top: 10px;
 }
@@ -103,29 +76,13 @@ margin-bottom: 0px;
     font-weight: 600;
 }
 
-   
-
-
-/* .custom-checkboxes label {
-  margin-left: 10px;
-  font-size: 16px;
-  font-weight: 200;
-} */
 .jwcfe-checkbox-label {
   display: flex;
   align-items: center;
   gap: 10px;
   line-height: 1.4;
 }
-.woocommerce-js .select2-container .select2-dropdown,
-.woocommerce-js .select2-container .select2-search__field,
-.woocommerce-page .select2-container .select2-dropdown,
-.woocommerce-page .select2-container .select2-search__field {
-    border: none !important;
-}
-.select2-search__field{
-margin-left: 7px !important;
-}
+
 .jwcfe-checkbox-label input[type="checkbox"] {
   margin: 0;
   vertical-align: middle;
@@ -141,9 +98,6 @@ margin-left: 7px !important;
     color: #0073aa; /* Change color when checkbox is checked */
 }
 
-.woocommerce form .form-row .select2-container {
-	width: 100% !important;
-}
 
 .custom-radio-container .custom-radio-wrapper {
 	display: flex;
@@ -152,14 +106,3 @@ margin-left: 7px !important;
 .custom-radio-value {
     margin-top: 14px;
 }
-/* input[type="month"]::before{
-	content: attr(placeholder) !important;
-	color: #aaa;
-	width: 100%;
-  } */
-  
-  /* input[type="month"]:focus::before,
-  input[type="month"]:active::before {
-	content: "";
-	width: 0%;
-  } */
