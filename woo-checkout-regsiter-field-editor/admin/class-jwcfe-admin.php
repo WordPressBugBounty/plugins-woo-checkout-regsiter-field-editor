@@ -40,6 +40,10 @@ if (!class_exists('JWCFE_Admin')) :
 		  
 
 		public function enqueue_admin_scripts() {
+
+			 // Only load on our specific admin page
+    if (isset($_GET['page']) && $_GET['page'] === 'jwcfe_checkout_register_editor') {
+
 		    wp_enqueue_style('jwcfe-newstyle', JWCFE_ASSETS_URL_ADMIN . 'css/jwcfe-newstyle.css', array(), $this->version);
     wp_enqueue_editor();
 
@@ -78,6 +82,8 @@ if (!class_exists('JWCFE_Admin')) :
 
 				
 		    ));
+
+		}
 		}
 
 
@@ -116,6 +122,10 @@ if (!class_exists('JWCFE_Admin')) :
 				$Fields_settings->checkout_form_field_editor();
 			}else if ($tab === 'block') {
 				$blocks_Setting->checkout_form_field_editor();
+			} elseif ($tab === 'accounts') {
+
+				// Use the same renderer (this class already knows how to render the account section)
+				$Fields_settings->checkout_form_field_editor();
 			}
 			
 		}
@@ -123,27 +133,31 @@ if (!class_exists('JWCFE_Admin')) :
 
 		public function get_current_tab()
 		{
-			$allowed_tabs = array('fields', 'block'); // Define allowed tabs
+			$allowed_tabs = array('fields', 'block', 'accounts'); // include accounts
 			$tab = isset($_GET['tab']) ? sanitize_text_field($_GET['tab']) : 'fields';
-		
-			return in_array($tab, $allowed_tabs) ? $tab : 'fields';
+
+			return in_array($tab, $allowed_tabs, true) ? $tab : 'fields';
 		}
+
 		
 	
 		public function get_current_section()
 		{
 			$tab = $this->get_current_tab();
 			
-			// Define sections based on the selected tab
+			  // Define sections based on the selected tab
 			$sections_by_tab = array(
-				'fields' => array('billing', 'shipping', 'additional', 'account'),
-				'block'  => array('billing', 'shipping', 'additional'),
+				'fields'   => array('billing', 'shipping', 'additional', 'account'),
+				'block'    => array('billing', 'shipping', 'additional'),
+				'accounts' => array('account'), // <-- add this
 			);
 
-			$default_section = 'billing'; // Default section
+			// Default section per tab
+			$default_section = ($tab === 'accounts') ? 'account' : 'billing';
+
 			$sections = isset($sections_by_tab[$tab]) ? $sections_by_tab[$tab] : array();
 
-			if (isset($_GET['section']) && in_array($_GET['section'], $sections)) {
+			if (isset($_GET['section']) && in_array($_GET['section'], $sections, true)) {
 				return sanitize_text_field($_GET['section']);
 			}
 
@@ -321,22 +335,39 @@ if (!class_exists('JWCFE_Admin')) :
 					$active = ($key === $section) ? 'current' : '';
 					$url = 'admin.php?page=jwcfe_checkout_register_editor&tab=' . esc_attr($tab) . '&section=' . esc_attr($key);
 			
-					$display_text = match(true) {
-						$tab === 'block' => match($key) {
-							'billing'    => 'Contact Information',
-							'shipping'   => 'Address',
-							'additional' => 'Additional Information',
-							default      => ucwords($key)
-						},
-						$tab === 'accounts' => 'Account Fields',
-						default => match($key) {
-							'billing'    => 'Billing Fields',
-							'shipping'   => 'Shipping Fields',
-							'additional' => 'Additional Fields',
-							default      => ucwords($key) . ' Fields'
-						}
-					};
-			
+              if ($tab === 'block') {
+				switch ($key) {
+					case 'billing':
+						$display_text = 'Contact Information';
+						break;
+					case 'shipping':
+						$display_text = 'Address';
+						break;
+					case 'additional':
+						$display_text = 'Additional Information';
+						break;
+					default:
+						$display_text = ucwords($key);
+						break;
+				}
+			} elseif ($tab === 'accounts') {
+				$display_text = 'Account Fields';
+			} else {
+				switch ($key) {
+					case 'billing':
+						$display_text = 'Billing Fields';
+						break;
+					case 'shipping':
+						$display_text = 'Shipping Fields';
+						break;
+					case 'additional':
+						$display_text = 'Additional Fields';
+						break;
+					default:
+						$display_text = ucwords($key) . ' Fields';
+						break;
+				}
+			}
 					echo '<li><a href="' . esc_url(admin_url($url)) . '" class="' . esc_attr($active) . '">' 
 						. esc_html__($display_text, 'jwcfe') 
 						. ' <span class="circle"></span></a></li>';

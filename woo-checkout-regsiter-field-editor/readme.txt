@@ -5,7 +5,7 @@ Tags: WooCommerce Checkout Field, Checkout Manager, Checkout form editor, My Acc
 Requires at least: 4.9
 Tested up to: 6.8.1
 Requires PHP: 5.6
-Stable tag: 2.4.6
+Stable tag: 2.4.7
 License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
@@ -410,6 +410,12 @@ Yes, it supports multiple languages. You can translate custom field strings on t
 9. Click to save changes show hide / eg.
 
 == Changelog ==
+= 2.4.7 =
+--fix bugs and compatibility issues with PHP 8.0+--
+--Make changes in field popup--
+--Fix issue with pdf invoices plugin
+--Fix css conflicts--
+
 = 2.4.6 =
 --fix buttons layout conflict with wordpress--
 --add new translations in pot domain file--

@@ -38,8 +38,10 @@ if (!class_exists('JWCFE_Admin_Settings_Fields')) :
 
 		public function checkout_form_field_editor()
 		{
+          
             
 			$section = $this->get_current_section();
+        
             if ($section == 'account') {
                 
                 echo '<div class="wrap woocommerce jwcfe-wrap"><div class="icon32 icon32-attributes" id="icon-woocommerce"><br /></div>';
@@ -467,11 +469,9 @@ if (!class_exists('JWCFE_Admin_Settings_Fields')) :
                                                     </div>
 
                                                     <div class="rowName" style="display: flex; align-items: center;">
-                                                        <div class="fieldlabel"  style="width: 40%;margin-right: 70px;margin-bottom: 22px;"><?php esc_html_e('Name:', 'jwcfe'); ?><font color="red"><?php echo esc_html__('*', 'jwcfe'); ?></font></div>
+                                                        <div class="fieldlabel"  style="width: 40%;margin-right: 70px;"><?php esc_html_e('Name:', 'jwcfe'); ?><font color="red"><?php echo esc_html__('*', 'jwcfe'); ?></font></div>
                                                         <div>
-                                                            <input type="text" value="" name="fname" placeholder="<?php esc_attr_e('eg. new_field', 'jwcfe'); ?>" require />
-                                                            <br>
-                                                            <span style="font-size: 10px;"><?php esc_html_e('Must be unique for each field', 'jwcfe'); ?></span>
+                                                            <input type="text" value="<?php echo esc_attr($_GET['section'].'_', 'jwcfe'); ?>" name="fname" placeholder="" require />
                                                             <br><span class="err_msgs"></span>
                                                         </div>
 
@@ -480,7 +480,7 @@ if (!class_exists('JWCFE_Admin_Settings_Fields')) :
                                                     <div class="rowLabel" style="display: flex; align-items: center;">
                                                         <div class="fieldlabel" id="fieldLabelText"   style="width: 40%; margin-right: 10px;"><?php esc_html_e('Label of Field:', 'jwcfe'); ?></div>
                                                         <div>
-                                                            <input type="text" name="flabel" placeholder="<?php esc_attr_e('eg. new_field', 'jwcfe'); ?>" />
+                                                            <input type="text" name="flabel" placeholder="" />
                                                         </div>
                                                     </div>
 
@@ -507,7 +507,7 @@ if (!class_exists('JWCFE_Admin_Settings_Fields')) :
                                                     </div>
                                                     <div class="rowPlaceholder" style="display: flex; align-items: center;">
                                                         <div class="fieldlabel" style="width: 40%; margin-right: 10px;"><?php esc_html_e('Placeholder:', 'jwcfe'); ?></div>
-                                                        <div><input type="text" name="fplaceholder" placeholder="<?php esc_attr_e('eg. new_field', 'jwcfe'); ?>" style="" /></div>
+                                                        <div><input type="text" name="fplaceholder" placeholder="" style="" /></div>
                                                     </div>
                                                     <div class="rowValidate" style="display: flex; align-items: center;">
                                                         <div class="fieldlabel" style="width: 40%; margin-right: 10px;"><?php esc_html_e('Validation:', 'jwcfe'); ?></div>
@@ -579,7 +579,7 @@ if (!class_exists('JWCFE_Admin_Settings_Fields')) :
 
                                                     <div class="rowLabel1" style="display: flex; align-items: center;">
                                                         <div class="fieldlabel" style="width: 40%; margin-right: 10px;"><?php esc_html_e('Label of Field:', 'jwcfe'); ?></div>
-                                                        <div><input type="text" name="flabel" placeholder="<?php esc_attr_e('eg. new_field', 'jwcfe'); ?>" />
+                                                        <div><input type="text" name="flabel" placeholder="" />
                                                         </div>
                                                     </div>
 
