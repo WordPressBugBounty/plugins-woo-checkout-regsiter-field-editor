@@ -38,10 +38,8 @@ if (!class_exists('JWCFE_Admin_Settings_Fields')) :
 
 		public function checkout_form_field_editor()
 		{
-          
-            
 			$section = $this->get_current_section();
-        
+           
             if ($section == 'account') {
                 
                 echo '<div class="wrap woocommerce jwcfe-wrap"><div class="icon32 icon32-attributes" id="icon-woocommerce"><br /></div>';
@@ -115,8 +113,8 @@ if (!class_exists('JWCFE_Admin_Settings_Fields')) :
             
             }
             else{
-                
                 echo '<div class="wrap woocommerce jwcfe-wrap"><div class="icon32 icon32-attributes" id="icon-woocommerce"><br /></div>';
+                echo '<h2>'. esc_html__('Checkout Form Editor', 'jwcfe') .'</h2>';
                 $this->render_tabs_and_sections();
                 if (isset($_POST['save_fields']))
                     echo $this->save_options($section);
@@ -141,6 +139,7 @@ if (!class_exists('JWCFE_Admin_Settings_Fields')) :
                         <tbody class="ui-sortable">
                             <?php
                             $i = 0;
+                            
                             foreach (JWCFE_Helper::get_fields($section) as $name => $options) :
                                 if (isset($options['custom']) && $options['custom'] == 1) {
                                     $options['custom'] = '1';
@@ -344,7 +343,7 @@ if (!class_exists('JWCFE_Admin_Settings_Fields')) :
                                         <td class="td_edit">
                                             <div class="f_edit_btn" <?php echo ($options['enabled'] == 1 ? '' : 'disabled') ?> onclick="openEditFieldForm(this,<?php echo $i; ?>)">
                                                 <img class="edit-icon" src="<?php echo plugin_dir_url(dirname(__FILE__)) . 'admin/assets/css/pencil.png'; ?>" alt="" width="12" height="14">
-                                                <?php _e('', 'jwcfe'); ?>
+                                               
                                             </div>
                                         </td>
                                     </tr>
@@ -439,7 +438,8 @@ if (!class_exists('JWCFE_Admin_Settings_Fields')) :
                                
                                 <div class="jwcfemodal-content-main-div" style="position: sticky;top: 0;z-index: 1000;">
                                 <div class="jwcfemodal-content-div">
-                                    <span class="jwcfecloseBtn" onclick="closejwcfeModal()">&times;</span>
+                                    <span class="jwcfecloseBtn" role="button" aria-label="Close">&times;</span>
+
                                     <h2 class="ui-dialog-title"><?php echo $formTitle; ?></h2>
                                 </div>
                                 <ul style="position: sticky;top: 0;z-index: 1000;">
@@ -620,11 +620,11 @@ if (!class_exists('JWCFE_Admin_Settings_Fields')) :
                                                                 <div class="jwcfe-opt-row">
                                                                     <div style="width:280px;">
                                                                         <input type="text" name="i_options_key[]" placeholder="<?php esc_attr_e('Option Value', 'jwcfe'); ?>" style="width:280px;"
-                                                                            value="<?php echo isset($previous_value['key']) ? esc_attr($previous_value['key']) : esc_attr__('Default Option Value', 'jwcfe'); ?>">
+                                                                            value="<?php echo isset($previous_value['key']) ? esc_attr($previous_value['key']) : '' ?>">
                                                                     </div>
                                                                     <div style="width:280px;">
                                                                         <input type="text" name="i_options_text[]" placeholder="<?php esc_attr_e('Option Text', 'jwcfe'); ?>" style="width:280px;"
-                                                                            value="<?php echo isset($previous_value['text']) ? esc_attr($previous_value['text']) : esc_attr__('Default Option Text', 'jwcfe'); ?>">
+                                                                            value="<?php echo isset($previous_value['text']) ? esc_attr($previous_value['text']) : '' ?>">
                                                                     </div>
 
                                                                     <div class="action-cell">

@@ -22,13 +22,10 @@ if (!class_exists('JWCFE_Admin_Settings_Block_Fields')) :
 			$tab = $this->get_current_tab();
 			
 			// Define sections based on the selected tab
-			$sections_by_tab = array(
-				'fields' => array('billing', 'shipping', 'additional', 'account'),
-				'block'  => array('billing', 'shipping', 'additional'),
-			);
+	
 		
 			$default_section = 'billing'; // Default section
-			$sections = isset($sections_by_tab[$tab]) ? $sections_by_tab[$tab] : array();
+			$sections = array('billing', 'shipping', 'additional','account');
 		
 			if (isset($_GET['section']) && in_array($_GET['section'], $sections)) {
 				return sanitize_text_field($_GET['section']);
@@ -269,7 +266,6 @@ if (!class_exists('JWCFE_Admin_Settings_Block_Fields')) :
                                         <td class="td_edit">
                                             <div class="f_edit_btn" <?php echo ($options['enabled'] == 1 ? '' : 'disabled') ?> onclick="openEditFieldForm(this,<?php echo $i; ?>)">
                                                 <img class="edit-icon" src="<?php echo plugin_dir_url(dirname(__FILE__)) . 'admin/assets/css/pencil.png'; ?>" alt="" width="12" height="14">
-                                                <?php _e('', 'jwcfe'); ?>
                                             </div>
                                         </td>
                                     </tr>
@@ -290,7 +286,7 @@ if (!class_exists('JWCFE_Admin_Settings_Block_Fields')) :
                 </div>
                 <?php
             }else if ($section == 'billing'){
-                
+         
                 echo '<div class="wrap woocommerce jwcfe-wrap"><div class="icon32 icon32-attributes" id="icon-woocommerce"><br /></div>';
                 $this->render_tabs_and_sections();
                 if (isset($_POST['save_fields']))
@@ -835,7 +831,7 @@ if (!class_exists('JWCFE_Admin_Settings_Block_Fields')) :
                             <div class="jwcfe_tabs" class="jwcfe-tabs">
                             <div class="jwcfemodal-content-main-div" style="position: sticky;top: 0;z-index: 1000;">
                                 <div class="jwcfemodal-content-div">
-                                    <span class="jwcfecloseBtn" onclick="closejwcfeModal()">&times;</span>
+                                    <span class="jwcfecloseBtn" role="button" aria-label="Close">&times;</span>
                                     <h2 class="ui-dialog-title"><?php echo $formTitle; ?></h2>
                                 </div>
                                 <ul style="position: sticky;top: 0;z-index: 1000;">
@@ -862,6 +858,7 @@ if (!class_exists('JWCFE_Admin_Settings_Block_Fields')) :
                                                                 <option value="text">Text</option>
                                                                 <option value="select">Select</option>
                                                                 <option value="checkbox">Checkbox</option>
+                                                                <option value="radio">Radio</option>
 
                                                             </select>
                                                             </div>

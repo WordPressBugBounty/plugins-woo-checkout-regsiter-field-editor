@@ -3,7 +3,7 @@
  * Plugin Name: Checkout Field Editor for Woocommerce - Checkout Manager
  * Description: Easily Add, Edit, Remove or re-arrange any fields on WooCommerce Checkout page.
  * Author:      Jcodex
- * Version:     2.4.7
+ * Version:     2.4.8
  * Author URI:  https://www.jcodex.com
  * Plugin URI:  https://www.jcodex.com
  * Text Domain: jwcfe
@@ -33,7 +33,7 @@ if (!defined('ABSPATH')) {
 }
 // Avoid defining constants if they are already defined.
 if (!defined('JWCFE_VERSION')) {
-    define('JWCFE_VERSION', '2.4.7');
+    define('JWCFE_VERSION', '2.4.8');
 }
 
 if (!defined('JWCFE_BASE_NAME')) {
@@ -71,22 +71,36 @@ if (!defined('JWCFE_URL')) {
         add_option( 'jwcfe_activation_redirect', true );
     }
     
-    add_filter('plugin_action_links_' . plugin_basename(__FILE__), 'jwcfe_add_plugin_action_links');
-    function jwcfe_add_plugin_action_links($links) {
-        // Add Settings link
-        $settings_url = admin_url('admin.php?page=jwcfe_checkout_register_editor');
-        $settings_link = '<a href="' . esc_url($settings_url) . '">' . __('Settings', 'jwcfe') . '</a>';
-        
-        // Add Get Pro link
-        $pro_url = 'https://jcodex.com/plugins/woocommerce-custom-checkout-field-editor/';
-        $pro_link = '<a href="' . esc_url($pro_url) . '" style="color: #46b450; font-weight: bold;" target="_blank">' . __('Upgrade to Pro', 'jwcfe') . '</a>';
-    
-        // Prepend custom links to the beginning
-        array_unshift($links, $settings_link, $pro_link);
-    
-        return $links;
+add_filter('plugin_action_links_' . plugin_basename(__FILE__), 'jwcfe_add_plugin_action_links');
+function jwcfe_add_plugin_action_links($links) {
+    // Add Settings link
+    $settings_url = admin_url('admin.php?page=jwcfe_checkout_register_editor');
+    $settings_link = '<a href="' . esc_url($settings_url) . '">' . __('Settings', 'jwcfe') . '</a>';
+
+   
+
+    // Add Upgrade to Pro link
+    $pro_url = 'https://jcodex.com/plugins/woocommerce-custom-checkout-field-editor/';
+    $pro_link = '<a href="' . esc_url($pro_url) . '" style="color: #215125ff; font-weight: bold;" target="_blank">' . __('Get Pro', 'jwcfe') . '</a>';
+
+    // Insert links in custom order: Settings | Deactivate | Upgrade to Pro
+    if (isset($links['deactivate'])) {
+        $deactivate_link = $links['deactivate'];
+        unset($links['deactivate']);
+    } else {
+        $deactivate_link = '';
     }
-    
+
+    $custom_links = array();
+    $custom_links[] = $settings_link;
+    if ($deactivate_link) {
+        $custom_links[] = $deactivate_link;
+    }
+    $custom_links[] = $pro_link;
+
+    return $custom_links;
+}
+
     function jwcfe_activation_redirect() {
         if (is_plugin_active('woocommerce/woocommerce.php')) {
             if (get_option('jwcfe_activation_redirect', false)) {

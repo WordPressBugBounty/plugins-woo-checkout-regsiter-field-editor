@@ -277,22 +277,14 @@ form#jwcfe_new_field_form .conditional-rule-new-field{
 
 .jwcfe-wrap .ui-widget-content {
     /* border: 1px solid #aaa; */
-    background: #fff url(images/ui-bg_flat_75_ffffff_40x100.png) 50% 50% repeat-x;
     color: #222;
 }
 
 .jwcfe-sections {
     list-style: outside none;
-    margin: 40px 0 0px;
+    margin:0;
     padding: 0;
-    font-size: 14px;
-
-    margin-top: 0px;
-    border-left: 1px solid white;
-    border-right: 1px solid white;
-    border-top: 1px solid white;
-    border-bottom: 1px solid #dcdcde;
-    background-color: white;
+    font-size: 12px;
 }
 .jwcfe-wrap .hidden-field {
     display: none !important;
@@ -321,7 +313,7 @@ form#jwcfe_new_field_form .conditional-rule-new-field{
 
     background-color: lightgrey;
     border-radius: 50%;
-    margin-right: 20px;
+    margin-right: 10px;
 }
 
 .jwcfe-wrap .squeezer table tbody ul li {
@@ -423,17 +415,14 @@ form#jwcfe_new_field_form .conditional-rule-new-field{
     color: #fff;
 }
 
-
+.jwcfe-sections a:first-child {
+    margin-left: 0;
+}
 .jwcfe-sections a {
     margin-left: 15px;
     /*background-color: #ddd;
 */
     text-decoration: none;
-    font-size: 13.5px;
-    border-right: 1px solid #fff;
-    color: #333;
-    background-color: #fff;
-    border-radius: 0px 0px 0 0;
 }
 
 .jwcfe-wrap .f_edit_btn {
@@ -452,11 +441,12 @@ form#jwcfe_new_field_form .conditional-rule-new-field{
 
 .jwcfe-sections a.current {
     font-weight: 600;
-    background-color: rgba(255, 255, 255, .9) !important;
     color: #333;
     line-height: 5px;
     border-right: none;
+    font-size: 12px;
     border-radius: 0px 0px 0 0;
+    text-decoration: underline;
 }
 
 
@@ -1601,4 +1591,103 @@ height: 110px !important;
 
 table#jwcfe_checkout_fields thead th{
     font-weight: 700;
+}
+
+body.woocommerce_page_jwcfe_checkout_register_editor .nav-tab:first-child{
+    margin-left: 0;
+}
+body.woocommerce_page_jwcfe_checkout_register_editor .nav-tab{
+    padding: 7px 20px;
+    color: #50575e;
+    font-weight: 700;
+
+}
+
+body.woocommerce_page_jwcfe_checkout_register_editor .nav-tab:hover,
+body.woocommerce_page_jwcfe_checkout_register_editor .nav-tab.nav-tab-active
+{
+    background: #F0F0F1;
+}
+
+.c-type-tabs{
+display: flex;
+border: 1px solid #ccc;
+border-radius: 5px;
+overflow: hidden;
+width: max-content;
+}
+    
+.c-type-tab{
+    padding: 10px 20px;
+    cursor: pointer;
+    border: none;
+    background: #fff;
+    color: #555;
+    font-weight: 700;
+    margin-left: 0 !important;
+    text-decoration: none;
+}
+
+.c-type-tab.active{
+        background: #2c6db6;
+    color: #fff;
+}
+.c-type-wrap{
+        display: flex;
+    align-items: center;
+    gap: 12px;
+    min-height: 100px;
+}
+.ct-info {
+    position: relative;
+    cursor: pointer;
+}
+.ct-info:hover .ct-info-box{
+    display: block !important;
+}
+.ct-info-box {
+    position: absolute;
+    top: -45px;
+    left: 35px;
+    width: 570px;
+}
+.ct-info-box p {
+    background: #f9f9f9;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    padding: 10px;
+    z-index: 999;
+    background: #222;
+    color: #fff;
+    position: relative;
+}
+.ct-info-box p::before{content:'';position:absolute;top:50%;left:-20px;border-width:10px;border-style:solid;border-color:transparent #222 transparent transparent;transform:translateY(-50%)}
+.ct-info-box a:hover{color:#0b86e1}
+.jc-block-warning-msg{
+    border: 1px solid #e7e7e7;
+    padding: 15px;
+    background-color: #fff;
+    color: #000;
+    border-radius: 10px;
+}
+.jc-warning-message-panel__text {
+    display: flex
+;
+    align-items: center;
+}
+.jc-warning-img {
+    padding-right: 10px;
+    text-align: center;
+    display: flex;
+}
+.jc-warning-img img{
+    width: 35px;
+}
+.jc-warning {
+    padding-left: 10px;
+    line-height: 1.5em;
+}
+.jc-warning a {
+    color: #2c6db6;
+    font-style: italic;
 }

@@ -66,15 +66,15 @@ if (!class_exists('JWCFE_Public_Checkout')) :
 			add_filter('woocommerce_form_field_customcontent', array($this, 'jwcfe_checkout_fields_customcontent_field'), 10, 4);
 			
 			add_filter('woocommerce_form_field_paragraph', array($this, 'jwcfe_checkout_fields_pro_paragraph_field'), 10, 4);
-			
-
-			add_action('woocommerce_init', array($this, 'jwcfe_register_checkout_fields'));
+			add_action('wp_enqueue_scripts', array($this, 'jwcfe_enqueue_scripts'), 10, 4);
+			add_action('woocommerce_init', array($this, 'jwcfe_register_checkout_fields'), 20);
 			
 		}
 		
-		function jwcfe_register_checkout_fields() {
+		function jwcfe_register_checkout_fields()
+		{
 			$sections = ['billing', 'shipping', 'additional'];
-		
+
 			// Define fields to exclude
 			$excluded_shipping_fields = [
 				'shipping_first_name',
@@ -88,34 +88,104 @@ if (!class_exists('JWCFE_Public_Checkout')) :
 				'shipping_postcode',
 				'shipping_phone'
 			];
-		
+
 			foreach ($sections as $section) {
 				$option_name = 'jwcfe_wc_fields_block_' . $section;
 				$saved_fields = maybe_unserialize(get_option($option_name, []));
-		
+
 				if (!is_array($saved_fields)) {
 					$saved_fields = [];
 				}
-		
+
 				// Filter out unwanted shipping fields
 				if ($section === 'shipping') {
 					$saved_fields = array_filter($saved_fields, function ($key) use ($excluded_shipping_fields) {
 						return !in_array($key, $excluded_shipping_fields, true);
 					}, ARRAY_FILTER_USE_KEY);
 				}
-		
+
 				if (!empty($saved_fields)) {
 					foreach ($saved_fields as $field_id => $field_data) {
 						if (empty($field_data['enabled'])) continue;
-		
+
 						// Remove any existing section prefix (billing_, shipping_, additional_)
 						$clean_field_id = preg_replace('/^(billing|shipping|additional)_/', '', $field_id);
-		
+
 						// Ensure the correct namespace
 						$field_id_formatted = "{$section}/{$clean_field_id}";
-		
+
 						$location = ($section === 'shipping') ? 'address' : (($section === 'billing') ? 'contact' : 'order');
-		
+
+						// Apply conditional logic
+						if (isset($field_data['rules_action']) && !empty($field_data['rules_action'])) {
+							if (!empty($field_data['rules'])) {
+								$rulesArr = json_decode(urldecode($field_data['rules']), true);
+
+								foreach ($rulesArr[0][0] as $key => $singleRule) {
+									$operator   = $singleRule[0]['operator'];
+									$operand    = $singleRule[0]['operand'];
+
+									// Check for user role operators
+									if (in_array($operator, ['user_role_eq', 'user_role_ne'])) {
+										$userObj        = wp_get_current_user();
+										$arrayCompare   = array_intersect((array) $userObj->roles, (array)$operand);
+
+										if ($field_data['rules_action'] == 'show' && (empty($arrayCompare) || ($operator == 'user_role_ne' && !empty($arrayCompare)))) {
+											continue; // Show field
+										} elseif ($field_data['rules_action'] == 'hide' && !empty($arrayCompare) || ($operator == 'user_role_ne' && empty($arrayCompare))) {
+											continue 2; // Skip this field
+										}
+									}
+
+									if (empty($singleRule[0]['operand_type']) && strstr($operator, 'total')) {
+										$cart_check_result = $this->rules->jwcfe_check_cart_total($operator, $operand);
+										if ((!$cart_check_result && $field_data['rules_action'] == 'show') || ($cart_check_result && $field_data['rules_action'] == 'hide')) {
+											continue 2; // Skip this field
+										}
+									}
+
+									if ($singleRule[0]['operand_type'] == 'product') {
+										$operand = isset($singleRule[0]['operand'][0]) ? $singleRule[0]['operand'][0] : null;
+										$operand_variation = isset($singleRule[0]['operand_variation'][0]) ? $singleRule[0]['operand_variation'][0] : null;
+										if (($field_data['rules_action'] == 'hide' && $operator == 'cart_contains' && $this->rules->jwcfe_check_product_in_cart($operand)) ||
+											($field_data['rules_action'] == 'hide' && $operator == 'cart_not_contains' && !$this->rules->jwcfe_check_product_in_cart($operand)) ||
+											($field_data['rules_action'] == 'hide' && $operator == 'cart_only_contains' && !$this->rules->jwcfe_check_product_in_cart($operand))
+										) {
+											continue 2; // Skip this field
+										} elseif (($field_data['rules_action'] == 'show' && $operator == 'cart_not_contains' && $this->rules->jwcfe_check_product_in_cart($operand)) ||
+											($field_data['rules_action'] == 'show' && $operator == 'cart_contains' && !$this->rules->jwcfe_check_product_in_cart($operand)) ||
+											($field_data['rules_action'] == 'show' && $operator == 'cart_only_contains' && !$this->rules->jwcfe_check_product_in_cart($operand))
+										) {
+											continue 2; // Skip this field
+										}
+									}
+
+									if ($singleRule[0]['operand_type'] == 'category') {
+										$operand         = isset($singleRule[0]['operand'][0]) ? $singleRule[0]['operand'][0] : null;
+										$categoryInCart = $this->rules->jwcfe_check_category_in_cart($operand);
+
+										if ($field_data['rules_action'] == 'hide') {
+											if ($operator == 'cart_contains' && $categoryInCart) {
+												continue 2; // Skip this field
+											} elseif ($operator == 'cart_not_contains' && !$categoryInCart) {
+												continue 2; // Skip this field
+											} elseif ($operator == 'cart_only_contains' && $categoryInCart) {
+												continue 2; // Skip this field
+											}
+										} elseif ($field_data['rules_action'] == 'show') {
+											if ($operator == 'cart_not_contains' && $categoryInCart) {
+												continue 2; // Skip this field
+											} elseif ($operator == 'cart_contains' && !$categoryInCart) {
+												continue 2; // Skip this field
+											} elseif ($operator == 'cart_only_contains' && !$categoryInCart) {
+												continue 2; // Skip this field
+											}
+										}
+									}
+								}
+							}
+						}
+
 						$field_attributes = [
 							'id'              => $field_id_formatted,
 							'label'           => $field_data['label'] ?? ucfirst($clean_field_id),
@@ -126,9 +196,9 @@ if (!class_exists('JWCFE_Public_Checkout')) :
 							'show_in_order'   => true,
 							'show_in_email'   => true,
 						];
-		
+
 						$field_type = $field_data['type'] ?? 'text';
-		
+
 						switch ($field_type) {
 							case 'text':
 								if (!empty($field_data['validate'])) {
@@ -154,10 +224,10 @@ if (!class_exists('JWCFE_Public_Checkout')) :
 										};
 									}
 								}
-								
+
 								woocommerce_register_additional_checkout_field($field_attributes);
 								break;
-		
+
 							case 'checkbox':
 								woocommerce_register_additional_checkout_field([
 									'type'     => 'checkbox',
@@ -166,32 +236,143 @@ if (!class_exists('JWCFE_Public_Checkout')) :
 									'location' => $location,
 								]);
 								break;
-		
+
 							case 'select':
 								if (!empty($field_data['options_json'])) {
 									$options = [];
-									foreach ($field_data['options_json'] as $option) {
-										if (isset($option['key'], $option['text'])) {
-											$options[] = [
-												'value' => $option['key'],
-												'label' => $option['text'],
-											];
+									$opts_source = $field_data['options_json'];
+
+									// support if options_json is a JSON string or urlencoded JSON
+									if (is_string($opts_source)) {
+										$decoded = json_decode(urldecode($opts_source), true);
+										if ($decoded !== null) {
+											$opts_source = $decoded;
+										} else {
+											$decoded2 = json_decode($opts_source, true);
+											if ($decoded2 !== null) {
+												$opts_source = $decoded2;
+											}
 										}
 									}
+
+									if (is_array($opts_source)) {
+										foreach ($opts_source as $option) {
+											if (isset($option['key'], $option['text'])) {
+												$options[] = [
+													'value' => $option['key'],
+													'label' => $option['text'],
+												];
+											} elseif (isset($option['value'], $option['label'])) {
+												$options[] = [
+													'value' => $option['value'],
+													'label' => $option['label'],
+												];
+											} elseif (is_string($option)) {
+												$options[] = [
+													'value' => $option,
+													'label' => $option,
+												];
+											}
+										}
+									}
+
 									if ($options) {
 										$field_attributes['type'] = 'select';
 										$field_attributes['options'] = $options;
+										// set default if provided
+										if (!empty($field_data['default'])) {
+											$field_attributes['default'] = $field_data['default'];
+										}
 										woocommerce_register_additional_checkout_field($field_attributes);
 									}
 								}
 								break;
-		
+
+						case 'radio':
+			// Parse options for radio (supports multiple shapes)
+			if (!empty($field_data['options_json'])) {
+				$options = [];
+				$opts_source = $field_data['options_json'];
+
+				// support urlencoded JSON string or plain JSON string
+				if (is_string($opts_source)) {
+					$decoded = json_decode(urldecode($opts_source), true);
+					if ($decoded !== null) {
+						$opts_source = $decoded;
+					} else {
+						$decoded2 = json_decode($opts_source, true);
+						if ($decoded2 !== null) {
+							$opts_source = $decoded2;
+						}
+					}
+				}
+
+				if (is_array($opts_source)) {
+					foreach ($opts_source as $option) {
+						if (is_array($option) && isset($option['key'], $option['text'])) {
+							$options[] = [
+								'value' => $option['key'],
+								'label' => $option['text'],
+							];
+						} elseif (is_array($option) && isset($option['value'], $option['label'])) {
+							$options[] = [
+								'value' => $option['value'],
+								'label' => $option['label'],
+							];
+						} elseif (is_string($option)) {
+							$options[] = [
+								'value' => $option,
+								'label' => $option,
+							];
+						}
+					}
+				}
+
+				if (!empty($options)) {
+					// Register as a SELECT so Blocks will render it.
+					// We'll convert the select -> radio UI on the frontend with JS.
+					$field_attributes['type'] = 'select';
+					$field_attributes['options'] = $options;
+
+					// Mark it so our frontend script can detect this should be radios
+					// Use attributes -> data-jwcfe-type to pass through to DOM elements.
+					$field_attributes['attributes'] = isset($field_attributes['attributes']) && is_array($field_attributes['attributes']) ? $field_attributes['attributes'] : [];
+					$field_attributes['attributes']['data-jwcfe-type'] = 'radio';
+
+					if (!empty($field_data['default'])) {
+						$field_attributes['default'] = (string)$field_data['default'];
+					}
+
+					// context mapping as before
+					$field_attributes['context'] = isset($field_data['context']) ? $field_data['context'] : $location;
+					// ✅ Add custom class support
+			
+			
+					woocommerce_register_additional_checkout_field($field_attributes);
+				}
+			}
+			break;
+
 							default:
 								// error_log("Unsupported field type: " . $field_type);
 						}
 					}
 				}
 			}
+		}
+
+		function jwcfe_enqueue_scripts()
+		{
+	
+			wp_register_script('jwcfe-checkout-radios', plugin_dir_url(__FILE__) . 'assets/js/jwcfe-checkout-radios.js', array('jquery'), '1.0.0', true);
+			wp_enqueue_script('jwcfe-checkout-radios');
+
+			// localized config if needed
+			wp_localize_script('jwcfe-checkout-radios', 'jwcfe_checkout_radios', array(
+				'selectDataAttr' => 'data-jwcfe-type',
+				'selectDataVal'  => 'radio'
+			));
+
 		}
 		
 		/**
@@ -1211,11 +1392,9 @@ if (!class_exists('JWCFE_Public_Checkout')) :
 		/** Save Data function. */
 
 		public function save_data($order_id, $posted) {
-			if (get_option('jwcfe_account_sync_fields') && get_option('jwcfe_account_sync_fields') == "on") {
-				$types = array('account', 'billing', 'shipping', 'additional');
-			} else {
-				$types = array('billing', 'shipping', 'additional');
-			}
+
+			$types = array('billing', 'shipping', 'additional');
+	
 		
 			foreach ($types as $type) {
 				$fields = JWCFE_Helper::get_fields($type);

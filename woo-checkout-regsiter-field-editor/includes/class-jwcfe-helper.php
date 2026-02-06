@@ -12,19 +12,30 @@ if(!class_exists('JWCFE_Helper')):
 class JWCFE_Helper {
 
 	function __construct() {}
-	public static function get_current_tab()
+
+		public static function get_current_tab()
 		{
-			$allowed_tabs = array('fields', 'block'); 
-			$tab = isset($_GET['tab']) ? sanitize_text_field($_GET['tab']) : 'fields';
-		
-			return in_array($tab, $allowed_tabs) ? $tab : 'fields';
+			$allowed_tabs = array('checkoutfields', 'accounts'); // include accounts
+			$tab = isset($_GET['tab']) ? sanitize_text_field($_GET['tab']) : 'checkoutfields';
+
+			return in_array($tab, $allowed_tabs, true) ? $tab : 'checkoutfields';
 		}
+
+		public static function get_current_ctype()
+		{
+			$allowed_ctypes = array('classic', 'block'); // include accounts
+			$ctype = isset($_GET['c_type']) ? sanitize_text_field($_GET['c_type']) : 'classic';
+
+			return in_array($ctype, $allowed_ctypes, true) ? $ctype : 'classic';
+		}
+		
 		public static function get_fields($key){
 
 				$tab = self::get_current_tab();
+				$ctype = self::get_current_ctype();
 				// echo $tab;
 			
-				if($tab==='fields'){
+				if($tab==='checkoutfields' && $ctype == 'classic'){
 					$fields = array_filter(get_option('jwcfe_wc_fields_'. $key, array()));
 
 					if(empty($fields) || sizeof($fields) == 0){
@@ -58,7 +69,7 @@ class JWCFE_Helper {
 						}
 					}
 					return $fields;
-				}else if ($tab === 'block') {
+				}else if ($tab==='checkoutfields' && $ctype === 'block') {
 					$fields = maybe_unserialize(get_option('jwcfe_wc_fields_block_' . $key, array()));
 				
 					if (!is_array($fields)) {

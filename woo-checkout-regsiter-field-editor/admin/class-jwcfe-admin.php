@@ -63,12 +63,9 @@ if (!class_exists('JWCFE_Admin')) :
 			
 			$fields_options = [];
 
-			if ($tab === 'fields') {
-				$fields_options['shipping'] = get_option('jwcfe_wc_fields_shipping',[]);
-				$fields_options['additional'] = get_option('jwcfe_wc_fields_additional',[]);
-				$fields_options['billing'] = get_option('jwcfe_wc_fields_billing',[]);
+			if ($tab === 'accounts') {
 				$fields_options['account'] = get_option('jwcfe_wc_fields_account',[]);
-			}else if ($tab === 'block') {
+			}else if ($tab === 'checkoutfields') {
 				$fields_options['shipping'] = get_option('jwcfe_wc_fields_block_shipping',[]);
 				$fields_options['additional'] = get_option('jwcfe_wc_fields_block_additional',[]);
 				$fields_options['billing'] = get_option('jwcfe_wc_fields_block_billing',[]);
@@ -117,10 +114,11 @@ if (!class_exists('JWCFE_Admin')) :
 			$blocks_Setting = new JWCFE_Admin_Settings_Block_Fields($this->plugin_name, $this->version);
 
 			$tab = $this->get_current_tab();
-
-			if ($tab === 'fields') {
+			$c_type = $this->get_current_ctype();
+		
+			if ($tab === 'checkoutfields' && $c_type == 'classic') {
 				$Fields_settings->checkout_form_field_editor();
-			}else if ($tab === 'block') {
+			}else if ($tab === 'checkoutfields' && $c_type == 'block') {
 				$blocks_Setting->checkout_form_field_editor();
 			} elseif ($tab === 'accounts') {
 
@@ -133,11 +131,20 @@ if (!class_exists('JWCFE_Admin')) :
 
 		public function get_current_tab()
 		{
-			$allowed_tabs = array('fields', 'block', 'accounts'); // include accounts
-			$tab = isset($_GET['tab']) ? sanitize_text_field($_GET['tab']) : 'fields';
+			$allowed_tabs = array('checkoutfields', 'accounts'); // include accounts
+			$tab = isset($_GET['tab']) ? sanitize_text_field($_GET['tab']) : 'checkoutfields';
 
-			return in_array($tab, $allowed_tabs, true) ? $tab : 'fields';
+			return in_array($tab, $allowed_tabs, true) ? $tab : 'checkoutfields';
 		}
+
+		public function get_current_ctype()
+		{
+			$allowed_ctypes = array('classic', 'block'); // include accounts
+			$ctype = isset($_GET['c_type']) ? sanitize_text_field($_GET['c_type']) : 'classic';
+
+			return in_array($ctype, $allowed_ctypes, true) ? $ctype : 'classic';
+		}
+
 
 		
 	
@@ -147,8 +154,7 @@ if (!class_exists('JWCFE_Admin')) :
 			
 			  // Define sections based on the selected tab
 			$sections_by_tab = array(
-				'fields'   => array('billing', 'shipping', 'additional', 'account'),
-				'block'    => array('billing', 'shipping', 'additional'),
+				'checkoutfields'    => array('billing', 'shipping', 'additional'),
 				'accounts' => array('account'), // <-- add this
 			);
 
@@ -166,13 +172,22 @@ if (!class_exists('JWCFE_Admin')) :
 
 		public function compatibility_warning(){
 			?>
-				<div>
-					
-					<a href="https://jcodex.com/plugins/woocommerce-custom-checkout-field-editor/" target="_blank" style="display: block; width: 100%;">
-						<img src="<?php echo plugin_dir_url(__FILE__) . 'assets/promo-banner.png'; ?>" alt="Banner Image" style="width: 100%; height: auto; display: block;" />
-					</a>
-
+			
+				<div id="jc_block_warning" class="jc-block-warning-msg">
+					<div class="jc-warning-message-panel__text jc-warning-message-panel__text--center">
+						<div class="jc-warning-img">
+							<img src="<?php echo plugin_dir_url(__FILE__) . 'assets/logo-blue.svg'; ?>" alt="Jcodex Logo">
+						</div>
+						<div class="jc-warning">
+						
+							<span class="jc-warning-message-panel__inner-text">
+							<?php esc_html_e('Our Checkout Field Editor now supports WooCommerce Checkout Blocks! Currently, a few field types are available, and more will be added soon. 
+									If you\'re using Block Checkout, make sure to switch to the Block Checkout Fields tab, otherwise, your changes won’t be reflected. Have questions or need help?','jwcfe'); ?>
+									<?php esc_html_e('Reach out to our','jwcfe'); ?>  <a href="<?php echo esc_url('https://jcodex.com/support/'); ?>" target="_blank" class="quick-widget-support-link"> <?php esc_html_e('Support team','jwcfe'); ?></a>.</span>
+						</div>
+					</div>
 				</div>
+
 			<?php
 		}
 
@@ -220,6 +235,7 @@ if (!class_exists('JWCFE_Admin')) :
 		public function render_tabs_and_sections()
 		
 		{
+		
 			?>
 
 				<div id="message" style="display:none; border-left-color: #6B2C88" class="wc-connect updated wcfe-notice">
@@ -279,21 +295,18 @@ if (!class_exists('JWCFE_Admin')) :
 
 			// Define tabs - now with Accounts as a separate tab
 			$tabs = array(
-				'block'    => 'Block Checkout Fields',
-				'fields'   => 'Classic Checkout Fields',
-				'accounts' => 'My Account & Register Form Fields'
+				'checkoutfields'    => 'Checkout Fields',
+				'accounts' => 'User Register Fields'
 			);
 			
 			$allowed_tabs = array_keys($tabs);
 			$tab = isset($_GET['tab']) && in_array($_GET['tab'], $allowed_tabs) 
 				? sanitize_text_field($_GET['tab']) 
-				: 'block';  // Default to block tab
+				: 'checkoutfields';  // Default to block tab
 			
 			// Define sections for each tab
 			$sections = array();
-			if ($tab === 'fields') {
-				$sections = array('billing', 'shipping', 'additional');
-			} elseif ($tab === 'block') {
+			if ($tab === 'checkoutfields') {
 				$sections = array('billing', 'shipping', 'additional');
 			} elseif ($tab === 'accounts') {
 				$sections = array('account');  // Only account section for accounts tab
@@ -301,12 +314,15 @@ if (!class_exists('JWCFE_Admin')) :
 			
 			// Validate section
 			$section = isset($_GET['section']) ? sanitize_text_field($_GET['section']) : '';
+			
+			$c_type = isset($_GET['c_type']) ? sanitize_text_field($_GET['c_type']) : '';
 			if (!in_array($section, $sections)) {
 				// Redirect to first section if invalid/empty
 				if (!empty($sections)) {
 					$first_section = reset($sections);
+					$c_type = isset($_GET['c_type']) ? sanitize_text_field($_GET['c_type']) : 'classic';
 					wp_safe_redirect(admin_url(
-						'admin.php?page=jwcfe_checkout_register_editor&tab=' . $tab . '&section=' . $first_section
+						'admin.php?page=jwcfe_checkout_register_editor&tab=' . $tab . '&c_type=' . $c_type . '&section=' . $first_section
 					));
 					exit;
 				}
@@ -323,19 +339,52 @@ if (!class_exists('JWCFE_Admin')) :
 					$url .= '&section=account';
 				}
 				
-				echo '<a class="nav-tab ' . esc_attr($active) . '" href="' . esc_url(admin_url($url)) . '">' 
-					. esc_html($value) . '</a>';
+				echo '<a class="nav-tab ' . esc_attr($active,) . '" href="' . esc_url(admin_url($url)) . '">' 
+					. esc_html__($value,'jwcfe') . '</a>';
 			}
 			echo '</h2>';
 		
 		
 			if (!empty($sections) && $tab !== 'accounts') {
+				$activectype1 = ('classic' === $c_type) ? 'active' : '';
+				$activectype2 = ('block' === $c_type) ? 'active' : '';
+
+				$captlize_ctype = ucfirst($c_type);
+				echo '<div class="c-type-wrap"><div class="c-type-tabs">';
+
+				echo '<a href="' . esc_url( admin_url( 'admin.php?page=jwcfe_checkout_register_editor&tab=' . esc_attr( $tab ) . '&c_type=classic' ) ) . '" class="c-type-tab ' . esc_attr( $activectype1 ) . '">'
+					. esc_html__( 'Classic Checkout', 'jwcfe' ) . '</a>';
+
+				echo '<a href="' . esc_url( admin_url( 'admin.php?page=jwcfe_checkout_register_editor&tab=' . esc_attr( $tab ) . '&c_type=block' ) ) . '" class="c-type-tab ' . esc_attr( $activectype2 ) . '">'
+					. esc_html__( 'Block Checkout', 'jwcfe' ) . '</a>';
+
+				echo '</div>';
+				echo '<div class="ct-info" id="th_info_container">
+			    <img src="' . esc_url( plugins_url( 'assets/info.svg', __FILE__ ) ) . '" alt="' . esc_attr__( 'Block Checkout', 'jwcfe' ) . '">
+			    <div class="ct-info-box" id="infoBox" style="display: none;">
+			        <p>' .
+			            sprintf(
+			                /* translators: %1$s: checkout type (e.g., Classic or Block), %2$s: help link */
+			                esc_html__(
+			                    "You're on the %1\$s Checkout Field Editor right now. If your store is not using %1\$s Checkout, fields you add here won’t appear on the checkout page. Unsure which checkout type your store is using? %2\$s.",
+			                    'jwcfe'
+			                ),
+			                esc_html( $captlize_ctype ),
+			                '<a href="' . esc_url( 'https://jcodex.com/doc/classic-vs-block-checkout/' ) . '" target="_blank" rel="noopener noreferrer">' .
+			                    esc_html__( 'Click here to find out!', 'jwcfe' ) .
+			                '</a>'
+			            )
+			        . '</p>
+			    </div>
+			</div></div>';
+
+
 				echo '<ul class="jwcfe-sections">';
 				foreach ($sections as $key) {
 					$active = ($key === $section) ? 'current' : '';
-					$url = 'admin.php?page=jwcfe_checkout_register_editor&tab=' . esc_attr($tab) . '&section=' . esc_attr($key);
+					$url = 'admin.php?page=jwcfe_checkout_register_editor&tab=' . esc_attr($tab) . '&c_type=' . esc_attr($c_type) .'&section=' . esc_attr($key);
 			
-              if ($tab === 'block') {
+              if ($tab === 'checkoutfields' && $c_type == 'block') {
 				switch ($key) {
 					case 'billing':
 						$display_text = 'Contact Information';
@@ -381,6 +430,7 @@ if (!class_exists('JWCFE_Admin')) :
 		public function save_options($section)
 		{
 			$tab = $this->get_current_tab();
+			$ctype = $this->get_current_ctype();
 				if (isset($_POST['woo_checkout_editor_nonce']) && wp_verify_nonce($_POST['woo_checkout_editor_nonce'], 'woo_checkout_editor_settings')) {
 					// Handle settings saving
 					$o_fields      = JWCFE_Helper::get_fields($section);
@@ -631,11 +681,11 @@ if (!class_exists('JWCFE_Admin')) :
 					}
 
 					uasort($fields, array($this, 'sort_fields_by_order'));
-					if($tab === 'fields'){
+					if($tab === 'checkoutfields' && $ctype == 'classic'){
 						$result = update_option('jwcfe_wc_fields_' . $section, $fields);
 
 
-					}else if ($tab === 'block') {
+					}else if ($tab === 'checkoutfields' && $ctype == 'block') {
 						if (isset($_POST['woo_checkout_editor_nonce']) && wp_verify_nonce($_POST['woo_checkout_editor_nonce'], 'woo_checkout_editor_settings')) {
 							// Handle settings saving
 							$o_fields      = JWCFE_Helper::get_fields($section);

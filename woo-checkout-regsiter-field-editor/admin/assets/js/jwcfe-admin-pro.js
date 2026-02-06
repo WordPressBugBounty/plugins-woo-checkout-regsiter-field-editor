@@ -60,8 +60,8 @@ var jwcfe_settings = (function ($, window, document) {
 	var OPTION_ROW_HTML = '<div class="jwcfe-opt-row">';
 
 	
-	OPTION_ROW_HTML += '<div style="width:280px;"><input type="text" name="i_options_key[]" placeholder="Option Value" style="width:280px;" value="Default Option Value"/></div>';
-	OPTION_ROW_HTML += '<div style="width:280px;"><input type="text" name="i_options_text[]" placeholder="Option Text" style="width:280px;" value="Default Option Text"/></div>';
+	OPTION_ROW_HTML += '<div style="width:280px;"><input type="text" name="i_options_key[]" placeholder="Option Value" style="width:280px;" /></div>';
+	OPTION_ROW_HTML += '<div style="width:280px;"><input type="text" name="i_options_text[]" placeholder="Option Text" style="width:280px;" /></div>';
 
 	OPTION_ROW_HTML += '<div class="action-cell"><a href="javascript:void(0)" onclick="jwcfeAddNewOptionRow(this)" class="btn btn-blue" title="Add new option">+</a></div>';
 	OPTION_ROW_HTML += '<div class="action-cell"><a href="javascript:void(0)" onclick="jwcfeRemoveOptionRow(this)" class="btn btn-red"  title="Remove option">x</a></div>';
@@ -71,7 +71,6 @@ var jwcfe_settings = (function ($, window, document) {
 	OPTION_ROW_HTML += '</div>';
 
 	OPTION_ROW_HTML += '</div>';
-
 
 
 	/*------------------------------------
@@ -237,10 +236,10 @@ var jwcfe_settings = (function ($, window, document) {
 	form.find('.jwcfe_options .jwcfe-opt-container').html(`
 		<div class="jwcfe-opt-row">
 			<div style="width:280px;">
-				<input type="text" name="i_options_key[]" placeholder="Option Value" style="width:280px;" value="Default Option Value">
+				<input type="text" name="i_options_key[]" placeholder="Option Value" style="width:280px;">
 			</div>
 			<div style="width:280px;">
-				<input type="text" name="i_options_text[]" placeholder="Option Text" style="width:280px;" value="Default Option Text">
+				<input type="text" name="i_options_text[]" placeholder="Option Text" style="width:280px;">
 			</div>
 			<div class="action-cell">
 				<a href="javascript:void(0)" onclick="jwcfeAddNewOptionRow(this)" class="btn btn-blue" title="Add new option">+</a>
@@ -510,12 +509,15 @@ var jwcfe_settings = (function ($, window, document) {
 
 		var row = $(elm).closest('tr');
 		var name = row.find(".f_name").val();
+		var label = row.find(".f_label").val();
+		  // Change dialog title using jQuery UI dialog method
+	
+    	$('#jwcfe_new_field_form_pp').find('.ui-dialog-title').text('Edit ' + label + ' Field');
 		// $("#jwcfe_new_field_form_pp form ul li:first a").click();
 		$("#jwcfe_new_field_form_pp form ul li:first a").trigger("click");
 		
 		var is_custom = row.find(".f_custom").val();
 		var type = row.find(".f_type").val();
-		var label = row.find(".f_label").val();
 		var text = row.find(".f_text").val();
 
 		var texteditor = row.find(".f_texteditor").val();
@@ -855,44 +857,20 @@ var jwcfe_settings = (function ($, window, document) {
 
 	// Get modal element
 		var jwcfemodal = document.getElementById('jwcfeModal');
-		// Get open modal button
-		var jwcfemodalBtn = document.getElementById('openModalBtn');
-		// Get close button
-		var jwcfecloseBtn = document.getElementsByClassName('jwcfecloseBtn')[0];
+		const closeBtns = document.querySelectorAll('.jwcfecloseBtn');
+    closeBtns.forEach(btn => btn.addEventListener('click', closejwcfeModalLocal));
 
+    const btnCancel = document.querySelector('.btncancel');
+    if (btnCancel) btnCancel.addEventListener('click', closejwcfeModalLocal);
 
-		// Listen for close click 
-		jwcfecloseBtn.addEventListener('click', closejwcfeModal);
+    // optional: close when clicking outside
+    window.addEventListener('click', function (e) {
+        const modal = document.getElementById('jwcfeModal');
+        if (modal && e.target === modal) closejwcfeModalLocal();
+    });
 
-
-		// Listen for outside click
-		window.addEventListener('click', outsideClick);
-
-		// Function to open modal
-		function openjwcfeModal() {
-		    jwcfemodal.style.display = 'block';
-		}
-
-
-		// Function to close modal
-		function closejwcfeModal() {
-		    jwcfemodal.style.display = 'none';
-		}
-
-		// Function to close modal if outside click
-		function outsideClick(e) {
-		    if (e.target == jwcfemodal) {
-		        jwcfemodal.style.display = 'none';
-		    }
-		}
-
-		// Listen for close click from button 
-		var btncancel = document.getElementsByClassName('btncancel')[0];
-		btncancel.addEventListener('click', closejwcfeModal);
-const closeBtn = document.querySelector('.jwcfecloseBtn');
-    if (closeBtn) {
-        closeBtn.addEventListener('click', closejwcfeModal);
-    }
+    // expose open function to the rest of your module if needed
+    window.openjwcfeModal = openjwcfeModalLocal; // if other code calls openjwcfeModal()
 
 	/*------------------------------------
 
@@ -926,7 +904,18 @@ const closeBtn = document.querySelector('.jwcfecloseBtn');
 		//optionsJson = optionsJson.replace(/"/g, "'");
 		return optionsJson;
 	}
-	
+	// ensure function exists inside IIFE scope
+function closejwcfeModalLocal() {
+    var modal = document.getElementById("jwcfeModal");
+    if (modal) modal.style.display = "none";
+}
+
+function openjwcfeModalLocal() {
+    var modal = document.getElementById("jwcfeModal");
+    if (modal) modal.style.display = "block";
+}
+
+
 	document.addEventListener('DOMContentLoaded', function() {
 		enableSelectAllInputFields(); // Ensure binding is applied when the DOM is ready
 	});
@@ -1469,7 +1458,7 @@ const closeBtn = document.querySelector('.jwcfecloseBtn');
 				$(".jwcfe-opt-row").css("margin-bottom", "0px"); // Adjust the value as needed
 				$(".jwcfe-opt-row:last-child").css("margin-bottom", "0"); // Remove bottom margin for the last item
 			}
-		}).disableSelection();
+		});
 	});
 
 
