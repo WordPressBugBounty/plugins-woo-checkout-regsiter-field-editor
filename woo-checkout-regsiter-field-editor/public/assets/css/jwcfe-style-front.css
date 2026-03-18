@@ -1,47 +1,48 @@
-.custom-email-style{
-	box-sizing: border-box;
-	width: 100%;
-	margin: 0;
-	outline: 0;
-	line-height: normal;
-	font-size: var(--wp--preset--font-size--small);
-	padding: .9rem 1.1rem;
-  }
-.custom-phone-style{
-	box-sizing: border-box;
-	width: 100%;
-	margin: 0;
-	outline: 0;
-	line-height: normal;
-	font-size: var(--wp--preset--font-size--small);
-	padding: .9rem 1.1rem;
-  }
+.custom-email-style {
+  box-sizing: border-box;
+  width: 100%;
+  margin: 0;
+  outline: 0;
+  line-height: normal;
+  font-size: var(--wp--preset--font-size--small);
+  padding: 0.9rem 1.1rem;
+}
+.custom-phone-style {
+  box-sizing: border-box;
+  width: 100%;
+  margin: 0;
+  outline: 0;
+  line-height: normal;
+  font-size: var(--wp--preset--font-size--small);
+  padding: 0.9rem 1.1rem;
+}
+.wc-block-components-address-form__country.wc-block-components-country-input {
+  margin-top: 12px !important;
+}
+#custom-file-style {
+  box-sizing: border-box;
+  width: 100%;
+  margin: 0;
+  padding: 0.9rem 1.1rem;
+  font-size: var(--wp--preset--font-size--small);
+  line-height: normal;
+  border: 1px solid rgb(118, 118, 118); /* Light-dark border color */
+  border-radius: 2px;
+  cursor: pointer;
+}
 
-#custom-file-style{
-	box-sizing: border-box;
-    width: 100%;
-    margin: 0;
-    padding: .9rem 1.1rem;
-    font-size: var(--wp--preset--font-size--small);
-    line-height: normal;
-    border: 1px solid rgb(118, 118, 118); /* Light-dark border color */
-    border-radius: 2px;
-    cursor: pointer;
-  }
-
-
-.custom-checkbox-style{
-padding-top: 10px;
+.custom-checkbox-style {
+  padding-top: 10px;
 }
 
 /* Custom styles for checkbox fields */
 .custom-checkbox-field {
-    margin-bottom: 20px;
+  margin-bottom: 20px;
 }
 
 .custom-checkbox .jwcfe-price-field {
-    margin-right: 10px;
-    cursor: pointer;
+  margin-right: 10px;
+  cursor: pointer;
 }
 /* .select2-container {
     border-color: var(--wc-red);
@@ -51,11 +52,11 @@ padding-top: 10px;
   border: 1px solid #ccc; /* Default border */
 }
 
-.custom-td{
+.custom-td {
   text-align: justify !important;
 }
 
-.custom-th{
+.custom-th {
   font-weight: 700 !important;
   width: 54%;
 }
@@ -63,17 +64,17 @@ padding-top: 10px;
   border: 1px solid red; /* Red border when invalid */
 }
 .custom-checkbox-wrapper {
-    display: flex;
-    align-items: center;
-    padding: 10px 0;
+  display: flex;
+  align-items: center;
+  padding: 10px 0;
 }
-.main-check{
-margin-bottom: 0px;
+.main-check {
+  margin-bottom: 0px;
 }
 .custom-checkbox label {
-    margin-left: 10px;
-    font-size: 16px;
-    font-weight: 600;
+  margin-left: 10px;
+  font-size: 16px;
+  font-weight: 600;
 }
 
 .jwcfe-checkbox-label {
@@ -86,90 +87,94 @@ margin-bottom: 0px;
 .jwcfe-checkbox-label input[type="checkbox"] {
   margin: 0;
   vertical-align: middle;
-   margin-right: 5px;
+  margin-right: 5px;
 }
 
 .custom-checkbox .required {
-    margin-left: 5px;
-    color: yellow; /* Customize the color of the required asterisk */
+  margin-left: 5px;
+  color: yellow; /* Customize the color of the required asterisk */
 }
 
 .custom-checkbox input[type="checkbox"]:checked + label {
-    color: #0073aa; /* Change color when checkbox is checked */
-}
-
-
-.custom-radio-container .custom-radio-wrapper {
-	display: flex;
-	column-gap: 0.8em;
-}
-.custom-radio-value {
-    margin-top: 14px;
+  color: #0073aa; /* Change color when checkbox is checked */
 }
 
 .custom-radio-container .custom-radio-wrapper {
-	display: flex;
-	column-gap: 0.8em;
+  display: flex;
+  column-gap: 0.8em;
 }
 .custom-radio-value {
-    margin-top: 14px;
+  margin-top: 14px;
+}
+
+.custom-radio-container .custom-radio-wrapper {
+  display: flex;
+  column-gap: 0.8em;
+}
+.custom-radio-value {
+  margin-top: 14px;
 }
 /* Ensure radio replacement sits below the block label and doesn't overlap */
 .wc-blocks-components-select .jwcfe-radio-replacement {
-    display: flex;
-    flex-direction: column;
-    gap: 0.375rem;
-    margin-top: 0.5rem; /* moves radios below the block label */
-    align-items: flex-start;
+  display: flex;
+  flex-direction: column;
+  gap: 0.375rem;
+  margin-top: 0.5rem; /* moves radios below the block label */
+  align-items: flex-start;
 }
 
 /* Style individual radio items */
 .jwcfe-radio-replacement .jwcfe-radio-item {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.5rem;
-    margin: 0;
-    cursor: pointer;
-    user-select: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin: 0;
+  cursor: pointer;
+  user-select: none;
 }
 
 /* Make the radio input normal size and visible */
 .jwcfe-radio-replacement input[type="radio"] {
-    width: 1em;
-    height: 1em;
-    margin: 0;
-    flex: 0 0 auto;
+  width: 1em;
+  height: 1em;
+  margin: 0;
+  flex: 0 0 auto;
 }
 
 /* text for each option */
 .jwcfe-radio-replacement .jwcfe-radio-label-text {
-    line-height: 1;
-    display: inline-block;
+  line-height: 1;
+  display: inline-block;
 }
 
 /* optional: small responsive wrap */
 @media (min-width: 640px) {
-    .jwcfe-radio-replacement { flex-direction: row; flex-wrap: wrap; gap: 0.75rem 1rem; }
-    .jwcfe-radio-replacement .jwcfe-radio-item { margin: 0.125rem 0; }
+  .jwcfe-radio-replacement {
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 0.75rem 1rem;
+  }
+  .jwcfe-radio-replacement .jwcfe-radio-item {
+    margin: 0.125rem 0;
+  }
 }
 
-
-.wc-block-components-radio-input .wc-blocks-components-select__label{
+.wc-block-components-radio-input .wc-blocks-components-select__label {
   overflow: unset;
-    position: relative;
-    left: 0;
+  position: relative;
+  left: 0;
 }
 
-.wc-block-components-radio-input .wc-blocks-components-select__container{
-      height: auto;
-    background: none;
+.wc-block-components-radio-input .wc-blocks-components-select__container {
+  height: auto;
+  background: none;
 }
 
-.wc-block-components-radio-input .wc-blocks-components-select__expand{
-fill: none;
+.wc-block-components-radio-input .wc-blocks-components-select__expand {
+  fill: none;
 }
 .form-row > label > abbr + span {
-    display: none;
+  display: none;
 }
 
 /* Keep select in DOM (not display:none), visually hide it */

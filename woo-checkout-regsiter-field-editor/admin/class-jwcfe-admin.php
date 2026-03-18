@@ -121,9 +121,13 @@ if (!class_exists('JWCFE_Admin')) :
 			}else if ($tab === 'checkoutfields' && $c_type == 'block') {
 				$blocks_Setting->checkout_form_field_editor();
 			} elseif ($tab === 'accounts') {
-
-				// Use the same renderer (this class already knows how to render the account section)
 				$Fields_settings->checkout_form_field_editor();
+			} elseif ($tab === 'advanced_settings') {
+				echo '<div class="wrap woocommerce jwcfe-wrap">';
+				$this->render_tabs_and_sections();
+				$advanced = JWCFE_Admin_Settings_Advanced::instance();
+				$advanced->render_page();
+				echo '</div>';
 			}
 			
 		}
@@ -131,7 +135,7 @@ if (!class_exists('JWCFE_Admin')) :
 
 		public function get_current_tab()
 		{
-			$allowed_tabs = array('checkoutfields', 'accounts'); // include accounts
+			$allowed_tabs = array('checkoutfields', 'accounts', 'advanced_settings');
 			$tab = isset($_GET['tab']) ? sanitize_text_field($_GET['tab']) : 'checkoutfields';
 
 			return in_array($tab, $allowed_tabs, true) ? $tab : 'checkoutfields';
@@ -296,7 +300,8 @@ if (!class_exists('JWCFE_Admin')) :
 			// Define tabs - now with Accounts as a separate tab
 			$tabs = array(
 				'checkoutfields'    => 'Checkout Fields',
-				'accounts' => 'User Register Fields'
+				'advanced_settings' => 'Advanced Settings',
+				'accounts' => 'Premium Features'
 			);
 			
 			$allowed_tabs = array_keys($tabs);
@@ -309,14 +314,16 @@ if (!class_exists('JWCFE_Admin')) :
 			if ($tab === 'checkoutfields') {
 				$sections = array('billing', 'shipping', 'additional');
 			} elseif ($tab === 'accounts') {
-				$sections = array('account');  // Only account section for accounts tab
+				$sections = array('account');
+			} elseif ($tab === 'advanced_settings') {
+				$sections = array(); // No sections for advanced settings
 			}
 			
 			// Validate section
 			$section = isset($_GET['section']) ? sanitize_text_field($_GET['section']) : '';
 			
 			$c_type = isset($_GET['c_type']) ? sanitize_text_field($_GET['c_type']) : '';
-			if (!in_array($section, $sections)) {
+			if (!empty($sections) && !in_array($section, $sections)) {
 				// Redirect to first section if invalid/empty
 				if (!empty($sections)) {
 					$first_section = reset($sections);
@@ -345,7 +352,7 @@ if (!class_exists('JWCFE_Admin')) :
 			echo '</h2>';
 		
 		
-			if (!empty($sections) && $tab !== 'accounts') {
+			if (!empty($sections) && $tab !== 'accounts' && $tab !== 'advanced_settings') {
 				$activectype1 = ('classic' === $c_type) ? 'active' : '';
 				$activectype2 = ('block' === $c_type) ? 'active' : '';
 
@@ -453,6 +460,7 @@ if (!class_exists('JWCFE_Admin')) :
 					$i_time_step = !empty($_POST['i_time_step']) ? $_POST['i_time_step'] : array();
 					$i_time_format = !empty($_POST['i_time_format']) ? $_POST['i_time_format'] : array();
 					$f_maxlength = !empty($_POST['f_maxlength']) ? $_POST['f_maxlength'] : array();
+					$f_heading_type = !empty($_POST['f_heading_type']) ? $_POST['f_heading_type'] : array();
 
 					if (isset($_POST['f_options'])) {
 						$f_options     = !empty($_POST['f_options']) ? $_POST['f_options'] : array();
@@ -646,9 +654,10 @@ if (!class_exists('JWCFE_Admin')) :
 						$fields[$name]['max_time'] = empty($i_max_time[$i]) ? '' : wc_clean(stripslashes($i_max_time[$i]));
 						$fields[$name]['time_step'] = empty($i_time_step[$i]) ? '' : wc_clean(stripslashes($i_time_step[$i]));
 						$fields[$name]['time_format'] = empty($i_time_format[$i]) ? '' : wc_clean(stripslashes($i_time_format[$i]));
+						$fields[$name]['heading_type'] = empty($f_heading_type[$i]) ? 'h4' : wc_clean(stripslashes($f_heading_type[$i]));
 						$fields[$name]['options_json'] 	  = empty($f_options[$i]) ? '' : json_decode(urldecode($f_options[$i]), true);
 						$fields[$name]['maxlength'] = empty($f_maxlength[$i]) ? '' : wc_clean(stripslashes($f_maxlength[$i]));
-						$fields[$name]['class'] 	  = empty($f_class[$i]) ? array() : array_map('wc_clean', explode(',', $f_class[$i]));
+						$fields[$name]['class'] 	  = empty($f_class[$i]) ? array() : array_filter(array_map('sanitize_html_class', explode(' ', $f_class[$i])));
 						$fields[$name]['label_class'] = empty($f_label_class[$i]) ? array() : array_map('wc_clean', explode(',', $f_label_class[$i]));
 						$fields[$name]['rules_action']    = empty($f_rules_action[$i]) ? '' : $f_rules_action[$i];
 						$fields[$name]['rules']    = empty($f_rules[$i]) ? '' : $f_rules[$i];
@@ -703,6 +712,7 @@ if (!class_exists('JWCFE_Admin')) :
 							$i_time_step = !empty($_POST['i_time_step']) ? $_POST['i_time_step'] : array();
 							$i_time_format = !empty($_POST['i_time_format']) ? $_POST['i_time_format'] : array();
 							$f_maxlength = !empty($_POST['f_maxlength']) ? $_POST['f_maxlength'] : array();
+							$f_heading_type = !empty($_POST['f_heading_type']) ? $_POST['f_heading_type'] : array();
 		
 							if (isset($_POST['f_options'])) {
 								$f_options     = !empty($_POST['f_options']) ? $_POST['f_options'] : array();
@@ -876,9 +886,10 @@ if (!class_exists('JWCFE_Admin')) :
 								$fields[$name]['max_time'] = empty($i_max_time[$i]) ? '' : wc_clean(stripslashes($i_max_time[$i]));
 								$fields[$name]['time_step'] = empty($i_time_step[$i]) ? '' : wc_clean(stripslashes($i_time_step[$i]));
 								$fields[$name]['time_format'] = empty($i_time_format[$i]) ? '' : wc_clean(stripslashes($i_time_format[$i]));
+								$fields[$name]['heading_type'] = empty($f_heading_type[$i]) ? 'h4' : wc_clean(stripslashes($f_heading_type[$i]));
 								$fields[$name]['options_json'] 	  = empty($f_options[$i]) ? '' : json_decode(urldecode($f_options[$i]), true);
 								$fields[$name]['maxlength'] = empty($f_maxlength[$i]) ? '' : wc_clean(stripslashes($f_maxlength[$i]));
-								$fields[$name]['class'] 	  = empty($f_class[$i]) ? array() : array_map('wc_clean', explode(',', $f_class[$i]));
+								$fields[$name]['class'] 	  = empty($f_class[$i]) ? array() : array_filter(array_map('sanitize_html_class', explode(' ', $f_class[$i])));
 								$fields[$name]['label_class'] = empty($f_label_class[$i]) ? array() : array_map('wc_clean', explode(',', $f_label_class[$i]));
 								$fields[$name]['rules_action']    = empty($f_rules_action[$i]) ? '' : $f_rules_action[$i];
 								$fields[$name]['rules']    = empty($f_rules[$i]) ? '' : $f_rules[$i];

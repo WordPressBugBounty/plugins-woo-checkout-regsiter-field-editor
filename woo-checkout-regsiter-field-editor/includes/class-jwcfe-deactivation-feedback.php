@@ -106,14 +106,24 @@ jQuery(function($){
     public function handle_feedback() {
         check_ajax_referer('jwcfe_feedback_nonce');
 
+        // Security Check: Only allow users with plugin activation capability
+        if (!current_user_can('activate_plugins')) {
+            wp_send_json_error('Unauthorized', 403);
+            return;
+        }
+
         $reason = sanitize_text_field($_POST['reason'] ?? '');
         $other  = sanitize_textarea_field($_POST['other_reason'] ?? '');
 
         $user        = wp_get_current_user();
         $user_email  = $user->user_email;
-        $site_name   = get_bloginfo('name');
+        
+        // Sanitize Site Name to prevent Email Header Injection
+        $site_name   = wp_strip_all_tags(get_bloginfo('name'));
+        $site_name   = str_replace(array("\r", "\n"), '', $site_name);
+        
         $site_url    = site_url();
-        $date        = date('F j, Y \a\t g:i a');
+        $date        = current_time('F j, Y \a\t g:i a');
 
         $additional = '';
         if (!empty($other)) {
@@ -122,7 +132,16 @@ jQuery(function($){
 
         $root_path = plugin_dir_path( dirname(__FILE__) );
         $email_template_path = $root_path . 'views/feedback-email-template.php';
-        $email_template = file_exists($email_template_path) ? file_get_contents($email_template_path) : '';
+        
+        $email_template = '';
+        if (file_exists($email_template_path)) {
+            ob_start();
+            include $email_template_path;
+            $email_template = ob_get_clean();
+        } else {
+            wp_send_json_error('Email template not found', 500);
+            return;
+        }
 
         $replacements = [
             '{{site_name}}' => esc_html($site_name),
@@ -141,8 +160,14 @@ jQuery(function($){
             'Reply-To: ' . sanitize_email(get_option('admin_email')),
         ];
 
-        wp_mail('support@jcodex.com', 'Plugin Deactivation Feedback: ' . $site_name, $email_content, $headers);
-        wp_die();
+        $sent = wp_mail('support@jcodex.com', 'Plugin Deactivation Feedback: ' . $site_name, $email_content, $headers);
+
+        if (!$sent) {
+            wp_send_json_error('Email failed to send', 500);
+            return;
+        }
+
+        wp_send_json_success(['message' => 'Feedback received']);
     }
 }
 

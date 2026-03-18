@@ -194,7 +194,7 @@ if (!class_exists('JWCFE_Admin_Settings_Fields')) :
                                     $options['extoptions'] = '';
                                 }
                                 if (isset($options['class']) && is_array($options['class'])) {
-                                    $options['class'] = implode(",", $options['class']);
+                                    $options['class'] = implode(" ", $options['class']);
                                 } else {
                                     $options['class'] = '';
                                 }
@@ -280,6 +280,7 @@ if (!class_exists('JWCFE_Admin_Settings_Fields')) :
                                         <input type="hidden" name="f_rules[<?php echo $i; ?>]" class="f_rules" value="<?php echo $options['rules']; ?>" />
                                         <input type="hidden" name="f_rules_action_ajax[<?php echo $i; ?>]" class="f_rules_action_ajax" value="<?php echo $options['rules_action_ajax']; ?>" />
                                         <input type="hidden" name="f_rules_ajax[<?php echo $i; ?>]" class="f_rules_ajax" value="<?php echo $options['rules_ajax']; ?>" />
+                                        <input type="hidden" name="f_heading_type[<?php echo $i; ?>]" class="f_heading_type" value="<?php echo isset($options['heading_type']) ? $options['heading_type'] : 'h4'; ?>" />
                                         <input type="hidden" name="f_options[<?php echo $i; ?>]" class="f_options" value="<?php echo ($options['options_json']); ?>" />
                                         <input type="hidden" name="f_class[<?php echo $i; ?>]" class="f_class" value="<?php echo $options['class']; ?>" />
                                         <input type="hidden" name="f_label_class[<?php echo $i; ?>]" class="f_label_class" value="<?php echo $options['label_class']; ?>" />
@@ -394,25 +395,26 @@ if (!class_exists('JWCFE_Admin_Settings_Fields')) :
 		{
 
 			return array(
-
 				'text'          => 'Text',
+                'email'         => 'Email',
 				'number'        => 'Number',
 				'password'      => 'Password',
-				'email'         => 'Email',
 				'phone'         => 'Phone',
+                'hidden'            => 'Hidden',
+                'select'        => 'Select',
+                'multiselect'   => 'Multi-Select',
+                'radio'	        => 'Radio Button',
+                'checkbox'      => 'Checkbox',
+                'checkboxgroup' => 'Checkbox Group',
+                'date'	        => 'Date Picker',
+                'timepicker'    => 'Time Picker',
+                'week'	        => 'Week Picker',
+                'month'	        => 'Month Picker',
 				'textarea'      => 'Textarea',
-				'select'        => 'Select',
-				'multiselect'   => 'Multi-Select',
-				'timepicker'    => 'Time Picker',
-				'checkbox'      => 'Checkbox',
-				'checkboxgroup' => 'Checkbox Group',
-				'radio'	        => 'Radio Button',
-				'date'	        => 'Date Picker',
-				'month'	        => 'Month Picker',
-				'week'	        => 'Week Picker',
 				'paragraph'	    => 'Paragraph',
-				'heading'           => 'Heading'
-
+				'heading'           => 'Heading',
+                'url'               => 'URL',
+				'datetime-local'    => 'Datetime Local',
 			);
 		}
 
@@ -434,7 +436,7 @@ if (!class_exists('JWCFE_Admin_Settings_Fields')) :
                     
                     <div id="jwcfe_new_field_form_pp" title="<?php echo esc_html($formTitle); ?>" class="<?php echo $addClass; ?> jwcfe_popup_wrapper">
                         <form method="POST" id="jwcfe_new_field_form" action="">
-                            <div class="jwcfe_tabs" class="jwcfe-tabs">
+                            <div class="jwcfe_tabs jwcfe-tabs">
                                
                                 <div class="jwcfemodal-content-main-div" style="position: sticky;top: 0;z-index: 1000;">
                                 <div class="jwcfemodal-content-div">
@@ -450,7 +452,6 @@ if (!class_exists('JWCFE_Admin_Settings_Fields')) :
                                 <div id="jwcfe_field_editor_form_new">
                                     <div id="tab-1">
                                         <input type="hidden" name="i_options" value="" />
-                                    
                                         <div class="jwcfe_form_container">
                                             <div class="">
                                                 <div class="">
@@ -470,19 +471,37 @@ if (!class_exists('JWCFE_Admin_Settings_Fields')) :
 
                                                     <div class="rowName" style="display: flex; align-items: center;">
                                                         <div class="fieldlabel"  style="width: 40%;margin-right: 70px;"><?php esc_html_e('Name:', 'jwcfe'); ?><font color="red"><?php echo esc_html__('*', 'jwcfe'); ?></font></div>
+                                                        
+                                                        <div class="jwcfe-tooltip">
+                                                            <img src="<?php echo esc_url( plugins_url( 'assets/help.png', __FILE__ ) ); ?>" title="">
+                                                            <p >The field name is considered its unique identifier. Ensure it is not repeated across different sections.</p>
+                                                        </div>
                                                         <div>
                                                             <input type="text" value="<?php echo esc_attr($_GET['section'].'_', 'jwcfe'); ?>" name="fname" placeholder="" require />
                                                             <br><span class="err_msgs"></span>
                                                         </div>
-
                                                     </div>
 
-                                                    <div class="rowLabel" style="display: flex; align-items: center;">
-                                                        <div class="fieldlabel" id="fieldLabelText"   style="width: 40%; margin-right: 10px;"><?php esc_html_e('Label of Field:', 'jwcfe'); ?></div>
-                                                        <div>
-                                                            <input type="text" name="flabel" placeholder="" />
+                                                        <div class="rowLabel" style="display: flex; align-items: center;">
+                                                            <div class="fieldlabel" id="fieldLabelText"   style="width: 40%; margin-right: 10px;"><?php esc_html_e('Label of Field:', 'jwcfe'); ?></div>
+                                                            <div>
+                                                                <input type="text" name="flabel" placeholder="" />
+                                                            </div>
                                                         </div>
-                                                    </div>
+
+                                                        <div class="rowHeadingType" style="display: flex; align-items: center; margin-bottom: 15px;">
+                                                            <div class="fieldlabel" style="width: 40%; margin-right: 10px;"><?php esc_html_e('Heading Level:', 'jwcfe'); ?></div>
+                                                            <div style="width: 100%;">
+                                                                <select name="fheading_type" style="width: 100%;">
+                                                                    <option value="h1">H1</option>
+                                                                    <option value="h2">H2</option>
+                                                                    <option value="h3">H3</option>
+                                                                    <option value="h4" selected>H4</option>
+                                                                    <option value="h5">H5</option>
+                                                                    <option value="h6">H6</option>
+                                                                </select>
+                                                            </div>
+                                                        </div>
 
 
                                                    <div class="texteditor" style="display: flex; align-items: center;">
@@ -533,6 +552,13 @@ if (!class_exists('JWCFE_Admin_Settings_Fields')) :
                                                                 <option value="form-row-wide"><?php esc_html_e('Full-Width', 'jwcfe'); ?></option>
                                                                 <option value="form-row-first"><?php esc_html_e('Half-Width', 'jwcfe'); ?></option>
                                                             </select>
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="rowCustomClass" style="display: flex; align-items: center;">
+                                                        <div class="fieldlabel" style="width: 40%; margin-right: 10px;"><?php esc_html_e('CSS Class:', 'jwcfe'); ?><br><span class="thpladmin-subtitle" style="font-size:11px;color:#888;"><?php esc_html_e('', 'jwcfe'); ?></span></div>
+                                                        <div style="width: 100%;">
+                                                            <input type="text" name="fcustomclass" placeholder="e.g. my-class another-class" style="width: 100%;" />
                                                         </div>
                                                     </div>
 
@@ -699,7 +725,6 @@ if (!class_exists('JWCFE_Admin_Settings_Fields')) :
             </div>
 
             <?php
-
         }
 		
 

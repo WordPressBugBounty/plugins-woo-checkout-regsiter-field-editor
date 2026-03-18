@@ -82,6 +82,12 @@ class JWCFE {
             // error_log("Admin class file not found: $admin_class_path");
         }
 
+        // Load Advanced Settings class
+        $advanced_settings_path = $plugin_dir . '../admin/class-jwcfe-admin-settings-advanced.php';
+        if (file_exists($advanced_settings_path)) {
+            require_once $advanced_settings_path;
+        }
+
         if (file_exists($public_class_path)) {
             require_once $public_class_path;
         } else {

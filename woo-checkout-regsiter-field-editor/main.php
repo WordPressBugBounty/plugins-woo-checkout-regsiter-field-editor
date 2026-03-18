@@ -3,15 +3,15 @@
  * Plugin Name: Checkout Field Editor for Woocommerce - Checkout Manager
  * Description: Easily Add, Edit, Remove or re-arrange any fields on WooCommerce Checkout page.
  * Author:      Jcodex
- * Version:     2.4.8
+ * Version:     2.4.9
  * Author URI:  https://www.jcodex.com
  * Plugin URI:  https://www.jcodex.com
  * Text Domain: jwcfe
  * Domain Path: /languages/
  * WC requires at least: 3.0.0
- * WC tested up to: 10.1.0
+ * WC tested up to: 10.6.1
  *
- * Copyright (C) 2018-2025 Jcodex Inc.
+ * Copyright (C) 2018-2026 Jcodex Inc.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -92,11 +92,11 @@ function jwcfe_add_plugin_action_links($links) {
     }
 
     $custom_links = array();
-    $custom_links[] = $settings_link;
+    $custom_links['settings'] = $settings_link;
     if ($deactivate_link) {
-        $custom_links[] = $deactivate_link;
+        $custom_links['deactivate'] = $deactivate_link;
     }
-    $custom_links[] = $pro_link;
+    $custom_links['pro'] = $pro_link;
 
     return $custom_links;
 }

@@ -328,9 +328,9 @@ if (!class_exists('JWCFE_Admin_Settings_Block_Fields')) :
 
                             foreach (JWCFE_Helper::get_fields($section) as $name => $options) :
                             //    print_r($options);
-                                if (in_array($name, $excluded_fields)) {
-                                    continue; // Skip this field
-                                }
+                                // if (in_array($name, $excluded_fields)) {
+                                //     continue; // Skip this field
+                                // }
                             
                                 if (isset($options['custom']) && $options['custom'] == 1) {
                                     $options['custom'] = '1';
@@ -674,15 +674,7 @@ if (!class_exists('JWCFE_Admin_Settings_Block_Fields')) :
                             ?>
                                 <?php
                                 $disabled = false;
-                                if ($tab == 'block' && $name =='shipping_first_name'|| 
-                                    $name =='shipping_last_name'|| 
-                                    $name =='shipping_country'|| 
-                                    $name =='shipping_address_1'|| 
-                                    $name =='shipping_address_2'|| 
-                                    $name =='shipping_city'|| 
-                                    $name =='shipping_state'|| 
-                                    $name =='shipping_postcode'|| 
-                                    $name == 'account_username' || $name == 'account_password') {
+                                if ($tab == 'block' && ($name == 'account_username' || $name == 'account_password')) {
                                     $disabled = true;
                                 ?>
                                     <tr class="row_<?php echo $i;
@@ -738,48 +730,13 @@ if (!class_exists('JWCFE_Admin_Settings_Block_Fields')) :
                                         <td class="td_enabled status">
                                             <label class="pure-material-switch">
                                                 <input type="checkbox" class="toggle-checkbox" 
-                                                    <?php echo ($options['enabled'] == 1 ? 'checked' : ''); ?>
-                                                    <?php echo (in_array($name, [
-                                                        'shipping_first_name', 
-                                                        'shipping_last_name', 
-                                                        'shipping_country', 
-                                                        'shipping_address_1', 
-                                                        'shipping_address_2', 
-                                                        'shipping_city', 
-                                                        'shipping_state', 
-                                                        'shipping_postcode', 
-                                                        'account_username', 
-                                                        'account_password'
-                                                    ])) ? 'disabled' : ''; ?> />
+                                                    <?php echo ($options['enabled'] == 1 ? 'checked' : ''); ?> />
                                                 <span class="label">No</span>
                                             </label>
                                             <span class="toggle-label">yes</span>
                                         </td>
                                         <td class="td_edit">
-                                            <div class="f_edit_btn <?php echo (in_array($name, [
-                                                'shipping_first_name', 
-                                                'shipping_last_name', 
-                                                'shipping_country', 
-                                                'shipping_address_1', 
-                                                'shipping_address_2', 
-                                                'shipping_city', 
-                                                'shipping_state', 
-                                                'shipping_postcode', 
-                                                'account_username', 
-                                                'account_password'
-                                            ])) ? 'disabled-edit' : ''; ?>" 
-                                            <?php echo (in_array($name, [
-                                                'shipping_first_name', 
-                                                'shipping_last_name', 
-                                                'shipping_country', 
-                                                'shipping_address_1', 
-                                                'shipping_address_2', 
-                                                'shipping_city', 
-                                                'shipping_state', 
-                                                'shipping_postcode', 
-                                                'account_username', 
-                                                'account_password'
-                                            ])) ? '' : 'onclick="openEditFieldForm(this,' . $i . ')"'; ?>>
+                                            <div class="f_edit_btn" onclick="openEditFieldForm(this,<?php echo $i; ?>)">
                                                 <img class="edit-icon" src="<?php echo plugin_dir_url(dirname(__FILE__)) . 'admin/assets/css/pencil.png'; ?>" alt="" width="12" height="14">
                                             </div>
                                         </td>
@@ -864,14 +821,18 @@ if (!class_exists('JWCFE_Admin_Settings_Block_Fields')) :
                                                             </div>
                                                     </div>
 
-                                                    <div class="rowName" style="display: flex; align-items: center;">
-                                                        <div class="fieldlabel"  style="width: 40%;margin-right: 70px;"><?php esc_html_e('Name:', 'jwcfe'); ?><font color="red"><?php echo esc_html__('*', 'jwcfe'); ?></font></div>
+                                                   <div class="rowName" style="display: flex; align-items: center;">
+                                                        <div class="fieldlabel" style="width: 40%;margin-right: 70px;"><?php esc_html_e('Name:', 'jwcfe'); ?><font color="red"><?php echo esc_html__('*', 'jwcfe'); ?></font></div>
+
+                                                        <div class="jwcfe-tooltip">
+                                                            <img src="<?php echo esc_url( plugins_url( 'assets/help.png', __FILE__ ) ); ?>" title="">
+                                                            <p>The field name is considered its unique identifier. Ensure it is not repeated across different sections.</p>
+                                                        </div>
+
                                                         <div>
                                                             <input type="text" value="<?php echo esc_attr($_GET['section'].'_', 'jwcfe'); ?>" name="fname" placeholder="" require />
                                                             <br><span class="err_msgs"></span>
-
                                                         </div>
-
                                                     </div>
 
                                                     <div class="rowLabel" style="display: flex; align-items: center;">

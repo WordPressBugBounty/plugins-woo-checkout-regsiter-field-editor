@@ -60,6 +60,9 @@ if (!class_exists('JWCFE_Public_Checkout')) :
 			add_filter('woocommerce_form_field_file', array($this, 'jwcfe_checkout_form_field'), 10, 4);
 			add_filter('woocommerce_form_field_timepicker', array($this, 'jwcfe_checkout_form_field'), 10, 4);
 			add_filter('woocommerce_form_field_number', array($this, 'jwcfe_checkout_form_field'), 10, 4);
+			add_filter('woocommerce_form_field_hidden', array($this, 'jwcfe_checkout_form_field'), 10, 4);
+			add_filter('woocommerce_form_field_datetime-local', array($this, 'jwcfe_checkout_form_field'), 10, 4);
+			add_filter('woocommerce_form_field_url', array($this, 'jwcfe_checkout_form_field'), 10, 4);
 
 
 			add_filter('woocommerce_form_field_heading', array($this, 'jwcfe_checkout_fields_heading_field'), 10, 4);
@@ -67,6 +70,7 @@ if (!class_exists('JWCFE_Public_Checkout')) :
 			
 			add_filter('woocommerce_form_field_paragraph', array($this, 'jwcfe_checkout_fields_pro_paragraph_field'), 10, 4);
 			add_action('wp_enqueue_scripts', array($this, 'jwcfe_enqueue_scripts'), 10, 4);
+			add_action('woocommerce_init', array($this, 'jwcfe_load_address_blocks'), 10);
 			add_action('woocommerce_init', array($this, 'jwcfe_register_checkout_fields'), 20);
 			
 		}
@@ -90,6 +94,14 @@ if (!class_exists('JWCFE_Public_Checkout')) :
 			];
 
 			foreach ($sections as $section) {
+
+				// ✅ FIX: Block checkout me shipping section skip karo
+				// kyunki jwcfe_register_additional_address_fields() already handle karta hai
+				// warna field double show hoti hai
+				if ($section === 'shipping' && $this->jwcfe_has_block_checkout()) {
+					continue;
+				}
+
 				$option_name = 'jwcfe_wc_fields_block_' . $section;
 				$saved_fields = maybe_unserialize(get_option($option_name, []));
 
@@ -203,7 +215,6 @@ if (!class_exists('JWCFE_Public_Checkout')) :
 							case 'text':
 								if (!empty($field_data['validate'])) {
 									if (in_array('email', $field_data['validate'], true)) {
-										// Apply email validation
 										$field_attributes['validate_callback'] = function ($field_value) use ($field_data, $clean_field_id) {
 											if (!is_email($field_value)) {
 												return new WP_Error(
@@ -213,7 +224,6 @@ if (!class_exists('JWCFE_Public_Checkout')) :
 											}
 										};
 									} elseif (in_array('phone', $field_data['validate'], true)) {
-										// Apply phone validation
 										$field_attributes['validate_callback'] = function ($field_value) use ($field_data, $clean_field_id) {
 											if (!preg_match('/^\+?[0-9]{10,15}$/', $field_value)) {
 												return new WP_Error(
@@ -242,7 +252,6 @@ if (!class_exists('JWCFE_Public_Checkout')) :
 									$options = [];
 									$opts_source = $field_data['options_json'];
 
-									// support if options_json is a JSON string or urlencoded JSON
 									if (is_string($opts_source)) {
 										$decoded = json_decode(urldecode($opts_source), true);
 										if ($decoded !== null) {
@@ -279,7 +288,6 @@ if (!class_exists('JWCFE_Public_Checkout')) :
 									if ($options) {
 										$field_attributes['type'] = 'select';
 										$field_attributes['options'] = $options;
-										// set default if provided
 										if (!empty($field_data['default'])) {
 											$field_attributes['default'] = $field_data['default'];
 										}
@@ -288,70 +296,60 @@ if (!class_exists('JWCFE_Public_Checkout')) :
 								}
 								break;
 
-						case 'radio':
-			// Parse options for radio (supports multiple shapes)
-			if (!empty($field_data['options_json'])) {
-				$options = [];
-				$opts_source = $field_data['options_json'];
+							case 'radio':
+								if (!empty($field_data['options_json'])) {
+									$options = [];
+									$opts_source = $field_data['options_json'];
 
-				// support urlencoded JSON string or plain JSON string
-				if (is_string($opts_source)) {
-					$decoded = json_decode(urldecode($opts_source), true);
-					if ($decoded !== null) {
-						$opts_source = $decoded;
-					} else {
-						$decoded2 = json_decode($opts_source, true);
-						if ($decoded2 !== null) {
-							$opts_source = $decoded2;
-						}
-					}
-				}
+									if (is_string($opts_source)) {
+										$decoded = json_decode(urldecode($opts_source), true);
+										if ($decoded !== null) {
+											$opts_source = $decoded;
+										} else {
+											$decoded2 = json_decode($opts_source, true);
+											if ($decoded2 !== null) {
+												$opts_source = $decoded2;
+											}
+										}
+									}
 
-				if (is_array($opts_source)) {
-					foreach ($opts_source as $option) {
-						if (is_array($option) && isset($option['key'], $option['text'])) {
-							$options[] = [
-								'value' => $option['key'],
-								'label' => $option['text'],
-							];
-						} elseif (is_array($option) && isset($option['value'], $option['label'])) {
-							$options[] = [
-								'value' => $option['value'],
-								'label' => $option['label'],
-							];
-						} elseif (is_string($option)) {
-							$options[] = [
-								'value' => $option,
-								'label' => $option,
-							];
-						}
-					}
-				}
+									if (is_array($opts_source)) {
+										foreach ($opts_source as $option) {
+											if (is_array($option) && isset($option['key'], $option['text'])) {
+												$options[] = [
+													'value' => $option['key'],
+													'label' => $option['text'],
+												];
+											} elseif (is_array($option) && isset($option['value'], $option['label'])) {
+												$options[] = [
+													'value' => $option['value'],
+													'label' => $option['label'],
+												];
+											} elseif (is_string($option)) {
+												$options[] = [
+													'value' => $option,
+													'label' => $option,
+												];
+											}
+										}
+									}
 
-				if (!empty($options)) {
-					// Register as a SELECT so Blocks will render it.
-					// We'll convert the select -> radio UI on the frontend with JS.
-					$field_attributes['type'] = 'select';
-					$field_attributes['options'] = $options;
+									if (!empty($options)) {
+										$field_attributes['type'] = 'select';
+										$field_attributes['options'] = $options;
+										$field_attributes['attributes'] = isset($field_attributes['attributes']) && is_array($field_attributes['attributes']) ? $field_attributes['attributes'] : [];
+										$field_attributes['attributes']['data-jwcfe-type'] = 'radio';
 
-					// Mark it so our frontend script can detect this should be radios
-					// Use attributes -> data-jwcfe-type to pass through to DOM elements.
-					$field_attributes['attributes'] = isset($field_attributes['attributes']) && is_array($field_attributes['attributes']) ? $field_attributes['attributes'] : [];
-					$field_attributes['attributes']['data-jwcfe-type'] = 'radio';
+										if (!empty($field_data['default'])) {
+											$field_attributes['default'] = (string)$field_data['default'];
+										}
 
-					if (!empty($field_data['default'])) {
-						$field_attributes['default'] = (string)$field_data['default'];
-					}
+										$field_attributes['context'] = isset($field_data['context']) ? $field_data['context'] : $location;
 
-					// context mapping as before
-					$field_attributes['context'] = isset($field_data['context']) ? $field_data['context'] : $location;
-					// ✅ Add custom class support
-			
-			
-					woocommerce_register_additional_checkout_field($field_attributes);
-				}
-			}
-			break;
+										woocommerce_register_additional_checkout_field($field_attributes);
+									}
+								}
+								break;
 
 							default:
 								// error_log("Unsupported field type: " . $field_type);
@@ -360,6 +358,468 @@ if (!class_exists('JWCFE_Public_Checkout')) :
 				}
 			}
 		}
+
+		/**
+		 * Update default fields data for Block Checkout (address/shipping section)
+		 * Replicating ThemeHigh behavior to sync core fields settings.
+		 */
+		/***************************************************
+		 ******* ADDRESS SECTION FUNCTIONALITY - START *****
+		 ***************************************************/
+
+		/**
+		 * Load address block hooks - called on woocommerce_init
+		 * Requires WooCommerce 8.8.0+
+		 */
+		public function jwcfe_load_address_blocks() {
+
+			if ( version_compare( $this->jwcfe_get_wc_version(), '8.8.0', '<' ) ) {
+				return;
+			}
+
+			// Register custom address fields (non-default ones added by admin)
+			$this->jwcfe_register_additional_address_fields();
+
+			// Update default fields in Block Registry (label, required, priority, hidden)
+			add_action( 'woocommerce_blocks_checkout_block_registration', array( $this, 'jwcfe_update_default_fields_with_block' ), 999 );
+
+			// Validate custom address fields (email, phone, postcode)
+			add_action( 'woocommerce_validate_additional_field', array( $this, 'jwcfe_validate_additional_address_field' ), 10, 3 );
+
+			// Update country locale (required/hidden) for address_1, postcode, city, state
+			add_filter( 'woocommerce_get_country_locale', array( $this, 'jwcfe_update_address_locale_fields' ), 999 );
+
+			// Update woocommerce_default_address_fields filter (only when block checkout is active)
+			if ( $this->jwcfe_has_block_checkout() ) {
+				add_filter( 'woocommerce_default_address_fields', array( $this, 'jwcfe_update_default_address_fields' ), 999 );
+			}
+		}
+
+		/**
+		 * Check if block checkout is active on the checkout page
+		 */
+		private function jwcfe_has_block_checkout() {
+			$checkout_page_id   = wc_get_page_id( 'checkout' );
+			$has_block_checkout = $checkout_page_id && has_block( 'woocommerce/checkout', $checkout_page_id );
+			return $has_block_checkout || apply_filters( 'jwcfe_woocommerce_blocks_has_block_checkout', false );
+		}
+
+		/**
+		 * Get WooCommerce version
+		 */
+		private function jwcfe_get_wc_version() {
+			if ( defined( 'WC_VERSION' ) ) {
+				return WC_VERSION;
+			}
+			if ( class_exists( 'WooCommerce' ) ) {
+				global $woocommerce;
+				return isset( $woocommerce->version ) ? $woocommerce->version : '0';
+			}
+			return '0';
+		}
+
+		/**
+		 * Get default core address fields (matches WooCommerce block defaults)
+		 */
+		private function jwcfe_get_core_address_fields() {
+			return [
+				'email'      => [ 'label' => __( 'Email address', 'woocommerce' ), 'optionalLabel' => __( 'Email address (optional)', 'woocommerce' ), 'required' => true,  'hidden' => false, 'autocomplete' => 'email',          'autocapitalize' => 'none',      'type'  => 'email', 'index' => 0   ],
+				'country'    => [ 'label' => __( 'Country/Region', 'woocommerce' ), 'optionalLabel' => __( 'Country/Region (optional)', 'woocommerce' ), 'required' => true,  'hidden' => false, 'autocomplete' => 'country',         'index' => 1   ],
+				'first_name' => [ 'label' => __( 'First name', 'woocommerce' ),     'optionalLabel' => __( 'First name (optional)', 'woocommerce' ),     'required' => true,  'hidden' => false, 'autocomplete' => 'given-name',      'autocapitalize' => 'sentences', 'index' => 10  ],
+				'last_name'  => [ 'label' => __( 'Last name', 'woocommerce' ),      'optionalLabel' => __( 'Last name (optional)', 'woocommerce' ),      'required' => true,  'hidden' => false, 'autocomplete' => 'family-name',     'autocapitalize' => 'sentences', 'index' => 20  ],
+				'company'    => [ 'label' => __( 'Company', 'woocommerce' ),        'optionalLabel' => __( 'Company (optional)', 'woocommerce' ),        'required' => false, 'hidden' => false, 'autocomplete' => 'organization',    'autocapitalize' => 'sentences', 'index' => 30  ],
+				'address_1'  => [ 'label' => __( 'Address', 'woocommerce' ),        'optionalLabel' => __( 'Address (optional)', 'woocommerce' ),        'required' => true,  'hidden' => false, 'autocomplete' => 'address-line1',   'autocapitalize' => 'sentences', 'index' => 40  ],
+				'address_2'  => [ 'label' => __( 'Apartment, suite, etc.', 'woocommerce' ), 'optionalLabel' => __( 'Apartment, suite, etc. (optional)', 'woocommerce' ), 'required' => false, 'hidden' => false, 'autocomplete' => 'address-line2', 'autocapitalize' => 'sentences', 'index' => 50 ],
+				'city'       => [ 'label' => __( 'City', 'woocommerce' ),           'optionalLabel' => __( 'City (optional)', 'woocommerce' ),           'required' => true,  'hidden' => false, 'autocomplete' => 'address-level2',  'autocapitalize' => 'sentences', 'index' => 70  ],
+				'state'      => [ 'label' => __( 'State/County', 'woocommerce' ),   'optionalLabel' => __( 'State/County (optional)', 'woocommerce' ),   'required' => true,  'hidden' => false, 'autocomplete' => 'address-level1',  'autocapitalize' => 'sentences', 'index' => 80  ],
+				'postcode'   => [ 'label' => __( 'Postal code', 'woocommerce' ),    'optionalLabel' => __( 'Postal code (optional)', 'woocommerce' ),    'required' => true,  'hidden' => false, 'autocomplete' => 'postal-code',     'autocapitalize' => 'characters', 'index' => 90  ],
+				'phone'      => [ 'label' => __( 'Phone', 'woocommerce' ),          'optionalLabel' => __( 'Phone (optional)', 'woocommerce' ),          'required' => false, 'hidden' => false, 'autocomplete' => 'tel',             'autocapitalize' => 'characters', 'type' => 'tel', 'index' => 100 ],
+			];
+		}
+
+		/**
+		 * Get saved shipping fields from DB (these are the admin-configured address fields)
+		 */
+		private function jwcfe_get_saved_address_field_set() {
+			$saved = maybe_unserialize( get_option( 'jwcfe_wc_fields_block_shipping', [] ) );
+			if ( ! is_array( $saved ) ) {
+				$saved = [];
+			}
+			return $saved;
+		}
+
+		/**
+		 * Register custom (non-default) address fields in WooCommerce Block Checkout
+		 * Same as THWCFD_Block::register_additional_address_fields()
+		 */
+		public function jwcfe_register_additional_address_fields() {
+
+			if ( ! function_exists( 'woocommerce_register_additional_checkout_field' ) ) {
+				return;
+			}
+
+			$saved_fields    = $this->jwcfe_get_saved_address_field_set();
+			$core_fields     = $this->jwcfe_get_core_address_fields();
+			$remove_optional = apply_filters( 'jwcfe_remove_optional_label', false );
+
+			if ( empty( $saved_fields ) ) {
+				return;
+			}
+
+			foreach ( $saved_fields as $field_id => $field_data ) {
+
+				$clean_key = preg_replace( '/^(billing|shipping|additional)_/', '', $field_id );
+
+				// Skip default core fields
+				if ( isset( $core_fields[ $clean_key ] ) ) {
+					continue;
+				}
+
+				// Skip disabled fields
+				if ( isset( $field_data['enabled'] ) && ! $field_data['enabled'] ) {
+					continue;
+				}
+
+				$label       = isset( $field_data['label'] ) ? $field_data['label'] : ucfirst( $clean_key );
+				$type        = isset( $field_data['type'] ) ? $field_data['type'] : 'text';
+				$required    = ! empty( $field_data['required'] );
+				$placeholder = isset( $field_data['placeholder'] ) ? $field_data['placeholder'] : '';
+				$priority    = isset( $field_data['order'] ) ? ( ( (int) $field_data['order'] + 1 ) * 10 ) : 100;
+
+				// WooCommerce < 9.8.0 does not support required checkboxes
+				if ( version_compare( $this->jwcfe_get_wc_version(), '9.8.0', '<' ) && $type === 'checkbox' ) {
+					$required = false;
+				}
+
+				$optional_label = $remove_optional ? $label : sprintf(
+					__( '%s (optional)', 'woocommerce' ),
+					$label
+				);
+
+				// Build options for select/radio
+				$options = [];
+				if ( ! empty( $field_data['options_json'] ) ) {
+					$opts_source = $field_data['options_json'];
+					if ( is_string( $opts_source ) ) {
+						$decoded = json_decode( urldecode( $opts_source ), true );
+						if ( $decoded !== null ) {
+							$opts_source = $decoded;
+						}
+					}
+					if ( is_array( $opts_source ) ) {
+						foreach ( $opts_source as $option ) {
+							if ( isset( $option['key'], $option['text'] ) ) {
+								$options[] = [ 'value' => $option['key'], 'label' => $option['text'] ];
+							} elseif ( isset( $option['value'], $option['label'] ) ) {
+								$options[] = [ 'value' => $option['value'], 'label' => $option['label'] ];
+							}
+						}
+					}
+				}
+
+				// Select aur radio dono blocks me 'select' ke taur pe register hote hain
+				$register_type = ( $type === 'radio' ) ? 'select' : $type;
+
+				$field_args = [
+					'id'            => 'jwcfe-block/' . $clean_key,
+					'label'         => $label,
+					'optionalLabel' => $optional_label,
+					'placeholder'   => $placeholder,
+					'location'      => 'address',
+					'type'          => $register_type,
+					'required'      => $required,
+					'index'         => $priority,
+					'options'       => $options,
+				];
+
+				// ✅ FIX: Radio type ke liye data-jwcfe-type attribute add karo
+				// Taake frontend JS isko select se radio me convert kar sake
+				if ( $type === 'radio' ) {
+					$field_args['attributes'] = [
+						'data-jwcfe-type' => 'radio',
+					];
+
+					// Default value set karo agar available ho
+					if ( ! empty( $field_data['default'] ) ) {
+						$field_args['default'] = (string) $field_data['default'];
+					}
+				}
+
+				woocommerce_register_additional_checkout_field( $field_args );
+			}
+		}
+
+		/**
+		 * Update default address fields in WooCommerce Block Registry
+		 * (label, required, priority, hidden)
+		 * Same as THWCFD_Block::update_default_fields_data_with_block()
+		 */
+		public function jwcfe_update_default_fields_with_block() {
+
+			if (
+				! class_exists( 'Automattic\WooCommerce\Blocks\Package' ) ||
+				! class_exists( 'Automattic\WooCommerce\Blocks\Assets\AssetDataRegistry' ) ||
+				! class_exists( 'Automattic\WooCommerce\Blocks\Domain\Services\CheckoutFields' )
+			) {
+				return;
+			}
+
+			$change_default = apply_filters( 'jwcfe_change_default_block_address_fields', true );
+			if ( ! $change_default ) {
+				return;
+			}
+
+			try {
+				$container           = \Automattic\WooCommerce\Blocks\Package::container();
+				$checkout_fields     = $container->get( \Automattic\WooCommerce\Blocks\Domain\Services\CheckoutFields::class );
+				$asset_data_registry = $container->get( \Automattic\WooCommerce\Blocks\Assets\AssetDataRegistry::class );
+
+				$default_fields   = $this->jwcfe_get_core_address_fields();
+				$saved_fields     = $this->jwcfe_get_saved_address_field_set();
+				$saved_billing    = maybe_unserialize( get_option( 'jwcfe_wc_fields_block_billing', [] ) );
+				$remove_optional  = apply_filters( 'jwcfe_remove_optional_label', false );
+
+				foreach ( $default_fields as $key => &$field ) {
+
+					// Email is controlled by billing section
+					if ( $key === 'email' ) {
+						if ( is_array( $saved_billing ) && isset( $saved_billing['billing_email'] ) ) {
+							$billing_email = $saved_billing['billing_email'];
+							if ( ! empty( $billing_email['label'] ) ) {
+								$field['label']         = $billing_email['label'];
+								$field['optionalLabel'] = $remove_optional ? $billing_email['label'] : sprintf( __( '%s (optional)', 'woocommerce' ), $billing_email['label'] ); // phpcs:ignore
+							}
+							$field['required'] = ! empty( $billing_email['required'] );
+							if ( isset( $billing_email['order'] ) && $billing_email['order'] !== '' ) {
+								$field['index'] = ( (int) $billing_email['order'] + 1 ) * 10;
+							}
+						}
+						continue;
+					}
+
+					// Match shipping_<key> from saved fields
+					$shipping_key = 'shipping_' . $key;
+
+					if ( isset( $saved_fields[ $shipping_key ] ) ) {
+						$field_data = $saved_fields[ $shipping_key ];
+
+						// Skip if field is disabled -> mark hidden
+						if ( isset( $field_data['enabled'] ) && ! $field_data['enabled'] ) {
+							$field['hidden'] = true;
+							continue;
+						}
+
+						// Update index/priority
+						if ( isset( $field_data['order'] ) && $field_data['order'] !== '' ) {
+							$field['index'] = ( (int) $field_data['order'] + 1 ) * 10;
+						}
+
+						// Update label
+						if ( apply_filters( 'jwcfe_block_address_field_dynamic_label', true ) ) {
+							if ( ! empty( $field_data['label'] ) ) {
+								$field['label'] = $field_data['label'];
+								if ( $remove_optional ) {
+									$field['optionalLabel'] = $field_data['label'];
+								} else {
+									$field['optionalLabel'] = sprintf(
+										/* translators: %s Field label. */
+										__( '%s (optional)', 'woocommerce' ), // phpcs:ignore WordPress.WP.I18n.TextDomainMismatch
+										$field_data['label']
+									);
+								}
+							}
+						}
+
+						// Update required
+						$field['required'] = ! empty( $field_data['required'] );
+
+					} else {
+						// Field not in saved set -> hide it
+						$field['hidden'] = true;
+					}
+				}
+				unset( $field );
+
+				$asset_data_registry->add(
+					'defaultFields',
+					array_merge( $default_fields, $checkout_fields->get_additional_fields() )
+				);
+
+			} catch ( \Exception $e ) {
+				// Silently fail
+			}
+		}
+
+		/**
+		 * Update woocommerce_default_address_fields filter
+		 * (label, required, priority, hidden for block checkout)
+		 * Same as THWCFD_Block::update_default_fields_data()
+		 */
+		public function jwcfe_update_default_address_fields( $fields ) {
+
+			$change_default = apply_filters( 'jwcfe_change_default_block_address_fields', true );
+			if ( ! $change_default ) {
+				return $fields;
+			}
+
+			$saved_fields = $this->jwcfe_get_saved_address_field_set();
+
+			foreach ( $fields as $key => &$field ) {
+
+				if ( $key === 'email' ) {
+					continue;
+				}
+
+				$shipping_key = 'shipping_' . $key;
+
+				if ( isset( $saved_fields[ $shipping_key ] ) ) {
+					$field_data = $saved_fields[ $shipping_key ];
+
+					if ( isset( $field_data['enabled'] ) && ! $field_data['enabled'] ) {
+						$field['hidden']   = true;
+						$field['required'] = false;
+						continue;
+					}
+
+					if ( isset( $field_data['order'] ) && $field_data['order'] !== '' ) {
+						$field['priority'] = ( (int) $field_data['order'] + 1 ) * 10;
+					}
+					if ( ! empty( $field_data['label'] ) ) {
+						$field['label'] = $field_data['label'];
+					}
+					$field['required'] = ! empty( $field_data['required'] );
+
+				} else {
+					$field['hidden']   = true;
+					$field['required'] = false;
+				}
+			}
+			unset( $field );
+
+			return $fields;
+		}
+
+		/**
+		 * Update country locale: control required/hidden for address_1, postcode, city, state
+		 * Same as THWCFD_Block::update_address_fields_data()
+		 */
+		public function jwcfe_update_address_locale_fields( $locale ) {
+
+			if ( ! function_exists( 'has_block' ) || ! has_block( 'woocommerce/checkout' ) ) {
+				return $locale;
+			}
+
+			$change_default = apply_filters( 'jwcfe_change_default_block_address_fields', true );
+			if ( ! $change_default ) {
+				return $locale;
+			}
+
+			$saved_fields       = $this->jwcfe_get_saved_address_field_set();
+			$locale_field_keys  = [ 'address_1', 'postcode', 'city', 'state' ];
+
+			foreach ( $locale as $country_code => $country_fields ) {
+				foreach ( $locale_field_keys as $field_name ) {
+					$shipping_key = 'shipping_' . $field_name;
+					if ( isset( $saved_fields[ $shipping_key ] ) && ! ( isset( $saved_fields[ $shipping_key ]['enabled'] ) && ! $saved_fields[ $shipping_key ]['enabled'] ) ) {
+						$locale[ $country_code ][ $field_name ] = [
+							'required' => ! empty( $saved_fields[ $shipping_key ]['required'] ),
+							'hidden'   => false,
+						];
+					} else {
+						$locale[ $country_code ][ $field_name ] = [
+							'required' => false,
+							'hidden'   => true,
+						];
+					}
+				}
+			}
+
+			return $locale;
+		}
+
+		/**
+		 * Validate custom address fields (email, phone, postcode rules)
+		 * Same as THWCFD_Block::validate_additional_field()
+		 */
+		public function jwcfe_validate_additional_address_field( $errors, $field_key, $field_value ) {
+
+			// Only handle our custom address fields
+			$key_parts      = explode( 'jwcfe-block/', $field_key );
+			$actual_key     = isset( $key_parts[1] ) ? $key_parts[1] : null;
+
+			if ( empty( $actual_key ) ) {
+				return $errors;
+			}
+
+			$saved_fields = $this->jwcfe_get_saved_address_field_set();
+
+			// Try to find the field by clean key
+			$field_data = null;
+			foreach ( $saved_fields as $fid => $fdata ) {
+				$clean = preg_replace( '/^(billing|shipping|additional)_/', '', $fid );
+				if ( $clean === $actual_key ) {
+					$field_data = $fdata;
+					break;
+				}
+			}
+
+			if ( empty( $field_data ) || empty( $field_data['validate'] ) ) {
+				return $errors;
+			}
+
+			$validate_rules = is_array( $field_data['validate'] ) ? $field_data['validate'] : explode( ',', $field_data['validate'] );
+			$field_label    = isset( $field_data['label'] ) ? $field_data['label'] : $actual_key;
+
+			foreach ( $validate_rules as $rule ) {
+				$rule = trim( $rule );
+				switch ( $rule ) {
+					case 'email':
+						if ( ! empty( $field_value ) && ! is_email( $field_value ) ) {
+							$errors->add(
+								'invalid_email_field',
+								sprintf(
+									/* translators: %s is the field label */
+									__( 'The provided %s is not a valid email address.', 'jwcfe' ),
+									esc_html( $field_label )
+								)
+							);
+						}
+						break;
+
+					case 'phone':
+						if ( ! empty( $field_value ) && ! \WC_Validation::is_phone( $field_value ) ) {
+							$errors->add(
+								'invalid_phone_field',
+								sprintf(
+									/* translators: %s is the field label */
+									__( 'The provided %s is not a valid phone number.', 'jwcfe' ),
+									esc_html( $field_label )
+								)
+							);
+						}
+						break;
+
+					case 'postcode':
+						if ( ! empty( $field_value ) && ! \WC_Validation::is_postcode( $field_value, '' ) ) {
+							$errors->add(
+								'invalid_postcode',
+								sprintf(
+									/* translators: %s is the field label */
+									__( 'The provided %s is not a valid postcode.', 'jwcfe' ),
+									esc_html( $field_label )
+								)
+							);
+						}
+						break;
+				}
+			}
+
+			return $errors;
+		}
+
+		/***************************************************
+		 ******* ADDRESS SECTION FUNCTIONALITY - END *******
+		 ***************************************************/
 
 		function jwcfe_enqueue_scripts()
 		{
@@ -606,6 +1066,57 @@ if (!class_exists('JWCFE_Public_Checkout')) :
 				}
 				
 				switch ($args['type']) {
+
+					case 'hidden':
+						$field = '<input type="hidden" class="input-hidden ' . esc_attr(implode(' ', (array)$args['input_class'])) . '" name="' . esc_attr($key) . '" id="' . esc_attr($args['id']) . '" value="' . esc_attr($value) . '" />';
+						return $field;
+						break;
+						
+					case 'url':
+					    $fieldLabel = '';
+						$field = '<p class="form-row ' . esc_attr(implode(' ', (array)$args['class'])) . '" id="' . esc_attr($key) . '_field">';
+						if ($args['label']) {
+							$fieldLabel = $args['label'];
+							$field .= '<label for="' . esc_attr($args['id']) . '" class="' . implode(' ', (array)$args['label_class']) . '">' . esc_html__($args['label'], 'jwcfe') . $required . $tooltip . '</label>';
+						}
+						
+						$session = WC()->session;
+						$previous_value = $session ? $session->get($key, '') : '';
+						$display_value = !empty($previous_value) ? $previous_value : $value;
+						
+						$field .= '<input type="url" class="input-text ' . esc_attr(implode(' ', (array)$args['input_class'])) . '" name="' . esc_attr($key) . '" id="' . esc_attr($args['id']) . '"';
+						if (!empty($args['custom_attributes']) && is_array($args['custom_attributes'])) {
+							foreach ($args['custom_attributes'] as $customattr_key => $customattr_val) {
+								$field .= ' ' . esc_attr($customattr_key) . '="' . esc_attr($customattr_val) . '" ';
+							}
+						}
+						$field .= 'placeholder="' . esc_attr__($args['placeholder'], 'jwcfe') . '" ' . $args['maxlength'] . ' value="' . esc_attr($display_value) . '" />';
+						$field .= '</p>' . $after;
+						return $field;
+						break;
+						
+					case 'datetime-local':
+					    $fieldLabel = '';
+						$field = '<p class="form-row ' . esc_attr(implode(' ', (array)$args['class'])) . '" id="' . esc_attr($key) . '_field">';
+						if ($args['label']) {
+							$fieldLabel = $args['label'];
+							$field .= '<label for="' . esc_attr($args['id']) . '" class="' . implode(' ', (array)$args['label_class']) . '">' . esc_html__($args['label'], 'jwcfe') . $required . $tooltip . '</label>';
+						}
+						
+						$session = WC()->session;
+						$previous_value = $session ? $session->get($key, '') : '';
+						$display_value = !empty($previous_value) ? $previous_value : $value;
+						
+						$field .= '<input type="datetime-local" class="input-text ' . esc_attr(implode(' ', (array)$args['input_class'])) . '" name="' . esc_attr($key) . '" id="' . esc_attr($args['id']) . '"';
+						if (!empty($args['custom_attributes']) && is_array($args['custom_attributes'])) {
+							foreach ($args['custom_attributes'] as $customattr_key => $customattr_val) {
+								$field .= ' ' . esc_attr($customattr_key) . '="' . esc_attr($customattr_val) . '" ';
+							}
+						}
+						$field .= 'placeholder="' . esc_attr__($args['placeholder'], 'jwcfe') . '" ' . $args['maxlength'] . ' value="' . esc_attr($display_value) . '" />';
+						$field .= '</p>' . $after;
+						return $field;
+						break;
 
 					case 'checkboxgroup':
 						$field 	= '';
@@ -1255,32 +1766,14 @@ if (!class_exists('JWCFE_Public_Checkout')) :
 				$required = '';
 			}
 
-			$fieldLabel = '';
+			// Start building the field HTML matching user request structure but using plugin classes
+			$field = '<div class="form-row ' . esc_attr(implode(' ', $args['class'])) . '" id="' . esc_attr($key) . '_field" data-name="' . esc_attr($key) . '" data-validations="' . $data_validations . '">';
+			
+			$heading_content = !empty($args['label']) ? $args['label'] : $value;
+			$heading_type = !empty($args['heading_type']) ? $args['heading_type'] : 'h4';
 
-			// Get the previous value from session
-			$session = WC()->session;
-			$previous_value = $session ? $session->get($key, '') : '';
-			$display_value = !empty($previous_value) ? $previous_value : $value;
-
-			// Start building the field HTML
-			$field = '<div class="form-row ' . esc_attr(implode(' ', $args['class'])) . '" id="' . esc_attr($key) . '_field" data-validations="' . $data_validations . '">';
-			$tooltip = $this->generate_tooltip($args['text']);
-
-			if ($args['label']) {
-				$label_classes = 'form-label';
-				if (!empty($args['label_class'])) {
-					if (is_array($args['label_class'])) {
-						$label_classes = implode(' ', $args['label_class']);
-					} elseif (is_string($args['label_class'])) {
-						$label_classes = esc_attr($args['label_class']);
-					}
-				}
-
-				$field .= '<label for="' . esc_attr($args['id']) . '" class="' . esc_attr($label_classes) . '">' . esc_html($args['label']) . $required . $tooltip . '</label>';
-			}
-
-			// 🔁 Replace input with H4 heading
-			$field .= '<h4 class="checkout-heading">' . esc_html($display_value) . '</h4>';
+			// User requested no label tag, and content inside the heading
+			$field .= '<' . esc_attr($heading_type) . ' class="">' . esc_html($heading_content) . '</' . esc_attr($heading_type) . '>';
 
 			$field .= '</div>' . $after;
 
@@ -1684,6 +2177,7 @@ if (!class_exists('JWCFE_Public_Checkout')) :
 					$new_field = $original_fields && isset($original_fields[$name]) ? $original_fields[$name] : $field;
 					$new_field['label'] = isset($field['label']) ? $field['label'] : '';
 					$new_field['texteditor'] = isset($field['texteditor']) ? $field['texteditor'] : '';
+					$new_field['heading_type'] = isset($field['heading_type']) ? $field['heading_type'] : 'h4';
 
 					$new_field['placeholder'] = isset($field['placeholder']) ? $field['placeholder'] : '';
 					$new_field['class'] = isset($field['class']) && is_array($field['class']) ? $field['class'] : array();
