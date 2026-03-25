@@ -98,14 +98,16 @@ class JWCFE_Helper {
 						} elseif ($key === 'shipping') {
 							// Show only the specific shipping fields when empty
 							$fields = [
-								'shipping_first_name'  => ['type' => 'text', 'label' => esc_html__('First name', 'jwcfe'), 'required' => 1],
-								'shipping_last_name'   => ['type' => 'text', 'label' => esc_html__('Last name', 'jwcfe'), 'required' => 1],
-								'shipping_country'     => ['type' => 'country', 'label' => esc_html__('Country / Region', 'jwcfe'), 'required' => 1],
-								'shipping_address_1'   => ['type' => 'text', 'label' => esc_html__('Street address', 'jwcfe'), 'required' => 1],
-								'shipping_address_2'   => ['type' => 'text', 'label' => esc_html__('Apartment, suite, unit, etc.', 'jwcfe')],
-								'shipping_city'        => ['type' => 'text', 'label' => esc_html__('Town / City', 'jwcfe'), 'required' => 1],
-								'shipping_state'       => ['type' => 'state', 'label' => esc_html__('State / County', 'jwcfe'), 'required' => 1],
-								'shipping_postcode'    => ['type' => 'text', 'label' => esc_html__('Postcode / ZIP', 'jwcfe'), 'required' => 1],
+								'shipping_first_name'  => ['type' => 'text',    'label' => esc_html__('First name', 'jwcfe'),                   'required' => 1, 'enabled' => 1],
+								'shipping_last_name'   => ['type' => 'text',    'label' => esc_html__('Last name', 'jwcfe'),                    'required' => 1, 'enabled' => 1],
+								'shipping_company'     => ['type' => 'text',    'label' => esc_html__('Company name', 'jwcfe'),                 'required' => 0, 'enabled' => 1],
+								'shipping_country'     => ['type' => 'country', 'label' => esc_html__('Country / Region', 'jwcfe'),            'required' => 1, 'enabled' => 1],
+								'shipping_address_1'   => ['type' => 'text',    'label' => esc_html__('Street address', 'jwcfe'),              'required' => 1, 'enabled' => 1],
+								'shipping_address_2'   => ['type' => 'text',    'label' => esc_html__('Apartment, suite, unit, etc.', 'jwcfe'), 'required' => 0, 'enabled' => 1],
+								'shipping_city'        => ['type' => 'text',    'label' => esc_html__('Town / City', 'jwcfe'),                 'required' => 1, 'enabled' => 1],
+								'shipping_state'       => ['type' => 'state',   'label' => esc_html__('State / County', 'jwcfe'),              'required' => 1, 'enabled' => 1],
+								'shipping_postcode'    => ['type' => 'text',    'label' => esc_html__('Postcode / ZIP', 'jwcfe'),              'required' => 1, 'enabled' => 1],
+								'shipping_phone'       => ['type' => 'tel',     'label' => esc_html__('Phone', 'jwcfe'),                        'required' => 0, 'enabled' => 1],
 							];
 						} elseif ($key === 'additional') {
 							$fields = [

@@ -91,10 +91,11 @@ jQuery(function($){
                         other_reason: other,
                         _ajax_nonce: '{$nonce}'
                     }
-                }).always(function(){
+                }).done(function(){
                     window.location.href = deactivateLink;
                 }).fail(function(){
-                    alert('Something went wrong. Please try again.');
+                    window.location.href = deactivateLink;
+                }).always(function(){
                     $('#jwcfe-loading').hide();
                 });
             });

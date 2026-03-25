@@ -19,6 +19,9 @@
 .wc-block-components-address-form__country.wc-block-components-country-input {
   margin-top: 12px !important;
 }
+.wc-block-components-radio-input {
+  width: 100%;
+}
 #custom-file-style {
   box-sizing: border-box;
   width: 100%;

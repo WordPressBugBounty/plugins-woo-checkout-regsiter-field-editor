@@ -289,6 +289,12 @@ var jwcfe_settings = (function ($, window, document) {
       $fname.val("");
     }
 
+    form.find(".err_msgs").html("");
+    form.find(".err_msgs_options").html("");
+    form
+      .find("input[name='i_options_key[]'], input[name='i_options_text[]']")
+      .css("border-color", "");
+
     openjwcfeModal();
   };
 
@@ -369,6 +375,69 @@ var jwcfe_settings = (function ($, window, document) {
       err_msgs = MSG_INVALID_NAME;
     } else if (type == "") {
       err_msgs = "Type is required";
+    } else if (type === "select" || type === "radio") {
+      var hasOption = false;
+      var hasEmptyOption = false;
+      $(form)
+        .find(".jwcfe-opt-row")
+        .each(function () {
+          hasOption = true;
+          var kv = $(this).find("input[name='i_options_key[]']").val().trim();
+          var tv = $(this).find("input[name='i_options_text[]']").val().trim();
+          if (kv === "" || tv === "") {
+            hasEmptyOption = true;
+            return false;
+          }
+        });
+      if (!hasOption) {
+        $(form)
+          .find(".err_msgs_options")
+          .html(
+            "Options are required for " +
+              type +
+              " field. Please add at least one option.",
+          );
+        $(form)
+          .find(".rowOptions")
+          .find("input[name='i_options_key[]'], input[name='i_options_text[]']")
+          .css("border-color", "red");
+        err_msgs = " ";
+      } else if (hasEmptyOption) {
+        $(form)
+          .find(".err_msgs_options")
+          .html(
+            "Each option must have both Option Value and Option Text filled in.",
+          );
+        $(form)
+          .find(".jwcfe-opt-row")
+          .each(function () {
+            var kv = $(this).find("input[name='i_options_key[]']");
+            var tv = $(this).find("input[name='i_options_text[]']");
+            if (kv.val().trim() === "") kv.css("border-color", "red");
+            if (tv.val().trim() === "") tv.css("border-color", "red");
+          });
+        err_msgs = " ";
+      } else {
+        $(form).find(".err_msgs_options").html("");
+        $(form)
+          .find("input[name='i_options_key[]'], input[name='i_options_text[]']")
+          .css("border-color", "");
+
+        var isDuplicate = false;
+        $("#jwcfe_checkout_fields tbody tr").each(function () {
+          var existingName = $(this).find(".f_name").val();
+          var existingNameNew = $(this).find(".f_name_new").val();
+          var checkName =
+            existingNameNew !== "" ? existingNameNew : existingName;
+          if (checkName !== "" && checkName === name) {
+            isDuplicate = true;
+            return false;
+          }
+        });
+        if (isDuplicate) {
+          err_msgs = 'A field with the name "' + name + '" already exists.';
+        }
+      }
     } else {
       // Duplicate name check - existing rows mein same name check karo
       var isDuplicate = false;
@@ -765,6 +834,10 @@ var jwcfe_settings = (function ($, window, document) {
     var form = $("#jwcfe_new_field_form_pp");
 
     form.find(".err_msgs").html("");
+    form.find(".err_msgs_options").html("");
+    form
+      .find("input[name='i_options_key[]'], input[name='i_options_text[]']")
+      .css("border-color", "");
     form.find("input[name=rowId]").val(rowId);
     form.find("input[name=fname]").val(name);
     form.find("input[name=fnameNew]").val(name);
@@ -907,6 +980,54 @@ var jwcfe_settings = (function ($, window, document) {
       err_msgs = MSG_INVALID_NAME;
     } else if (type == "") {
       err_msgs = "Type is required";
+    } else if (type === "select" || type === "radio") {
+      var hasOpt = false;
+      var hasEmptyOpt = false;
+      $(form)
+        .find(".jwcfe-opt-row")
+        .each(function () {
+          hasOpt = true;
+          var kv = $(this).find("input[name='i_options_key[]']").val().trim();
+          var tv = $(this).find("input[name='i_options_text[]']").val().trim();
+          if (kv === "" || tv === "") {
+            hasEmptyOpt = true;
+            return false;
+          }
+        });
+      if (!hasOpt) {
+        $(form)
+          .find(".err_msgs_options")
+          .html(
+            "Options are required for " +
+              type +
+              " field. Please add at least one option.",
+          );
+        $(form)
+          .find(".rowOptions")
+          .find("input[name='i_options_key[]'], input[name='i_options_text[]']")
+          .css("border-color", "red");
+        err_msgs = " ";
+      } else if (hasEmptyOpt) {
+        $(form)
+          .find(".err_msgs_options")
+          .html(
+            "Each option must have both Option Value and Option Text filled in.",
+          );
+        $(form)
+          .find(".jwcfe-opt-row")
+          .each(function () {
+            var kv = $(this).find("input[name='i_options_key[]']");
+            var tv = $(this).find("input[name='i_options_text[]']");
+            if (kv.val().trim() === "") kv.css("border-color", "red");
+            if (tv.val().trim() === "") tv.css("border-color", "red");
+          });
+        err_msgs = " ";
+      } else {
+        $(form).find(".err_msgs_options").html("");
+        $(form)
+          .find("input[name='i_options_key[]'], input[name='i_options_text[]']")
+          .css("border-color", "");
+      }
     }
 
     if (err_msgs != "") {

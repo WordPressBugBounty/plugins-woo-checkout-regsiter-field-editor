@@ -5,7 +5,7 @@ Tags: checkout field Editor for wooCommerce, WooCommerce Checkout, woocommerce c
 Requires at least: 4.9
 Tested up to: 6.9.4
 Requires PHP: 5.6
-Stable tag: 2.4.9
+Stable tag: 2.5.0
 License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
@@ -183,7 +183,14 @@ Easily translate all field labels and descriptions into your store language.
 
 ## 🆕 CHANGELOG
 
-### 5.0.1 — Security Update & Feature Improvements (March 15, 2024)
+### 2.5.0
+– Fix default WooCommerce Fields conflict
+– Reset to defaults fields issue resolved
+– Radio button field in the block checkout
+– Select drop down options error in the backend
+– field unique name is required in the field settings
+
+### 2.4.9 — Security Update & Feature Improvements (March 15, 2024)
 – Fixed: CSRF security issue verified by WordPress.org Plugin Review Team  
 – Improved: Nonce verification and permission checks  
 – Added: Compatibility with WooCommerce 8.6+ and WordPress 6.7  
@@ -191,16 +198,16 @@ Easily translate all field labels and descriptions into your store language.
 – Updated: UI improvements for easier field management  
 – Minor bug fixes and performance enhancements  
 
-### 4.9.0
+### 2.4.8
 – Added: Multi-select and Paragraph field types  
 – Enhanced: Drag-and-drop reorder system  
 – Improved: Field validation and UX  
 
-### 4.8.0
+### 2.4.7
 – Added: Checkbox group, Date, and Time field types  
 – Added: Option to disable fields temporarily  
 
-### 4.7.0
+### 2.4.5
 – Initial release with core field editor features  
 
 —

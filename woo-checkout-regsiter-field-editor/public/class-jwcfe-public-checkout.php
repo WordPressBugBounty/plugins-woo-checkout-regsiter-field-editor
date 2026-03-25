@@ -77,43 +77,14 @@ if (!class_exists('JWCFE_Public_Checkout')) :
 		
 		function jwcfe_register_checkout_fields()
 		{
-			$sections = ['billing', 'shipping', 'additional'];
-
-			// Define fields to exclude
-			$excluded_shipping_fields = [
-				'shipping_first_name',
-				'shipping_last_name',
-				'shipping_company',
-				'shipping_country',
-				'shipping_address_1',
-				'shipping_address_2',
-				'shipping_city',
-				'shipping_state',
-				'shipping_postcode',
-				'shipping_phone'
-			];
+			$sections = ['billing', 'additional']; // shipping is handled by jwcfe_register_additional_address_fields()
 
 			foreach ($sections as $section) {
-
-				// ✅ FIX: Block checkout me shipping section skip karo
-				// kyunki jwcfe_register_additional_address_fields() already handle karta hai
-				// warna field double show hoti hai
-				if ($section === 'shipping' && $this->jwcfe_has_block_checkout()) {
-					continue;
-				}
-
 				$option_name = 'jwcfe_wc_fields_block_' . $section;
 				$saved_fields = maybe_unserialize(get_option($option_name, []));
 
 				if (!is_array($saved_fields)) {
 					$saved_fields = [];
-				}
-
-				// Filter out unwanted shipping fields
-				if ($section === 'shipping') {
-					$saved_fields = array_filter($saved_fields, function ($key) use ($excluded_shipping_fields) {
-						return !in_array($key, $excluded_shipping_fields, true);
-					}, ARRAY_FILTER_USE_KEY);
 				}
 
 				if (!empty($saved_fields)) {
@@ -126,7 +97,13 @@ if (!class_exists('JWCFE_Public_Checkout')) :
 						// Ensure the correct namespace
 						$field_id_formatted = "{$section}/{$clean_field_id}";
 
-						$location = ($section === 'shipping') ? 'address' : (($section === 'billing') ? 'contact' : 'order');
+						// Shipping custom fields are handled by jwcfe_register_additional_address_fields()
+						// to avoid double registration, skip shipping section here
+						if ( $section === 'shipping' ) {
+							continue 2;
+						}
+
+						$location = ($section === 'billing') ? 'contact' : 'order';
 
 						// Apply conditional logic
 						if (isset($field_data['rules_action']) && !empty($field_data['rules_action'])) {
@@ -215,6 +192,7 @@ if (!class_exists('JWCFE_Public_Checkout')) :
 							case 'text':
 								if (!empty($field_data['validate'])) {
 									if (in_array('email', $field_data['validate'], true)) {
+										// Apply email validation
 										$field_attributes['validate_callback'] = function ($field_value) use ($field_data, $clean_field_id) {
 											if (!is_email($field_value)) {
 												return new WP_Error(
@@ -224,6 +202,7 @@ if (!class_exists('JWCFE_Public_Checkout')) :
 											}
 										};
 									} elseif (in_array('phone', $field_data['validate'], true)) {
+										// Apply phone validation
 										$field_attributes['validate_callback'] = function ($field_value) use ($field_data, $clean_field_id) {
 											if (!preg_match('/^\+?[0-9]{10,15}$/', $field_value)) {
 												return new WP_Error(
@@ -252,6 +231,7 @@ if (!class_exists('JWCFE_Public_Checkout')) :
 									$options = [];
 									$opts_source = $field_data['options_json'];
 
+									// support if options_json is a JSON string or urlencoded JSON
 									if (is_string($opts_source)) {
 										$decoded = json_decode(urldecode($opts_source), true);
 										if ($decoded !== null) {
@@ -288,6 +268,7 @@ if (!class_exists('JWCFE_Public_Checkout')) :
 									if ($options) {
 										$field_attributes['type'] = 'select';
 										$field_attributes['options'] = $options;
+										// set default if provided
 										if (!empty($field_data['default'])) {
 											$field_attributes['default'] = $field_data['default'];
 										}
@@ -296,60 +277,70 @@ if (!class_exists('JWCFE_Public_Checkout')) :
 								}
 								break;
 
-							case 'radio':
-								if (!empty($field_data['options_json'])) {
-									$options = [];
-									$opts_source = $field_data['options_json'];
+						case 'radio':
+			// Parse options for radio (supports multiple shapes)
+			if (!empty($field_data['options_json'])) {
+				$options = [];
+				$opts_source = $field_data['options_json'];
 
-									if (is_string($opts_source)) {
-										$decoded = json_decode(urldecode($opts_source), true);
-										if ($decoded !== null) {
-											$opts_source = $decoded;
-										} else {
-											$decoded2 = json_decode($opts_source, true);
-											if ($decoded2 !== null) {
-												$opts_source = $decoded2;
-											}
-										}
-									}
+				// support urlencoded JSON string or plain JSON string
+				if (is_string($opts_source)) {
+					$decoded = json_decode(urldecode($opts_source), true);
+					if ($decoded !== null) {
+						$opts_source = $decoded;
+					} else {
+						$decoded2 = json_decode($opts_source, true);
+						if ($decoded2 !== null) {
+							$opts_source = $decoded2;
+						}
+					}
+				}
 
-									if (is_array($opts_source)) {
-										foreach ($opts_source as $option) {
-											if (is_array($option) && isset($option['key'], $option['text'])) {
-												$options[] = [
-													'value' => $option['key'],
-													'label' => $option['text'],
-												];
-											} elseif (is_array($option) && isset($option['value'], $option['label'])) {
-												$options[] = [
-													'value' => $option['value'],
-													'label' => $option['label'],
-												];
-											} elseif (is_string($option)) {
-												$options[] = [
-													'value' => $option,
-													'label' => $option,
-												];
-											}
-										}
-									}
+				if (is_array($opts_source)) {
+					foreach ($opts_source as $option) {
+						if (is_array($option) && isset($option['key'], $option['text'])) {
+							$options[] = [
+								'value' => $option['key'],
+								'label' => $option['text'],
+							];
+						} elseif (is_array($option) && isset($option['value'], $option['label'])) {
+							$options[] = [
+								'value' => $option['value'],
+								'label' => $option['label'],
+							];
+						} elseif (is_string($option)) {
+							$options[] = [
+								'value' => $option,
+								'label' => $option,
+							];
+						}
+					}
+				}
 
-									if (!empty($options)) {
-										$field_attributes['type'] = 'select';
-										$field_attributes['options'] = $options;
-										$field_attributes['attributes'] = isset($field_attributes['attributes']) && is_array($field_attributes['attributes']) ? $field_attributes['attributes'] : [];
-										$field_attributes['attributes']['data-jwcfe-type'] = 'radio';
+				if (!empty($options)) {
+					// Register as a SELECT so Blocks will render it.
+					// We'll convert the select -> radio UI on the frontend with JS.
+					$field_attributes['type'] = 'select';
+					$field_attributes['options'] = $options;
 
-										if (!empty($field_data['default'])) {
-											$field_attributes['default'] = (string)$field_data['default'];
-										}
+					// Mark it so our frontend script can detect this should be radios
+					// Use attributes -> data-jwcfe-type to pass through to DOM elements.
+					$field_attributes['attributes'] = isset($field_attributes['attributes']) && is_array($field_attributes['attributes']) ? $field_attributes['attributes'] : [];
+					$field_attributes['attributes']['data-jwcfe-type'] = 'radio';
 
-										$field_attributes['context'] = isset($field_data['context']) ? $field_data['context'] : $location;
+					if (!empty($field_data['default'])) {
+						$field_attributes['default'] = (string)$field_data['default'];
+					}
 
-										woocommerce_register_additional_checkout_field($field_attributes);
-									}
-								}
-								break;
+					// context mapping as before
+					$field_attributes['context'] = isset($field_data['context']) ? $field_data['context'] : $location;
+					// ✅ Add custom class support
+			
+			
+					woocommerce_register_additional_checkout_field($field_attributes);
+				}
+			}
+			break;
 
 							default:
 								// error_log("Unsupported field type: " . $field_type);
@@ -466,11 +457,13 @@ if (!class_exists('JWCFE_Public_Checkout')) :
 				return;
 			}
 
+			// Only register fields that are NOT default WooCommerce address fields
 			foreach ( $saved_fields as $field_id => $field_data ) {
 
+				// Strip prefix e.g. shipping_custom_field -> custom_field
 				$clean_key = preg_replace( '/^(billing|shipping|additional)_/', '', $field_id );
 
-				// Skip default core fields
+				// Skip if this is a default core field
 				if ( isset( $core_fields[ $clean_key ] ) ) {
 					continue;
 				}
@@ -492,7 +485,8 @@ if (!class_exists('JWCFE_Public_Checkout')) :
 				}
 
 				$optional_label = $remove_optional ? $label : sprintf(
-					__( '%s (optional)', 'woocommerce' ),
+					/* translators: %s Field label. */
+					__( '%s (optional)', 'woocommerce' ), // phpcs:ignore WordPress.WP.I18n.TextDomainMismatch
 					$label
 				);
 
@@ -517,35 +511,28 @@ if (!class_exists('JWCFE_Public_Checkout')) :
 					}
 				}
 
-				// Select aur radio dono blocks me 'select' ke taur pe register hote hain
+				// Select and radio both register as 'select' in blocks
 				$register_type = ( $type === 'radio' ) ? 'select' : $type;
 
-				$field_args = [
-					'id'            => 'jwcfe-block/' . $clean_key,
-					'label'         => $label,
-					'optionalLabel' => $optional_label,
-					'placeholder'   => $placeholder,
-					'location'      => 'address',
-					'type'          => $register_type,
-					'required'      => $required,
-					'index'         => $priority,
-					'options'       => $options,
-				];
-
-				// ✅ FIX: Radio type ke liye data-jwcfe-type attribute add karo
-				// Taake frontend JS isko select se radio me convert kar sake
+				$field_attrs = [];
 				if ( $type === 'radio' ) {
-					$field_args['attributes'] = [
-						'data-jwcfe-type' => 'radio',
-					];
-
-					// Default value set karo agar available ho
-					if ( ! empty( $field_data['default'] ) ) {
-						$field_args['default'] = (string) $field_data['default'];
-					}
+					$field_attrs['data-jwcfe-type'] = 'radio';
 				}
 
-				woocommerce_register_additional_checkout_field( $field_args );
+				woocommerce_register_additional_checkout_field(
+					[
+						'id'            => 'jwcfe-block/' . $clean_key,
+						'label'         => $label,
+						'optionalLabel' => $optional_label,
+						'placeholder'   => $placeholder,
+						'location'      => 'address',
+						'type'          => $register_type,
+						'required'      => $required,
+						'index'         => $priority,
+						'options'       => $options,
+						'attributes'    => $field_attrs,
+					]
+				);
 			}
 		}
 
@@ -578,6 +565,15 @@ if (!class_exists('JWCFE_Public_Checkout')) :
 				$saved_fields     = $this->jwcfe_get_saved_address_field_set();
 				$saved_billing    = maybe_unserialize( get_option( 'jwcfe_wc_fields_block_billing', [] ) );
 				$remove_optional  = apply_filters( 'jwcfe_remove_optional_label', false );
+
+				// Agar shipping fields reset ho gayi hain to default fields as-is use karo
+				if ( empty( $saved_fields ) ) {
+					$asset_data_registry->add(
+						'defaultFields',
+						array_merge( $default_fields, $checkout_fields->get_additional_fields() )
+					);
+					return;
+				}
 
 				foreach ( $default_fields as $key => &$field ) {
 
@@ -664,6 +660,11 @@ if (!class_exists('JWCFE_Public_Checkout')) :
 
 			$saved_fields = $this->jwcfe_get_saved_address_field_set();
 
+			// Agar shipping fields reset ho gayi hain to fields as-is return karo
+			if ( empty( $saved_fields ) ) {
+				return $fields;
+			}
+
 			foreach ( $fields as $key => &$field ) {
 
 				if ( $key === 'email' ) {
@@ -716,6 +717,11 @@ if (!class_exists('JWCFE_Public_Checkout')) :
 
 			$saved_fields       = $this->jwcfe_get_saved_address_field_set();
 			$locale_field_keys  = [ 'address_1', 'postcode', 'city', 'state' ];
+
+			// Agar shipping fields reset ho gayi hain to locale as-is return karo
+			if ( empty( $saved_fields ) ) {
+				return $locale;
+			}
 
 			foreach ( $locale as $country_code => $country_fields ) {
 				foreach ( $locale_field_keys as $field_name ) {

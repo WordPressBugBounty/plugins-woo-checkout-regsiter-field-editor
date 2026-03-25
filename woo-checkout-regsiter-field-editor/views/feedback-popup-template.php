@@ -15,8 +15,8 @@
         .jwcfd-link {text-decoration: none;padding: 8px 12px;border-radius: 5px;font-size: 14px;transition: all 0.2s;}
         .jwcfd-deactivate { color: #a00; }
         .jwcfd-deactivate:hover { color: #dc3232; background: #f8d7da; }
-        .jwcfd-active { background: #3858e9; color: white; border:#3858e9}
-        .jwcfd-active:hover { background: #2a46c7; }
+        .jwcfd-active { background: #3858e9; color: white; border:#3858e9; cursor: pointer;}
+        .jwcfd-active:hover { background: #2a46c7;color: white !important;}
         .jwcfd-close { background: #f0f0f0; color: #2c3338; }
         .jwcfd-close:hover { background: #e0e0e0; }
         #jwcfe-loading { display:none; margin-top:1em; color:#646970; font-style:italic }

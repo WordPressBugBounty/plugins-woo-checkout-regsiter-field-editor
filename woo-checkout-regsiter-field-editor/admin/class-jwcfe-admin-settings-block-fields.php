@@ -955,6 +955,7 @@ if (!class_exists('JWCFE_Admin_Settings_Block_Fields')) :
                                                     <font color="red"><?php echo esc_html__('*', 'jwcfe'); ?></font>
                                                 </div>
                                                 <div class="jwcfe_options">
+                                                    <span class="err_msgs_options" style="color:red; font-size:12px; display:block; margin-bottom:5px;"></span>
                                                     <div class="jwcfe-option-list thpladmin-dynamic-row-table custom-jwcfe-options">
                                                         <div class="ui-sortable">
                                                             <div class="jwcfe-opt-container custom-scroll-option">
