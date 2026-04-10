@@ -42,6 +42,8 @@ if (!class_exists('JWCFE_Public_Checkout')) :
 			
 
 			add_action('woocommerce_after_checkout_validation', array($this, 'jwcfe_check_field_validations'), 10, 4);
+			add_action('wp_ajax_jwcfe_file_action', array($this, 'jwcfe_handle_file_upload'));
+			add_action('wp_ajax_nopriv_jwcfe_file_action', array($this, 'jwcfe_handle_file_upload'));
 			add_action('woocommerce_email_order_meta', array($this, 'jwcfe_display_custom_fields_in_emails_lite'), 10, 3);
 
 
@@ -127,6 +129,7 @@ if (!class_exists('JWCFE_Public_Checkout')) :
 									}
 
 									if (empty($singleRule[0]['operand_type']) && strstr($operator, 'total')) {
+										if (!is_object($this->rules)) continue;
 										$cart_check_result = $this->rules->jwcfe_check_cart_total($operator, $operand);
 										if ((!$cart_check_result && $field_data['rules_action'] == 'show') || ($cart_check_result && $field_data['rules_action'] == 'hide')) {
 											continue 2; // Skip this field
@@ -134,6 +137,7 @@ if (!class_exists('JWCFE_Public_Checkout')) :
 									}
 
 									if ($singleRule[0]['operand_type'] == 'product') {
+										if (!is_object($this->rules)) continue;
 										$operand = isset($singleRule[0]['operand'][0]) ? $singleRule[0]['operand'][0] : null;
 										$operand_variation = isset($singleRule[0]['operand_variation'][0]) ? $singleRule[0]['operand_variation'][0] : null;
 										if (($field_data['rules_action'] == 'hide' && $operator == 'cart_contains' && $this->rules->jwcfe_check_product_in_cart($operand)) ||
@@ -150,6 +154,7 @@ if (!class_exists('JWCFE_Public_Checkout')) :
 									}
 
 									if ($singleRule[0]['operand_type'] == 'category') {
+										if (!is_object($this->rules)) continue;
 										$operand         = isset($singleRule[0]['operand'][0]) ? $singleRule[0]['operand'][0] : null;
 										$categoryInCart = $this->rules->jwcfe_check_category_in_cart($operand);
 
@@ -175,10 +180,13 @@ if (!class_exists('JWCFE_Public_Checkout')) :
 							}
 						}
 
+						$_label           = $field_data['label'] ?? ucfirst($clean_field_id);
 						$field_attributes = [
 							'id'              => $field_id_formatted,
-							'label'           => $field_data['label'] ?? ucfirst($clean_field_id),
-							'optionalLabel'   => $field_data['optionalLabel'] ?? '',
+							'label'           => $_label,
+							'optionalLabel'   => !empty($field_data['optionalLabel'])
+								? $field_data['optionalLabel']
+								: sprintf( __( '%s (optional)', 'woocommerce' ), $_label ),
 							'location'        => $location,
 							'required'        => !empty($field_data['required']),
 							'placeholder'     => $field_data['placeholder'] ?? '',
@@ -957,7 +965,7 @@ if (!class_exists('JWCFE_Public_Checkout')) :
 					$p = '/' . $p . '/';
 				}
 
-				wp_localize_script('wc-checkout-editor-frontend', 'wc_checkout_fields', array(
+				wp_localize_script('jwcfe-checkout-editor-frontend', 'wc_checkout_fields', array(
 					'date_format' => preg_replace($pattern, $replace, wc_date_format())
 				));
 			}
@@ -1869,8 +1877,9 @@ if (!class_exists('JWCFE_Public_Checkout')) :
 			$args['maxlength'] = ($args['maxlength']) ? 'maxlength="' . absint($args['maxlength']) . '"' : '';
 		
 			$field = '<div class="form-row ' . esc_attr(implode(' ', $args['class'])) . '" id="' . esc_attr($key) . '_field"  data-validations="' . $data_validations . '" >';
-				
-			$field .= '<div class="jwcfe-paragraph-content">' . wp_kses_post($args['texteditor']) . '</div>';
+			
+			$paragraph_content = !empty($args['texteditor']) ? $args['texteditor'] : (!empty($args['label']) ? $args['label'] : (!empty($args['text']) ? $args['text'] : ''));
+			$field .= '<div class="jwcfe-paragraph-content">' . wp_kses_post($paragraph_content) . '</div>';
 		
 			if (!empty($args['custom_attributes']) && is_array($args['custom_attributes'])) {
 				foreach ($args['custom_attributes'] as $customattr_key => $customattr_val) {
@@ -2346,6 +2355,60 @@ if (!class_exists('JWCFE_Public_Checkout')) :
 				return true;
 			}
 			return false;
+		}
+
+		/**
+		 * AJAX handler for file upload fields on checkout/account pages.
+		 * Stores the uploaded file in the WordPress uploads directory and
+		 * saves the URL to the session so it can be retrieved on order save.
+		 */
+		public function jwcfe_handle_file_upload() {
+			if (empty($_FILES['file']) || $_FILES['file']['error'] !== UPLOAD_ERR_OK) {
+				echo json_encode(array('error' => __('No file uploaded or upload error.', 'jwcfe')));
+				wp_die();
+			}
+
+			$field_name    = isset($_POST['field_name']) ? sanitize_key($_POST['field_name']) : '';
+			$allowed_types = apply_filters('jwcfe_allowed_file_types', array(
+				'image/jpeg', 'image/png', 'image/gif', 'image/webp',
+				'application/pdf',
+				'text/plain',
+				'application/msword',
+				'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+			));
+
+			$file_type = wp_check_filetype(basename($_FILES['file']['name']), null);
+			$mime      = isset($_FILES['file']['type']) ? $_FILES['file']['type'] : '';
+
+			if (!in_array($mime, $allowed_types)) {
+				echo json_encode(array('error' => __('File type not allowed.', 'jwcfe')));
+				wp_die();
+			}
+
+			$max_size = apply_filters('jwcfe_max_upload_size', wp_max_upload_size());
+			if ($_FILES['file']['size'] > $max_size) {
+				echo json_encode(array('error' => __('File size exceeds the allowed limit.', 'jwcfe')));
+				wp_die();
+			}
+
+			$upload = wp_handle_upload($_FILES['file'], array('test_form' => false));
+
+			if (isset($upload['error'])) {
+				echo json_encode(array('error' => $upload['error']));
+				wp_die();
+			}
+
+			// Store the uploaded file URL in session keyed by field name
+			// save_data() retrieves it via WC()->session->get($field_name)
+			if (!WC()->session) {
+				WC()->initialize_session();
+			}
+			if ($field_name) {
+				WC()->session->set($field_name, $upload['url']);
+			}
+
+			echo '1';
+			wp_die();
 		}
 	}
 

@@ -51,6 +51,7 @@ class JWCFE {
 
         // Construct the paths to admin and public directories
         // require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/class-jwcfe-autoloader.php';
+        require_once plugin_dir_path( __FILE__ ) . 'class-jwcfe-checkout-fields-utils.php';
         require_once plugin_dir_path( __FILE__ ) . '../public/class-jwcfe-print-invoice-wp-overnight.php';
         require_once plugin_dir_path( __FILE__ ) . '../public/class-jwcfe-print-invoice.php';
         require_once plugin_dir_path( __FILE__ ) . '../public/class-jwcfe-wc-checkout-field-editor-export-handler.php';

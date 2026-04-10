@@ -3,7 +3,7 @@
  * Plugin Name: Checkout Field Editor for Woocommerce - Checkout Manager
  * Description: Easily Add, Edit, Remove or re-arrange any fields on WooCommerce Checkout page.
  * Author:      Jcodex
- * Version:     2.5.0
+ * Version:     2.5.1
  * Author URI:  https://www.jcodex.com
  * Plugin URI:  https://www.jcodex.com
  * Text Domain: jwcfe
@@ -33,7 +33,7 @@ if (!defined('ABSPATH')) {
 }
 // Avoid defining constants if they are already defined.
 if (!defined('JWCFE_VERSION')) {
-    define('JWCFE_VERSION', '2.4.8');
+    define('JWCFE_VERSION', '2.5.0');
 }
 
 if (!defined('JWCFE_BASE_NAME')) {

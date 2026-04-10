@@ -42,6 +42,53 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 });
 
+/* ──────────────────────────────────────────────────────────
+   JWCFE ACCORDION — Section click to expand / collapse
+   ────────────────────────────────────────────────────────── */
+document.addEventListener("DOMContentLoaded", function () {
+
+  // Bind click on every accordion trigger (section card header)
+  document.querySelectorAll(".jwcfe-accordion-trigger").forEach(function (trigger) {
+
+    trigger.addEventListener("click", function (e) {
+      // Don't collapse when clicking Add Field button or its children
+      if (e.target.closest(".jwcfe-section-card-actions")) return;
+
+      var wrapper = trigger.closest(".jwcfe-accordion-wrapper");
+      if (!wrapper) return;
+
+      var isOpen = wrapper.classList.contains("jwcfe-accordion-open");
+
+      if (isOpen) {
+        // Collapse: measure current height, set it explicitly, then animate to 0
+        var body = wrapper.querySelector(".jwcfe-accordion-body");
+        if (body) {
+          body.style.maxHeight = body.scrollHeight + "px";
+          // Force reflow so transition fires
+          body.getBoundingClientRect();
+          body.style.maxHeight = "0";
+          body.style.opacity   = "0";
+        }
+        wrapper.classList.remove("jwcfe-accordion-open");
+      } else {
+        // Expand: set maxHeight to scrollHeight, then let CSS transition run
+        var body = wrapper.querySelector(".jwcfe-accordion-body");
+        wrapper.classList.add("jwcfe-accordion-open");
+        if (body) {
+          body.style.maxHeight = body.scrollHeight + "px";
+          body.style.opacity   = "1";
+          // After transition, set back to 9999 so dynamic content (new rows) shows
+          body.addEventListener("transitionend", function onEnd(ev) {
+            if (ev.propertyName !== "max-height") return;
+            body.style.maxHeight = "9999px";
+            body.removeEventListener("transitionend", onEnd);
+          });
+        }
+      }
+    });
+  });
+});
+
 // Polyfill for jQuery.isArray
 if (typeof jQuery !== "undefined" && !jQuery.isArray) {
   jQuery.isArray = Array.isArray;
@@ -56,24 +103,16 @@ var jwcfe_settings = (function ($, window, document) {
   }
   var MSG_INVALID_NAME = WcfeAdmin.MSG_INVALID_NAME;
 
-  var OPTION_ROW_HTML = '<div class="jwcfe-opt-row">';
-
-  OPTION_ROW_HTML +=
-    '<div style="width:280px;"><input type="text" name="i_options_key[]" placeholder="Option Value" style="width:280px;" /></div>';
-  OPTION_ROW_HTML +=
-    '<div style="width:280px;"><input type="text" name="i_options_text[]" placeholder="Option Text" style="width:280px;" /></div>';
-
-  OPTION_ROW_HTML +=
-    '<div class="action-cell"><a href="javascript:void(0)" onclick="jwcfeAddNewOptionRow(this)" class="btn btn-blue" title="Add new option">+</a></div>';
-  OPTION_ROW_HTML +=
-    '<div class="action-cell"><a href="javascript:void(0)" onclick="jwcfeRemoveOptionRow(this)" class="btn btn-red"  title="Remove option">x</a></div>';
-
-  OPTION_ROW_HTML += '<div class="action-cell sort ui-sortable-handle">';
-  OPTION_ROW_HTML +=
-    '<span class="btn btn-tiny sort ui-jwcf-sortable-handle"  onclick="jwcfe_handler_OptionRow(this)" title="Drag to sort">⇅</span>';
-  OPTION_ROW_HTML += "</div>";
-
-  OPTION_ROW_HTML += "</div>";
+  var OPTION_ROW_HTML =
+    '<div class="jwcfe-opt-row">' +
+    '<div class="jwcfe-opt-input-wrap"><input type="text" name="i_options_key[]" placeholder="Option Value" /></div>' +
+    '<div class="jwcfe-opt-input-wrap"><input type="text" name="i_options_text[]" placeholder="Option Text" /></div>' +
+    '<div class="jwcfe-opt-actions">' +
+    '<a href="javascript:void(0)" onclick="jwcfeAddNewOptionRow(this)" class="jwcfe-opt-btn jwcfe-opt-btn-add" title="Add option">+</a>' +
+    '<a href="javascript:void(0)" onclick="jwcfeRemoveOptionRow(this)" class="jwcfe-opt-btn jwcfe-opt-btn-remove" title="Remove">×</a>' +
+    '<span class="jwcfe-opt-btn jwcfe-opt-btn-sort ui-jwcf-sortable-handle" onclick="jwcfe_handler_OptionRow(this)" title="Drag to sort">⇅</span>' +
+    '</div>' +
+    '</div>';
 
   /*------------------------------------
    *---- ON-LOAD FUNCTIONS - SATRT -----
@@ -90,23 +129,24 @@ var jwcfe_settings = (function ($, window, document) {
 
     $("select.jwcfe-enhanced-multi-select")
       .select2({
-        placeholder: "Plese Select",
+        placeholder: "Please Select",
         minimumResultsForSearch: 10,
         allowClear: true,
       })
       .addClass("enhanced");
 
     $(".jwcfe_remove_field_btn").on("click", function () {
-      var form = $(this.form);
-
-      $(
-        "#jwcfe_checkout_fields tbody input:checkbox[name=select_field]:checked",
-      ).each(function () {
+      // FIX: Old selector only targeted one table. In the new layout there
+      // are multiple section tables so we search the whole form.
+      $("#jwcfe_checkout_fields_form tbody input:checkbox[name=select_field]:checked").each(function () {
         $(this).closest("tr").remove();
       });
     });
 
-    $("#jwcfe_checkout_fields tbody").sortable({
+    // FIX: Initialize sortable on EACH section table individually.
+    // The old code targeted a single #jwcfe_checkout_fields_form tbody which
+    // does not exist in the new multi-section layout.
+    $(".ui-sortable").sortable({
       items: "tr",
       cursor: "move",
       axis: "y",
@@ -122,11 +162,11 @@ var jwcfe_settings = (function ($, window, document) {
       },
     });
 
-    $("#jwcfe_checkout_fields tbody").on("sortstart", function (event, ui) {
+    $(".ui-sortable").on("sortstart", function (event, ui) {
       ui.item.css("background-color", "#f6f6f6");
     });
 
-    $("#jwcfe_checkout_fields tbody").on("sortstop", function (event, ui) {
+    $(".ui-sortable").on("sortstop", function (event, ui) {
       ui.item.removeAttr("style");
       jwcfe_prepare_field_order_indexes();
     });
@@ -163,7 +203,8 @@ var jwcfe_settings = (function ($, window, document) {
   };
 
   function setup_enhanced_multi_select(form) {
-    form.find("select.jwcfe-enhanced-multi-select2").each(function () {
+    form.find("select.jwcfe-enhanced-multi-select").each(function () {
+      if ($(this).hasClass("enhanced")) { $(this).select2("destroy"); $(this).removeClass("enhanced"); }
       $(this)
         .select2({
           minimumResultsForSearch: 10,
@@ -214,6 +255,11 @@ var jwcfe_settings = (function ($, window, document) {
 
   //     openjwcfeModal();
   // }
+  // FIX: Track which section's "Add Field" button was clicked so the new
+  // row can be appended to the correct table and tagged with the right
+  // f_section value. This variable is read by jwcfe_add_new_row().
+  var _currentSection = "";
+
   _openNewFieldForm = function openNewFieldForm(tabName) {
     var prefix = "";
     if (
@@ -223,6 +269,7 @@ var jwcfe_settings = (function ($, window, document) {
       tabName == "account"
     ) {
       prefix = tabName + "_"; // prefix save karo
+      _currentSection = tabName; // FIX: remember which section triggered
       tabName = prefix;
     }
 
@@ -231,25 +278,7 @@ var jwcfe_settings = (function ($, window, document) {
 
     // Clear option inputs manually
     var form = $("#jwcfe_new_field_form_pp");
-    form.find(".jwcfe_options .jwcfe-opt-container").html(`
-        <div class="jwcfe-opt-row">
-            <div style="width:280px;">
-                <input type="text" name="i_options_key[]" placeholder="Option Value" style="width:280px;">
-            </div>
-            <div style="width:280px;">
-                <input type="text" name="i_options_text[]" placeholder="Option Text" style="width:280px;">
-            </div>
-            <div class="action-cell">
-                <a href="javascript:void(0)" onclick="jwcfeAddNewOptionRow(this)" class="btn btn-blue" title="Add new option">+</a>
-            </div>
-            <div class="action-cell">
-                <a href="javascript:void(0)" onclick="jwcfeRemoveOptionRow(this)" class="btn btn-red" title="Remove option">x</a>
-            </div>
-            <div class="action-cell sort ui-sortable-handle">
-                <span class="btn btn-tiny sort ui-jwcf-sortable-handle" onclick="jwcfe_handler_OptionRow(this)" title="Drag to sort">⇅</span>
-            </div>
-        </div>
-    `);
+    form.find(".jwcfe_options .jwcfe-opt-container").html(OPTION_ROW_HTML);
 
     // reset tab and default field values
     $("#jwcfe_new_field_form_pp form ul li:first a").trigger("click");
@@ -260,11 +289,35 @@ var jwcfe_settings = (function ($, window, document) {
       "border-color": "",
     });
 
-    form.find("select[name=ftype]").trigger("change");
+    form.find("select[name=ftype]").prop("disabled", false).trigger("change");
     form.find("select[name=fclass]").val("form-row-wide");
     form.find("input[name=fcustomclass]").val("");
+    form.find("select[name=fheading_type]").val("h4");
+    form.find("textarea[name=ftexteditor]").val("");
+    if (typeof tinymce !== "undefined" && tinymce.get("flabel_editor")) {
+      tinymce.get("flabel_editor").setContent("");
+    }
+    form.find("input[name=flabel]").val("");
+    form.find("input[name=fplaceholder]").val("");
+    form.find("textarea[name=ftext]").val("");
+    form.find("input[name=fmaxlength]").val("");
+    form.find("select[name=fvalidate]").val(null).trigger("change");
+    form.find("select[name=fextoptions]").val(null).trigger("change");
+    form.find("input[name=frequired]").prop("checked", false);
+    form.find("input[name=fenabled]").prop("checked", true);
+    form.find("input[name=fshowinorder]").prop("disabled", false).prop("checked", true);
+    form.find("input[name=fshowinemail]").prop("disabled", false).prop("checked", true);
 
-    $("#btnaddfield").html("Add New Field");
+    // Update modal header back to "Add New Field" mode
+    var $title = $("#jwcfe_new_field_form_pp .ui-dialog-title");
+    $title.text("Add New Field");
+    $title.removeClass("is-edit");
+    // Update section dropdown to match current section
+    if (_currentSection) {
+      $(".jwcfe-section-display-select").val(_currentSection);
+    }
+
+    $("#btnaddfield").html("&#10003; Add Field");
     $("#btnaddfield").attr("data-type", "add");
     $("#btnaddfield").removeAttr("data-rowId");
 
@@ -394,8 +447,8 @@ var jwcfe_settings = (function ($, window, document) {
           .find(".err_msgs_options")
           .html(
             "Options are required for " +
-              type +
-              " field. Please add at least one option.",
+            type +
+            " field. Please add at least one option.",
           );
         $(form)
           .find(".rowOptions")
@@ -424,7 +477,7 @@ var jwcfe_settings = (function ($, window, document) {
           .css("border-color", "");
 
         var isDuplicate = false;
-        $("#jwcfe_checkout_fields tbody tr").each(function () {
+        $("#jwcfe_checkout_fields_form tbody tr").each(function () {
           var existingName = $(this).find(".f_name").val();
           var existingNameNew = $(this).find(".f_name_new").val();
           var checkName =
@@ -441,7 +494,7 @@ var jwcfe_settings = (function ($, window, document) {
     } else {
       // Duplicate name check - existing rows mein same name check karo
       var isDuplicate = false;
-      $("#jwcfe_checkout_fields tbody tr").each(function () {
+      $("#jwcfe_checkout_fields_form tbody tr").each(function () {
         var existingName = $(this).find(".f_name").val();
         var existingNameNew = $(this).find(".f_name_new").val();
         var checkName = existingNameNew !== "" ? existingNameNew : existingName;
@@ -474,7 +527,11 @@ var jwcfe_settings = (function ($, window, document) {
     extoptionsList = extoptionsList ? extoptionsList : "";
     text = text.replace(/"/g, "\\'");
 
-    var index = $("#jwcfe_checkout_fields tbody tr").size();
+    // FIX: Count rows across ALL section tables so the new row gets a
+    // globally unique index — not just the count of one table's rows.
+    // Old code used "#jwcfe_checkout_fields_form tbody tr" which only targeted
+    // a single (often absent) table in the new multi-section layout.
+    var index = $("#jwcfe_checkout_fields_form tbody tr").length;
 
     var newRow = '<tr class="row_' + index + '">';
 
@@ -670,35 +727,52 @@ var jwcfe_settings = (function ($, window, document) {
       '<input type="hidden" name="f_deleted[' +
       index +
       ']" class="f_deleted" value="0" />';
+    // FIX: Add f_section so PHP save_options knows which section this
+    // newly-added field belongs to. Without this the field gets lost on save.
+    newRow +=
+      '<input type="hidden" name="f_section[' +
+      index +
+      ']" class="f_section" value="' +
+      _currentSection +
+      '" />';
     newRow += "</td>";
-    newRow += '<td ><input type="checkbox" /></td>';
-    newRow += '<td class="name">' + name + "</td>";
-    newRow += '<td class="id">' + type + "</td>";
-    newRow += "<td>" + label + "</td>";
-    newRow += "<td>" + placeholder + "</td>";
-    newRow += "<td>" + validations + "</td>";
+
+    var $targetTbody = _currentSection
+      ? $("#jwcfe_sortable_" + _currentSection)
+      : $("#jwcfe_checkout_fields_form tbody:first");
+
+    var isBlockCheckout = $targetTbody.parent().find('thead tr th').length === 10;
+
+    newRow += '<td class="td_select"><input type="checkbox" name="select_field" /></td>';
+    
+    if (isBlockCheckout) {
+        newRow += '<td class="td_name" style="color:#888;font-size:12px;">' + name + "</td>";
+        newRow += '<td class="td_type"><span class="jwcfe-type-badge jwcfe-type-' + type + '">' + type + "</span></td>";
+        newRow += '<td class="td_label">' + label + "</td>";
+        newRow += '<td class="td_description">' + placeholder + "</td>";
+        newRow += '<td class="td_validation">' + validations + "</td>";
+    } else {
+        newRow += '<td class="td_label">' + label + "</td>";
+        newRow += '<td class="td_name" style="color:#888;font-size:12px;">' + name + "</td>";
+        newRow += '<td class="td_type"><span class="jwcfe-type-badge jwcfe-type-' + type + '">' + type + "</span></td>";
+    }
 
     if (required == true) {
-      newRow +=
-        '<td class="status"><span class="status-enabled tips">Yes</span></td>';
+      newRow += '<td class="td_required status"><span class="jwcfe-status-required">Required</span></td>';
     } else {
-      newRow += '<td class="status">-</td>';
+      newRow += '<td class="td_required status"><span class="jwcfe-status-optional">Optional</span></td>';
     }
 
     if (enabled == true) {
-      newRow +=
-        '<td class="status"><span class="status-enabled tips">Yes</span></td>';
+      newRow += '<td class="td_enabled status"><label class="pure-material-switch"><input type="checkbox" class="toggle-checkbox" checked><span class="label">No</span></label><span class="toggle-label">yes</span></td>';
     } else {
-      newRow += '<td class="status">-</td>';
+      newRow += '<td class="td_enabled status"><label class="pure-material-switch"><input type="checkbox" class="toggle-checkbox"><span class="label">No</span></label><span class="toggle-label">yes</span></td>';
     }
 
-    newRow +=
-      '<td><button type="button" onclick="openEditFieldForm(this,' +
-      index +
-      ')">Edit</button></td>';
+    newRow += '<td class="td_edit"><div class="jwcfe-actions-cell"><div class="jwcfe-icon-btn edit" onclick="openEditFieldForm(this,' + index + ')" title="Edit field"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/></svg></div><div class="jwcfe-icon-btn delete" onclick="jwcfeDeleteSingleField(this)" title="Delete field"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg></div></div></td>';
     newRow += "</tr>";
 
-    $("#jwcfe_checkout_fields tbody tr:last").after(newRow);
+    $targetTbody.append(newRow);
     return true;
   }
 
@@ -777,13 +851,17 @@ var jwcfe_settings = (function ($, window, document) {
     var row = $(elm).closest("tr");
     var name = row.find(".f_name").val();
     var label = row.find(".f_label").val();
-    // Change dialog title using jQuery UI dialog method
 
-    $("#jwcfe_new_field_form_pp")
-      .find(".ui-dialog-title")
-      .text("Edit " + label + " Field");
-    // $("#jwcfe_new_field_form_pp form ul li:first a").click();
-    $("#jwcfe_new_field_form_pp form ul li:first a").trigger("click");
+    // FIX: Update modal header for edit mode
+    var $title = $("#jwcfe_new_field_form_pp .ui-dialog-title");
+    $title.text("Edit: " + (label || name));
+    $title.addClass("is-edit");
+
+    // Update section dropdown to reflect which section this field belongs to
+    var section = row.find(".f_section").val() || "";
+    if (section) {
+      $(".jwcfe-section-display-select").val(section);
+    }
 
     var is_custom = row.find(".f_custom").val();
     var type = row.find(".f_type").val();
@@ -848,6 +926,9 @@ var jwcfe_settings = (function ($, window, document) {
     form.find("input[name=fmaxlength]").val(maxlength);
 
     form.find("textarea[name=ftexteditor]").val(texteditor);
+    if (typeof tinymce !== "undefined" && tinymce.get("flabel_editor")) {
+      tinymce.get("flabel_editor").setContent(texteditor);
+    }
 
     var optionsJson = row.find(".f_options").val();
     populate_options_list(form, optionsJson);
@@ -910,7 +991,7 @@ var jwcfe_settings = (function ($, window, document) {
 
     form.find("select[name=ftype]").change();
 
-    $("#btnaddfield").html("Update Field");
+    $("#btnaddfield").html("&#10003; Save Changes");
     $("#btnaddfield").attr("data-type", "update");
     $("#btnaddfield").attr("data-rowId", rowId);
 
@@ -961,7 +1042,9 @@ var jwcfe_settings = (function ($, window, document) {
       .val();
     var extoptionsList = $(form).find("select[name=fextoptions]").val();
     var heading_type = $(form).find("select[name=fheading_type]").val();
-    var fieldClass = $(form).find("select[name=fclass]").val();
+    var widthClass = $(form).find("select[name=fclass]").val();
+    var customCssClass = ($(form).find("input[name=fcustomclass]").val() || "").trim();
+    var fieldClass = customCssClass ? widthClass + " " + customCssClass : widthClass;
     var labelClass = $(form).find("input[name=flabelclass]").val();
     var access = $(form).find("input[name=faccess]").prop("checked");
     var maxlength = $(form).find("input[name=fmaxlength]").val();
@@ -999,8 +1082,8 @@ var jwcfe_settings = (function ($, window, document) {
           .find(".err_msgs_options")
           .html(
             "Options are required for " +
-              type +
-              " field. Please add at least one option.",
+            type +
+            " field. Please add at least one option.",
           );
         $(form)
           .find(".rowOptions")
@@ -1044,7 +1127,9 @@ var jwcfe_settings = (function ($, window, document) {
     validations = validations ? validations : "";
     extoptionsList = extoptionsList ? extoptionsList : "";
 
-    var row = $("#jwcfe_checkout_fields tbody").find(".row_" + rowId_);
+    // FIX: Search across ALL section tables, not just a single
+    // #jwcfe_checkout_fields_form tbody which doesn't exist in the new layout.
+    var row = $("#jwcfe_checkout_fields_form tbody").find(".row_" + rowId_);
     row.find(".f_name").val(name);
     row.find(".f_type").val(type);
     row.find(".f_label").val(label);
@@ -1093,9 +1178,9 @@ var jwcfe_settings = (function ($, window, document) {
   }
 
   _removeSelectedFields = function removeSelectedFields() {
-    $("#jwcfe_checkout_fields tbody tr").removeClass("strikeout");
+    $("#jwcfe_checkout_fields_form tbody tr").removeClass("strikeout");
     $(
-      "#jwcfe_checkout_fields tbody input:checkbox[name=select_field]:checked",
+      "#jwcfe_checkout_fields_form tbody input:checkbox[name=select_field]:checked",
     ).each(function () {
       //$(this).closest('tr').remove();
 
@@ -1111,9 +1196,27 @@ var jwcfe_settings = (function ($, window, document) {
     });
   };
 
+  _deleteSingleField = function deleteSingleField(elm) {
+    var row = $(elm).closest("tr");
+    if (!row.length) return;
+
+    var fieldName = row.find(".f_name").val() || row.find(".td_name").text().trim();
+    var confirmMsg = "Delete this field? This action cannot be undone after saving.";
+
+    if (!confirm(confirmMsg)) return;
+
+    if (!row.hasClass("strikeout")) {
+      row.addClass("strikeout");
+      row.fadeOut(300);
+    }
+    row.find(".f_deleted").val(1);
+    row.find(".jwcfe-icon-btn.edit").prop("disabled", true).css("pointer-events", "none").css("opacity", "0.4");
+    row.find(".jwcfe-icon-btn.delete").prop("disabled", true).css("pointer-events", "none").css("opacity", "0.4");
+  };
+
   _enableDisableSelectedFields = function enableDisableSelectedFields(enabled) {
     $(
-      "#jwcfe_checkout_fields tbody input:checkbox[name=select_field]:checked",
+      "#jwcfe_checkout_fields_form tbody input:checkbox[name=select_field]:checked",
     ).each(function () {
       var row = $(this).closest("tr");
       if (enabled == 0) {
@@ -1121,9 +1224,6 @@ var jwcfe_settings = (function ($, window, document) {
           row.addClass("jwcfe-disabled");
         }
       } else {
-        if (!row.hasClass("jwcfe-disabled")) {
-          alert("Field is already enabled.");
-        }
         row.removeClass("jwcfe-disabled");
       }
 
@@ -1169,7 +1269,7 @@ var jwcfe_settings = (function ($, window, document) {
 
   _enableDisableSelectedFields = function enableDisableSelectedFields(enabled) {
     $(
-      "#jwcfe_checkout_fields tbody input:checkbox[name=select_field]:checked",
+      "#jwcfe_checkout_fields_form tbody input:checkbox[name=select_field]:checked",
     ).each(function () {
       var row = $(this).closest("tr");
       // Set the state of the toggle switch
@@ -1242,7 +1342,7 @@ var jwcfe_settings = (function ($, window, document) {
 
   function openjwcfeModalLocal() {
     var modal = document.getElementById("jwcfeModal");
-    if (modal) modal.style.display = "block";
+    if (modal) modal.style.display = "flex";
   }
 
   document.addEventListener("DOMContentLoaded", function () {
@@ -1279,28 +1379,20 @@ var jwcfe_settings = (function ($, window, document) {
             const newkey = option.key.split("+").join(" ");
             const newtxt = option.text.split("+").join(" ");
 
-            optionsHtml += `
-							<div class="jwcfe-opt-row">
-								<div style="width:280px;">
-									<input type="text" name="i_options_key[]" value="${newkey}" placeholder="Option Value" style="width:280px;"/>
-								</div>
-								<div style="width:280px;">
-									<input type="text" name="i_options_text[]" value="${newtxt}" placeholder="Option Text" style="width:280px;"/>
-								</div>
-								<div class="action-cell">
-									<a href="javascript:void(0)" onclick="jwcfeAddNewOptionRow(this)" class="btn btn-blue" title="Add new option">+</a>
-								</div>
-								<div class="action-cell">
-									<a href="javascript:void(0)" onclick="jwcfeRemoveOptionRow(this)" class="btn btn-red" title="Remove option">x</a>
-								</div>
-								<div class="action-cell sort ui-sortable-handle">
-									<span class="btn btn-tiny sort ui-jwcf-sortable-handle" onclick="jwcfe_handler_OptionRow(this)" title="Drag to sort">⇅</span>
-								</div>
-							</div>`;
+            optionsHtml +=
+              '<div class="jwcfe-opt-row">' +
+              '<div class="jwcfe-opt-input-wrap"><input type="text" name="i_options_key[]" value="' + newkey + '" placeholder="Option Value" /></div>' +
+              '<div class="jwcfe-opt-input-wrap"><input type="text" name="i_options_text[]" value="' + newtxt + '" placeholder="Option Text" /></div>' +
+              '<div class="jwcfe-opt-actions">' +
+              '<a href="javascript:void(0)" onclick="jwcfeAddNewOptionRow(this)" class="jwcfe-opt-btn jwcfe-opt-btn-add" title="Add option">+</a>' +
+              '<a href="javascript:void(0)" onclick="jwcfeRemoveOptionRow(this)" class="jwcfe-opt-btn jwcfe-opt-btn-remove" title="Remove">×</a>' +
+              '<span class="jwcfe-opt-btn jwcfe-opt-btn-sort ui-jwcf-sortable-handle" onclick="jwcfe_handler_OptionRow(this)" title="Drag to sort">⇅</span>' +
+              '</div>' +
+              '</div>';
           });
         }
       } catch (err) {
-        alert("Error parsing options: " + err.message);
+        console.error("JWCFE: Error parsing options:", err.message);
       }
     }
 
@@ -1338,10 +1430,13 @@ var jwcfe_settings = (function ($, window, document) {
    *------------------------------------*/
 
   function jwcfe_prepare_field_order_indexes() {
-    $("#jwcfe_checkout_fields tbody tr").each(function (index, el) {
-      $("input.f_order", el).val(
-        parseInt($(el).index("#jwcfe_checkout_fields tbody tr")),
-      );
+    // FIX: Update f_order values across ALL section tables so drag-drop
+    // reordering works in the new multi-section layout. Old code only
+    // touched rows in a single (non-existent) #jwcfe_checkout_fields table.
+    var globalIndex = 0;
+    $("#jwcfe_checkout_fields_form tbody tr").each(function () {
+      $("input.f_order", this).val(globalIndex);
+      globalIndex++;
     });
   }
 
@@ -1658,18 +1753,18 @@ var jwcfe_settings = (function ($, window, document) {
     } else if (type === "text") {
       form
         .find(
-          ".rowLabel1, .rowDescription2,.rowMaxlength,.rowDescription, .rowOptions",
+          ".rowLabel1, .rowDescription2, .rowMaxlength, .rowDescription, .rowOptions",
         )
         .hide();
-      form.find("  .rowValidate, .rowClass").show();
+      form.find(".rowValidate, .rowClass").show();
       form.find(".pricetxt, .taxtxt").hide();
     } else if (type === "checkbox") {
       form
         .find(
-          ".rowDescription2,.rowDescription, .rowRequired, .rowAccess, .rowMaxlength, .rowValidate, .rowCustomText, .rowOptions, .rowPlaceholder",
+          ".rowDescription2, .rowDescription, .rowRequired, .rowAccess, .rowMaxlength, .rowValidate, .rowCustomText, .rowOptions, .rowPlaceholder",
         )
         .hide();
-      form.find(" .rowClass").show();
+      form.find(".rowClass").show();
     } else if (type === "textarea") {
       form
         .find(
@@ -1723,6 +1818,9 @@ var jwcfe_settings = (function ($, window, document) {
     } else if (type === "number") {
       form.find(".rowLabel1, .rowDescription2, .rowOptions").hide();
       form.find(".rowMaxlength").show();
+    } else if (type === "file") {
+      form.find(".rowValidate, .rowOptions, .rowMaxlength, .rowPlaceholder, .rowDescription2, .rowCustomText").hide();
+      form.find(".rowExtoptions, .rowDescription, .rowClass").show();
     } else {
       form.find(".rowOptions, .rowCustomText").hide();
     }
@@ -1742,11 +1840,16 @@ var jwcfe_settings = (function ($, window, document) {
     form.find(".rowTimepicker").hide();
     form.find(".rowPricing").show();
     form.find(".rowHeadingType").hide();
+    form.find(".texteditor").hide();
+    form.find(".rowCustomClass").show();
+    form.find(".rowDescription").show();
+    form.find(".rowMaxlength").show();
+    form.find(".rowClass").show();
   }
 
   _selectAllCheckoutFields = function selectAllCheckoutFields(elm) {
     var checkAll = $(elm).prop("checked");
-    $("#jwcfe_checkout_fields tbody input:checkbox[name=select_field]").prop(
+    $("#jwcfe_checkout_fields_form tbody input:checkbox[name=select_field]").prop(
       "checked",
       checkAll,
     );
@@ -1841,6 +1944,7 @@ var jwcfe_settings = (function ($, window, document) {
     openEditFieldForm: _openEditFieldForm,
 
     removeSelectedFields: _removeSelectedFields,
+    deleteSingleField: _deleteSingleField,
 
     enableDisableSelectedFields: _enableDisableSelectedFields,
 
@@ -1892,6 +1996,10 @@ function openEditFieldForm(elm, rowId) {
 
 function removeSelectedFields() {
   jwcfe_settings.removeSelectedFields();
+}
+
+function jwcfeDeleteSingleField(elm) {
+  jwcfe_settings.deleteSingleField(elm);
 }
 
 function enableSelectedFields() {

@@ -154,43 +154,95 @@ class JWCFE_Admin_Settings_Advanced {
 		if ( isset( $_POST['jwcfe_import_settings'] ) ) {
 			$this->save_plugin_settings();
 		}
-
+		echo '<div class="jwcfe-adv-page">';
 		$this->render_locale_settings_form();
 		$this->render_import_export_form();
+		echo '</div>';
 	}
 
 	private function render_locale_settings_form() {
 		$settings = self::get_advanced_settings();
+
+		// Icon map for each setting
+		$icons = array(
+			'enable_label_override'       => '<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A2 2 0 013 12V7a4 4 0 014-4z"/></svg>',
+			'enable_placeholder_override' => '<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h8m-8 6h16"/></svg>',
+			'enable_class_override'       => '<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"/></svg>',
+			'enable_priority_override'    => '<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M3 4h13M3 8h9m-9 4h9m5-4v12m0 0l-4-4m4 4l4-4"/></svg>',
+			'enable_required_override'    => '<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>',
+		);
+
+		$descriptions = array(
+			'enable_label_override'       => __( 'Allow custom labels to override WooCommerce default address field labels.', 'jwcfe' ),
+			'enable_placeholder_override' => __( 'Allow custom placeholder text to override defaults on address fields.', 'jwcfe' ),
+			'enable_class_override'       => __( 'Allow custom CSS classes to override address field classes.', 'jwcfe' ),
+			'enable_priority_override'    => __( 'Allow field priority/order to be overridden for address fields.', 'jwcfe' ),
+			'enable_required_override'    => __( 'Allow required/optional status to be overridden on address fields.', 'jwcfe' ),
+		);
 		?>
-		<div style="padding: 20px 30px;">
-			<form id="jwcfe_advanced_settings_form" method="post" action="">
-				<?php wp_nonce_field( 'jwcfe_advanced_settings', 'jwcfe_security_advanced_settings' ); ?>
-				<h3><?php esc_html_e( 'Locale Override Settings', 'jwcfe' ); ?></h3>
-				<table class="widefat" style="max-width:700px;">
-					<tbody>
-						<tr>
-							<td colspan="2" style="background:#f9f9f9; font-weight:600; padding:10px 12px;">
-								<?php esc_html_e( 'Address Field Overrides', 'jwcfe' ); ?>
-							</td>
-						</tr>
-						<?php foreach ( $this->settings_fields as $name => $field ) : ?>
-							<tr>
-								<td style="padding:10px 12px;">
-									<?php $this->render_checkbox( $field, $settings ); ?>
-								</td>
-							</tr>
-						<?php endforeach; ?>
-					</tbody>
-				</table>
-				<p class="submit" style="margin-top:15px;">
-					<input type="submit" name="jwcfe_save_advanced_settings" class="button button-primary"
-						value="<?php esc_attr_e( 'Save Changes', 'jwcfe' ); ?>">
-					<input type="submit" name="jwcfe_reset_advanced_settings" class="button"
-						value="<?php esc_attr_e( 'Reset to Default', 'jwcfe' ); ?>"
+		<form id="jwcfe_advanced_settings_form" method="post" action="">
+			<?php wp_nonce_field( 'jwcfe_advanced_settings', 'jwcfe_security_advanced_settings' ); ?>
+
+			<!-- ── Section Card ── -->
+			<div class="jwcfe-adv-card">
+				<div class="jwcfe-adv-card-header">
+					<div class="jwcfe-adv-card-header-icon">
+						<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><path stroke-linecap="round" stroke-linejoin="round" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+					</div>
+					<div>
+						<h3 class="jwcfe-adv-card-title"><?php esc_html_e( 'Locale Override Settings', 'jwcfe' ); ?></h3>
+						<p class="jwcfe-adv-card-subtitle"><?php esc_html_e( 'Control which address field properties can be overridden by your custom settings.', 'jwcfe' ); ?></p>
+					</div>
+				</div>
+
+				<div class="jwcfe-adv-section-label"><?php esc_html_e( 'Address Field Overrides', 'jwcfe' ); ?></div>
+
+				<div class="jwcfe-adv-toggle-list">
+					<?php foreach ( $this->settings_fields as $name => $field ) :
+						$checked = 1;
+						if ( is_array( $settings ) && isset( $settings[ $name ] ) ) {
+							$checked = ( $settings[ $name ] === '1' ) ? 1 : 0;
+						}
+						$fid  = 'jwcfe_adv_' . esc_attr( $name );
+						$icon = isset( $icons[ $name ] ) ? $icons[ $name ] : '';
+						$desc = isset( $descriptions[ $name ] ) ? $descriptions[ $name ] : '';
+					?>
+					<div class="jwcfe-adv-toggle-row">
+						<div class="jwcfe-adv-toggle-left">
+							<span class="jwcfe-adv-toggle-icon"><?php echo $icon; ?></span>
+							<div class="jwcfe-adv-toggle-text">
+								<span class="jwcfe-adv-toggle-label"><?php echo esc_html( $field['label'] ); ?></span>
+								<?php if ( $desc ) : ?>
+								<span class="jwcfe-adv-toggle-desc"><?php echo esc_html( $desc ); ?></span>
+								<?php endif; ?>
+							</div>
+						</div>
+						<label class="jwcfe-adv-switch" for="<?php echo esc_attr( $fid ); ?>">
+							<input type="checkbox"
+								id="<?php echo esc_attr( $fid ); ?>"
+								name="i_<?php echo esc_attr( $name ); ?>"
+								value="1"
+								<?php checked( $checked, 1 ); ?> />
+							<span class="jwcfe-adv-slider"></span>
+						</label>
+					</div>
+					<?php endforeach; ?>
+				</div>
+
+				<div class="jwcfe-adv-card-footer">
+					<button type="submit" name="jwcfe_save_advanced_settings" class="jwcfe-adv-btn jwcfe-adv-btn-primary">
+						<svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+						<?php esc_html_e( 'Save Changes', 'jwcfe' ); ?>
+					</button>
+					<button type="submit" name="jwcfe_reset_advanced_settings" class="jwcfe-adv-btn jwcfe-adv-btn-secondary"
 						onclick="return confirm('<?php esc_attr_e( 'Are you sure? All your changes will be deleted.', 'jwcfe' ); ?>')">
-				</p>
-			</form>
-		</div>
+						<svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
+						<?php esc_html_e( 'Reset to Default', 'jwcfe' ); ?>
+					</button>
+				</div>
+			</div>
+
+		</form>
 		<?php
 	}
 
@@ -223,20 +275,42 @@ class JWCFE_Admin_Settings_Advanced {
 	private function render_import_export_form() {
 		$plugin_settings = $this->prepare_export_data();
 		?>
-		<div style="padding: 0 30px 20px;">
-			<form id="jwcfe_import_export_form" method="post" action="">
-				<?php wp_nonce_field( 'jwcfe_import_settings', 'jwcfe_import_nonce' ); ?>
-				<h3><?php esc_html_e( 'Backup and Import Settings', 'jwcfe' ); ?></h3>
-				<p style="color:#666; max-width:700px;">
-					<?php esc_html_e( 'You can transfer the saved settings data between different installs by copying the text inside the text box. To import data from another install, replace the data in the text box with the one from another install and click "Import Settings".', 'jwcfe' ); ?>
-				</p>
-				<textarea name="i_settings_data" rows="8" style="width:100%; max-width:700px; font-family:monospace; font-size:12px;"><?php echo esc_textarea( $plugin_settings ); ?></textarea>
-				<p class="submit">
-					<input type="submit" name="jwcfe_import_settings" class="button button-primary"
-						value="<?php esc_attr_e( 'Import Settings', 'jwcfe' ); ?>">
-				</p>
-			</form>
-		</div>
+		<form id="jwcfe_import_export_form" method="post" action="">
+			<?php wp_nonce_field( 'jwcfe_import_settings', 'jwcfe_import_nonce' ); ?>
+
+			<div class="jwcfe-adv-card" style="margin-top:20px;">
+				<div class="jwcfe-adv-card-header">
+					<div class="jwcfe-adv-card-header-icon">
+						<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/></svg>
+					</div>
+					<div>
+						<h3 class="jwcfe-adv-card-title"><?php esc_html_e( 'Backup and Import Settings', 'jwcfe' ); ?></h3>
+						<p class="jwcfe-adv-card-subtitle"><?php esc_html_e( 'Transfer settings between installs by copying the export data below.', 'jwcfe' ); ?></p>
+					</div>
+				</div>
+
+				<div class="jwcfe-adv-import-body">
+					<p class="jwcfe-adv-import-info">
+						<svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4m0 4h.01"/></svg>
+						<?php esc_html_e( 'To import: paste settings data from another install into the box below, then click "Import Settings".', 'jwcfe' ); ?>
+					</p>
+					<textarea
+						name="i_settings_data"
+						rows="6"
+						class="jwcfe-adv-textarea"
+						spellcheck="false"
+						placeholder="<?php esc_attr_e( 'Paste exported settings data here to import...', 'jwcfe' ); ?>"
+					><?php echo esc_textarea( $plugin_settings ); ?></textarea>
+				</div>
+
+				<div class="jwcfe-adv-card-footer">
+					<button type="submit" name="jwcfe_import_settings" class="jwcfe-adv-btn jwcfe-adv-btn-primary">
+						<svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
+						<?php esc_html_e( 'Import Settings', 'jwcfe' ); ?>
+					</button>
+				</div>
+			</div>
+		</form>
 		<?php
 	}
 

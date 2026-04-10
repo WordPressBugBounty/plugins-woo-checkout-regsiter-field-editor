@@ -107,7 +107,7 @@ var jwcfe_settings = (function($, window, document) {
 
 		
 
-		$('#jwcfe_checkout_fields tbody input:checkbox[name=select_field]:checked').each(function () {
+		$('.jwcfe-fields-table tbody input:checkbox[name=select_field]:checked').each(function () {
 
 			$(this).closest('tr').remove();
 
@@ -117,7 +117,7 @@ var jwcfe_settings = (function($, window, document) {
 
 	
 
-	$('#jwcfe_checkout_fields tbody').sortable({
+	$('.jwcfe-fields-table tbody').sortable({
 
 		items:'tr',
 
@@ -147,13 +147,13 @@ var jwcfe_settings = (function($, window, document) {
 
 	
 
-	$("#jwcfe_checkout_fields tbody").on("sortstart", function( event, ui ){
+	$(".jwcfe-fields-table tbody").on("sortstart", function( event, ui ){
 
 		ui.item.css('background-color','#f6f6f6');										
 
 	});
 
-	$("#jwcfe_checkout_fields tbody").on("sortstop", function( event, ui ){
+	$(".jwcfe-fields-table tbody").on("sortstop", function( event, ui ){
 
 		ui.item.removeAttr('style');
 
@@ -211,8 +211,6 @@ var jwcfe_settings = (function($, window, document) {
                 action: 'save_form_fields',
 				section: tabName
             };
-
-            alert(data);
 
 			$.ajax({
 
@@ -337,7 +335,7 @@ var jwcfe_settings = (function($, window, document) {
 		validations = validations ? validations : '';
 
 
-		var index = $('#jwcfe_checkout_fields tbody tr').size();
+		var index = $('.jwcfe-fields-table tbody tr').size();
 
 		var newRow = '<tr class="row_'+index+'">';
 
@@ -411,7 +409,8 @@ var jwcfe_settings = (function($, window, document) {
 		newRow += '<td><button type="button" onclick="openEditFieldForm(this)">Edit</button></td>';
 		newRow += '</tr>';
 
-		$('#jwcfe_checkout_fields tbody tr:last').after(newRow);
+		var $targetTable = $('.jwcfe-fields-table[data-section="' + currentSection + '"] tbody');
+		if ($targetTable.length) { $targetTable.append(newRow); } else { $('.jwcfe-fields-table:last tbody').append(newRow); }
 
 		return true;
 
@@ -537,7 +536,7 @@ var jwcfe_settings = (function($, window, document) {
 		showinorder = showinorder ? 1 : 0;
 		validations = validations ? validations : '';
 
-		var row = $('#jwcfe_checkout_fields tbody').find('.row_'+rowId);
+		var row = $('.jwcfe-fields-table tbody').find('.row_'+rowId);
 		row.find(".f_name").val(name);
 		row.find(".f_type").val(type);
 		row.find(".f_label").val(label);
@@ -564,9 +563,9 @@ var jwcfe_settings = (function($, window, document) {
 
 	_removeSelectedFields = function removeSelectedFields(){
 
-		$('#jwcfe_checkout_fields tbody tr').removeClass('strikeout');
+		$('.jwcfe-fields-table tbody tr').removeClass('strikeout');
 
-		$('#jwcfe_checkout_fields tbody input:checkbox[name=select_field]:checked').each(function () {
+		$('.jwcfe-fields-table tbody input:checkbox[name=select_field]:checked').each(function () {
 
 			//$(this).closest('tr').remove();
 
@@ -586,7 +585,7 @@ var jwcfe_settings = (function($, window, document) {
 	
 	
 _enableDisableSelectedFields = function enableDisableSelectedFields(enabled){
-		$('#jwcfe_checkout_fields tbody input:checkbox[name=select_field]:checked').each(function () {
+		$('.jwcfe-fields-table tbody input:checkbox[name=select_field]:checked').each(function () {
 			var row = $(this).closest('tr');
 			if(enabled == 0){
 				if(!row.hasClass("jwcfe-disabled")){
@@ -595,10 +594,7 @@ _enableDisableSelectedFields = function enableDisableSelectedFields(enabled){
 			}
 			
 			else{
-				if(!row.hasClass("jwcfe-disabled")){
-					alert("Field is already enabled.")
-				}
-				row.removeClass("jwcfe-disabled");				
+				row.removeClass("jwcfe-disabled");
 			}
 			
 			row.find(".f_edit_btn").prop('disabled', enabled == 1 ? false : true);
@@ -616,18 +612,12 @@ function handleToggleSwitch(row) {
     var inputField = row.find(".td_enabled .toggle-label");
     var toggleSwitch = row.find(".td_enabled .toggle-checkbox");
     var isEnabled = toggleSwitch.prop('checked');
-    console.log("isEnabled:", isEnabled);
 
     if (!isEnabled) {
         if (!row.hasClass("jwcfe-disabled")) {
             row.addClass("jwcfe-disabled");
         }
-
         inputField.hide();
-        else{
-				if(!row.hasClass("jwcfe-disabled")){
-					alert("Field is already enabled.")
-				}
     } else {
         row.removeClass("jwcfe-disabled");
         inputField.show();
@@ -640,16 +630,14 @@ function handleToggleSwitch(row) {
 
 $('.td_enabled .toggle-checkbox').on('change', function() {
     var row = $(this).closest('tr');
-    console.log("Toggle switch changed");
     handleToggleSwitch(row);
 });
 
 _enableDisableSelectedFields = function enableDisableSelectedFields(enabled) {
-    $('#jwcfe_checkout_fields tbody input:checkbox[name=select_field]:checked').each(function () {
+    $('.jwcfe-fields-table tbody input:checkbox[name=select_field]:checked').each(function () {
         var row = $(this).closest('tr');
         // Set the state of the toggle switch
         row.find(".td_enabled .toggle-checkbox").prop("checked", enabled == 1);
-        console.log("Setting toggle switch state to:", enabled == 1);
         handleToggleSwitch(row);
     });
 }
@@ -692,8 +680,8 @@ _enableDisableSelectedFields = function enableDisableSelectedFields(enabled) {
 
 	function jwcfe_prepare_field_order_indexes() {
 
-		$('#jwcfe_checkout_fields tbody tr').each(function(index, el){
-			$('input.f_order', el).val( parseInt( $(el).index('#jwcfe_checkout_fields tbody tr') ) );
+		$('.jwcfe-fields-table tbody tr').each(function(index, el){
+			$('input.f_order', el).val( parseInt( $(el).index('.jwcfe-fields-table tbody tr') ) );
 		});
 	};
 
@@ -723,7 +711,7 @@ _enableDisableSelectedFields = function enableDisableSelectedFields(enabled) {
 	
 	_selectAllCheckoutFields = function selectAllCheckoutFields(elm){
 		var checkAll = $(elm).prop('checked');
-		$('#jwcfe_checkout_fields tbody input:checkbox[name=select_field]').prop('checked', checkAll);
+		$('.jwcfe-fields-table tbody input:checkbox[name=select_field]').prop('checked', checkAll);
 	}
 
 	
@@ -804,18 +792,3 @@ function jwcfeSelectAllCheckoutFields(elm){
 
 
 
-
-jQuery(document).ready(function($){
-	// Add validation to check if at least one file extension is selected
-	$('form.checkout').on('checkout_place_order', function(){
-		alert(form.checkout);
-		var selectedExtensions = $('select[name="fextoptions"]').val();
-
-		// console.log(selectedExtensions);	
-		if (!selectedExtensions || selectedExtensions.length === 0) {
-			alert('<?php esc_html_e("Please select at least one allowed file type.", "jwcfe"); ?>');
-			return false;
-		}
-		return true;
-	});
-});
