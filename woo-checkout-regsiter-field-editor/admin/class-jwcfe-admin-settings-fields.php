@@ -148,6 +148,17 @@ if (!class_exists('JWCFE_Admin_Settings_Fields')) :
                 <form method="post" id="jwcfe_checkout_fields_form" action="">
                     <?php wp_nonce_field('woo_checkout_editor_settings', 'woo_checkout_editor_nonce'); ?>
 
+                    <!-- ═══ TOP SAVE BAR ═══ -->
+                    <div class="jwcfe-bottom-bar jwcfe-top-bar">
+                        <button type="button" class="button" onclick="removeSelectedFields()"><?php esc_html_e('Remove Selected', 'jwcfe'); ?></button>
+                        <button type="button" class="button" onclick="enableSelectedFields()"><?php esc_html_e('Show Selected', 'jwcfe'); ?></button>
+                        <button type="button" class="button" onclick="disableSelectedFields()"><?php esc_html_e('Hide Selected', 'jwcfe'); ?></button>
+                        <div class="jwcfe-save-group">
+                            <input type="submit" name="reset_fields" class="button" value="<?php esc_attr_e('Reset to defaults', 'jwcfe'); ?>" onclick="return confirm('<?php esc_attr_e('Are you sure? All changes will be deleted.', 'jwcfe'); ?>');" />
+                            <input type="submit" name="save_fields" class="button-primary jwcfe-save-btn" value="<?php esc_attr_e('Save Changes', 'jwcfe'); ?>" />
+                        </div>
+                    </div>
+
                     <?php 
                     $i = 0;
                     foreach ($all_sections as $sec_key) :
@@ -323,6 +334,7 @@ if (!class_exists('JWCFE_Admin_Settings_Fields')) :
                                             <input type="hidden" name="f_maxlength[<?php echo $i; ?>]" class="f_maxlength" value="<?php echo $options['maxlength']; ?>" />
                                         <?php } ?>
                                         <input type="hidden" name="f_placeholder[<?php echo $i; ?>]" class="f_placeholder" value="<?php echo $options['placeholder']; ?>" />
+                                        <input type="hidden" name="f_default[<?php echo $i; ?>]" class="f_default" value="<?php echo isset($options['default']) ? esc_attr($options['default']) : ''; ?>" />
                                         <input type="hidden" name="i_min_time[<?php echo $i; ?>]" class="i_min_time" value="<?php echo $options['min_time']; ?>" />
                                         <input type="hidden" name="i_max_time[<?php echo $i; ?>]" class="i_max_time" value="<?php echo $options['max_time']; ?>" />
                                         <input type="hidden" name="i_time_step[<?php echo $i; ?>]" class="i_time_step" value="<?php echo $options['time_step']; ?>" />
@@ -551,23 +563,7 @@ if (!class_exists('JWCFE_Admin_Settings_Fields')) :
                             <div class="jwcfe-modal-body" id="jwcfe_field_editor_form_new">
                                 <input type="hidden" name="i_options" value="" />
 
-                                <!-- Row 1: Label + Key/Name -->
-                                <div class="jwcfe-modal-row-2col">
-                                    <div class="jwcfe-modal-field">
-                                        <label class="jwcfe-modal-label"><?php esc_html_e('Field Label', 'jwcfe'); ?> <span class="jwcfe-required">*</span></label>
-                                        <input type="text" name="flabel" class="jwcfe-modal-input" placeholder="<?php esc_attr_e('e.g. Company Name', 'jwcfe'); ?>" />
-                                    </div>
-                                    <div class="jwcfe-modal-field">
-                                        <label class="jwcfe-modal-label">
-                                            <?php esc_html_e('Field Key / Name', 'jwcfe'); ?> <span class="jwcfe-required">*</span>
-                                            <span class="jwcfe-modal-tooltip-icon" title="<?php esc_attr_e('Unique identifier. No spaces. Not repeated across sections.', 'jwcfe'); ?>">&#9432;</span>
-                                        </label>
-                                        <input type="text" name="fname" class="jwcfe-modal-input" placeholder="<?php esc_attr_e('e.g. billing_vat_number', 'jwcfe'); ?>" />
-                                        <span class="err_msgs" style="color:red;font-size:11px;display:block;margin-top:3px;"></span>
-                                    </div>
-                                </div>
-
-                                <!-- Row 2: Field Type + Section -->
+                                <!-- Row 1: Field Type + Section -->
                                 <div class="jwcfe-modal-row-2col">
                                     <div class="jwcfe-modal-field rowfield">
                                         <label class="jwcfe-modal-label"><?php esc_html_e('Field Type', 'jwcfe'); ?> <span class="jwcfe-required">*</span></label>
@@ -606,6 +602,30 @@ if (!class_exists('JWCFE_Admin_Settings_Fields')) :
                                     </div>
                                 </div>
 
+                                <!-- Row 2: Label + Key/Name -->
+                                <div class="jwcfe-modal-row-2col">
+                                    <div class="jwcfe-modal-field">
+                                        <label class="jwcfe-modal-label"><?php esc_html_e('Field Label', 'jwcfe'); ?> <span class="jwcfe-required">*</span></label>
+                                        <input type="text" name="flabel" class="jwcfe-modal-input" placeholder="<?php esc_attr_e('e.g. Company Name', 'jwcfe'); ?>" />
+                                    </div>
+                                    <div class="jwcfe-modal-field">
+                                        <label class="jwcfe-modal-label">
+                                            <?php esc_html_e('Field Key / Name', 'jwcfe'); ?> <span class="jwcfe-required">*</span>
+                                            <span class="jwcfe-modal-tooltip-icon" title="<?php esc_attr_e('Unique identifier. No spaces. Not repeated across sections.', 'jwcfe'); ?>">&#9432;</span>
+                                        </label>
+                                        <input type="text" name="fname" class="jwcfe-modal-input" placeholder="<?php esc_attr_e('e.g. billing_vat_number', 'jwcfe'); ?>" />
+                                        <span class="err_msgs" style="color:red;font-size:11px;display:block;margin-top:3px;"></span>
+                                    </div>
+                                </div>
+
+                                <!-- Default Value -->
+                                <div class="jwcfe-modal-row-1col rowDefault">
+                                    <div class="jwcfe-modal-field">
+                                        <label class="jwcfe-modal-label"><?php esc_html_e('Default Value', 'jwcfe'); ?></label>
+                                        <input type="text" name="fdefault" class="jwcfe-modal-input" placeholder="<?php esc_attr_e('e.g. ABC', 'jwcfe'); ?>" />
+                                    </div>
+                                </div>
+
                                 <!-- Select/Radio options -->
                                 <div class="rowOptions jwcfe-modal-options-block" style="display:none;">
                                     <div class="jwcfe-modal-field">
@@ -628,18 +648,6 @@ if (!class_exists('JWCFE_Admin_Settings_Fields')) :
                                                 </div>
                                             </div>
                                         </div>
-                                    </div>
-                                </div>
-
-                                <!-- Row 3: Field Width -->
-                                <div class="jwcfe-modal-row-1col rowClass">
-                                    <div class="jwcfe-modal-field">
-                                        <label class="jwcfe-modal-label"><?php esc_html_e('Field Width', 'jwcfe'); ?></label>
-                                        <select name="fclass" class="jwcfe-modal-select">
-                                            <option value="form-row-wide"><?php esc_html_e('Full width', 'jwcfe'); ?></option>
-                                            <option value="form-row-first"><?php esc_html_e('Half width — left', 'jwcfe'); ?></option>
-                                            <option value="form-row-last"><?php esc_html_e('Half width — right', 'jwcfe'); ?></option>
-                                        </select>
                                     </div>
                                 </div>
 
@@ -745,6 +753,18 @@ if (!class_exists('JWCFE_Admin_Settings_Fields')) :
                                     </div>
                                 </div>
                                 <?php endif; ?>
+
+                                <!-- Field Width (moved near end) -->
+                                <div class="jwcfe-modal-row-1col rowClass">
+                                    <div class="jwcfe-modal-field">
+                                        <label class="jwcfe-modal-label"><?php esc_html_e('Field Width', 'jwcfe'); ?></label>
+                                        <select name="fclass" class="jwcfe-modal-select">
+                                            <option value="form-row-wide"><?php esc_html_e('Full width', 'jwcfe'); ?></option>
+                                            <option value="form-row-first"><?php esc_html_e('Half width — left', 'jwcfe'); ?></option>
+                                            <option value="form-row-last"><?php esc_html_e('Half width — right', 'jwcfe'); ?></option>
+                                        </select>
+                                    </div>
+                                </div>
 
                                 <!-- Toggle rows -->
                                 <div class="jwcfe-modal-divider"></div>

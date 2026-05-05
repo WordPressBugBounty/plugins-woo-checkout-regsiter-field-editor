@@ -177,6 +177,7 @@ var jwcfe_settings = (function ($, window, document) {
     var data = {
       formdata: formData,
       action: "save_custom_form_fields",
+      _ajax_nonce: (window.WcfeAdmin && WcfeAdmin.nonce) ? WcfeAdmin.nonce : "",
     };
 
     $.ajax({
@@ -290,6 +291,7 @@ var jwcfe_settings = (function ($, window, document) {
     });
 
     form.find("select[name=ftype]").prop("disabled", false).trigger("change");
+    jwcfe_set_default_value_input_mode(form, form.find("select[name=ftype]").val());
     form.find("select[name=fclass]").val("form-row-wide");
     form.find("input[name=fcustomclass]").val("");
     form.find("select[name=fheading_type]").val("h4");
@@ -298,6 +300,7 @@ var jwcfe_settings = (function ($, window, document) {
       tinymce.get("flabel_editor").setContent("");
     }
     form.find("input[name=flabel]").val("");
+    form.find("input[name=fdefault]").val("");
     form.find("input[name=fplaceholder]").val("");
     form.find("textarea[name=ftext]").val("");
     form.find("input[name=fmaxlength]").val("");
@@ -392,6 +395,7 @@ var jwcfe_settings = (function ($, window, document) {
     var text = $(form).find("textarea[name=ftext]").val();
     var texteditor = $(form).find("textarea[name=ftexteditor]").val();
     var placeholder = $(form).find("input[name=fplaceholder]").val();
+    var fdefault = $(form).find("input[name=fdefault]").val();
     var min_time = $(form).find("input[name=i_min_time]").val();
     var max_time = $(form).find("input[name=i_max_time]").val();
     var time_step = $(form).find("input[name=i_time_step]").val();
@@ -419,7 +423,7 @@ var jwcfe_settings = (function ($, window, document) {
     var showinemail = $(form).find("input[name=fshowinemail]").prop("checked");
     var showinorder = $(form).find("input[name=fshowinorder]").prop("checked");
     var validations = $(form).find("select[name=fvalidate]").val();
-
+    var $nameInput = $(form).find("input[name='fname']");
     var err_msgs = "";
 
     if (name == "") {
@@ -514,6 +518,28 @@ var jwcfe_settings = (function ($, window, document) {
 
     if (err_msgs != "") {
       $(form).find(".err_msgs").html(err_msgs).css("color", "red");
+
+      //focus on name field
+      if(name == "" || !isHtmlIdValid(name)){
+        // Find modal body (scroll container)
+    var $modalBody = $nameInput.closest('.jwcfe-modal-body');
+
+    if ($modalBody.length) {
+        // Scroll inside modal to input
+        $modalBody.animate({
+            scrollTop: $modalBody.scrollTop() + $nameInput.position().top - 150
+        }, 400);
+    } else {
+        // fallback (if not inside scroll container)
+        $('html, body').animate({
+            scrollTop: $nameInput.offset().top - 100
+        }, 400);
+    }
+
+    // Focus the input
+    $nameInput.focus();
+      }
+      
       return false;
     }
 
@@ -595,6 +621,13 @@ var jwcfe_settings = (function ($, window, document) {
       index +
       ']" class="f_placeholder" value="' +
       placeholder +
+      '" />';
+
+    newRow +=
+      '<input type="hidden" name="f_default[' +
+      index +
+      ']" class="f_default" value="' +
+      (fdefault || "") +
       '" />';
     newRow +=
       '<input type="hidden" name="f_maxlength[' +
@@ -870,6 +903,7 @@ var jwcfe_settings = (function ($, window, document) {
     var texteditor = row.find(".f_texteditor").val();
 
     var placeholder = row.find(".f_placeholder").val();
+    var fdefault = row.find(".f_default").val();
 
     var min_time = row.find(".i_min_time").val();
     var max_time = row.find(".i_max_time").val();
@@ -920,7 +954,9 @@ var jwcfe_settings = (function ($, window, document) {
     form.find("input[name=fname]").val(name);
     form.find("input[name=fnameNew]").val(name);
     form.find("select[name=ftype]").val(type);
+    jwcfe_set_default_value_input_mode(form, type);
     form.find("input[name=flabel]").val(label);
+    form.find("input[name=fdefault]").val(fdefault);
     form.find("textarea[name=ftext]").val(text);
     form.find("input[name=fplaceholder]").val(placeholder);
     form.find("input[name=fmaxlength]").val(maxlength);
@@ -1032,6 +1068,7 @@ var jwcfe_settings = (function ($, window, document) {
     var texteditor = $(form).find("textarea[name=ftexteditor]").val();
 
     var placeholder = $(form).find("input[name=fplaceholder]").val();
+    var fdefault = $(form).find("input[name=fdefault]").val();
     var min_time = $(form).find("input[name=i_min_time]").val();
     var max_time = $(form).find("input[name=i_max_time]").val();
     var time_step = $(form).find("input[name=i_time_step]").val();
@@ -1054,7 +1091,7 @@ var jwcfe_settings = (function ($, window, document) {
     var showinemail = $(form).find("input[name=fshowinemail]").prop("checked");
     var showinorder = $(form).find("input[name=fshowinorder]").prop("checked");
     var validations = $(form).find("select[name=fvalidate]").val();
-
+    var $nameInput = $(form).find("input[name='fname']");
     var err_msgs = "";
 
     if (name == "") {
@@ -1114,7 +1151,10 @@ var jwcfe_settings = (function ($, window, document) {
     }
 
     if (err_msgs != "") {
+
+      
       $(form).find(".err_msgs").html(err_msgs);
+
       return false;
     }
 
@@ -1137,6 +1177,7 @@ var jwcfe_settings = (function ($, window, document) {
     row.find(".f_texteditor").val(texteditor);
 
     row.find(".f_placeholder").val(placeholder);
+    row.find(".f_default").val(fdefault || "");
     row.find(".i_min_time").val(min_time);
     row.find(".i_max_time").val(max_time);
     row.find(".i_time_step").val(time_step);
@@ -1440,6 +1481,17 @@ var jwcfe_settings = (function ($, window, document) {
     });
   }
 
+  function jwcfe_set_default_value_input_mode(form, type) {
+    var $dv = $(form).find("input[name=fdefault]");
+    if (!$dv.length) return;
+
+    if (type === "date") {
+      $dv.attr("type", "date");
+    } else {
+      $dv.attr("type", "text");
+    }
+  }
+
   _fieldTypeChangeListner = function fieldTypeChangeListner(elm) {
     var type = $(elm).val();
 
@@ -1447,6 +1499,7 @@ var jwcfe_settings = (function ($, window, document) {
     form.find("#fieldLabelText").text("Label of Field:");
 
     showAllFields(form);
+    jwcfe_set_default_value_input_mode(form, type);
     var requiredCheckboxRow = $("#requiredechk").closest(".checkbox-row");
 
     if (type === "paragraph" || type === "heading" || type === "hidden") {
@@ -1462,6 +1515,7 @@ var jwcfe_settings = (function ($, window, document) {
       form.find(".rowValidate").hide();
       form.find(".rowPricing").hide();
       form.find(".rowPlaceholder").hide();
+      form.find(".rowDefault").hide();
       form.find(".rowMaxlength").hide();
       form.find(".rowCustomText").hide();
       form.find(".rowLabel").show();
@@ -1478,6 +1532,7 @@ var jwcfe_settings = (function ($, window, document) {
       form.find(".rowValidate").hide();
       form.find(".rowPricing").hide();
       form.find(".rowPlaceholder").hide();
+      form.find(".rowDefault").hide();
       form.find(".rowMaxlength").hide();
       form.find(".rowCustomText").hide();
       form.find(".rowLabel").show();
@@ -1529,6 +1584,7 @@ var jwcfe_settings = (function ($, window, document) {
       form.find(".rowCustomText").hide();
       form.find(".rowOptions").hide();
       form.find(".rowPlaceholder").hide();
+      form.find(".rowDefault").hide();
       form.find(".rowDescription").hide();
       form.find(".rowClass").hide(); //this is for field width
       form.find(".rowLabel1").hide();
@@ -1584,6 +1640,7 @@ var jwcfe_settings = (function ($, window, document) {
       form.find(".rowCustomText").hide();
       form.find(".rowOptions").hide();
       form.find(".rowPlaceholder").hide();
+      form.find(".rowDefault").hide();
       form.find(".rowDescription").hide();
       form.find(".rowClass").hide(); //this is for field width
       form.find(".texteditor").hide();
@@ -1599,6 +1656,7 @@ var jwcfe_settings = (function ($, window, document) {
       form.find(".rowCustomText").hide();
       form.find(".rowOptions").hide();
       form.find(".rowPlaceholder").hide();
+      form.find(".rowDefault").hide();
       form.find(".rowDescription").hide();
       form.find(".rowClass").hide(); // for field width
       form.find(".rowLabel1").hide();
@@ -1718,6 +1776,7 @@ var jwcfe_settings = (function ($, window, document) {
     var form = $(elm).closest("form");
 
     showAllFields(form);
+    jwcfe_set_default_value_input_mode(form, type);
     form.find("#fieldLabelText").text("Label of Field:");
 
     // Fix for hiding the required checkbox when type is 'checkbox'
@@ -1739,6 +1798,7 @@ var jwcfe_settings = (function ($, window, document) {
           ".rowValidate, .rowPricing, .rowPlaceholder, .rowMaxlength, .rowCustomText",
         )
         .hide();
+      form.find(".rowDefault").hide();
       form.find(".rowLabel, .rowOptions, .rowClass").show();
       form.find(".pricetxt, .taxtxt, .rowDescription").hide();
       form.find(".rowLabel1").appendTo(".jwcfe_left_col_child_div");
@@ -1748,6 +1808,7 @@ var jwcfe_settings = (function ($, window, document) {
           ".rowValidate, .rowPricing, .rowPlaceholder, .rowMaxlength, .rowCustomText",
         )
         .hide();
+      form.find(".rowDefault").hide();
       form.find(".rowLabel, .rowDescription, .rowOptions, .rowClass").show();
       form.find(".pricetxt, .taxtxt, .rowDescription2").hide();
     } else if (type === "text") {
@@ -1777,12 +1838,14 @@ var jwcfe_settings = (function ($, window, document) {
           ".rowDescription2, .rowRequired, .rowAccess, .rowMaxlength, .rowValidate, .rowCustomText, .rowOptions, .rowPlaceholder, .rowDescription, .rowClass, .rowLabel1, .rowLabel",
         )
         .hide();
+      form.find(".rowDefault").hide();
     } else if (type === "heading") {
       form
         .find(
           ".rowDescription2, .rowRequired, .rowAccess, .rowMaxlength, .rowValidate, .rowCustomText, .rowOptions, .rowPlaceholder",
         )
         .hide();
+      form.find(".rowDefault").hide();
       form.find(".rowDescription, .rowClass, .rowHeadingType").show();
     } else if (type === "paragraph") {
       form
@@ -1790,6 +1853,7 @@ var jwcfe_settings = (function ($, window, document) {
           ".rowDescription2, .rowRequired, .rowAccess, .rowMaxlength, .rowValidate, .rowCustomText, .rowOptions",
         )
         .hide();
+      form.find(".rowDefault").hide();
       form.find(".rowPlaceholder, .rowDescription, .rowClass").show();
     } else if (type === "email" || type === "phone") {
       form
@@ -1818,9 +1882,6 @@ var jwcfe_settings = (function ($, window, document) {
     } else if (type === "number") {
       form.find(".rowLabel1, .rowDescription2, .rowOptions").hide();
       form.find(".rowMaxlength").show();
-    } else if (type === "file") {
-      form.find(".rowValidate, .rowOptions, .rowMaxlength, .rowPlaceholder, .rowDescription2, .rowCustomText").hide();
-      form.find(".rowExtoptions, .rowDescription, .rowClass").show();
     } else {
       form.find(".rowOptions, .rowCustomText").hide();
     }
@@ -1833,6 +1894,7 @@ var jwcfe_settings = (function ($, window, document) {
     form.find(".rowLabel").show();
     form.find(".rowOptions").show();
     form.find(".rowPlaceholder").show();
+    form.find(".rowDefault").show();
     form.find(".rowAccess").show();
     form.find(".rowRequired").show();
     form.find(".rowValidate").show();

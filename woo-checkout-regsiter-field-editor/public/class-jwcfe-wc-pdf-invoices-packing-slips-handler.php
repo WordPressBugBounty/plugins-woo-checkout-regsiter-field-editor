@@ -144,11 +144,7 @@ class JWCFE_WC_PDF_Invoices_Packing_Slips_Handler extends JWCFE_Checkout_Fields_
 					$value = $order->get_meta( $key, true );
 				}
 
-				if($type === 'file'){
-					$value = JWCFE_Checkout_Fields_Utils::get_file_display_name_order($value, false);
-				}else{
-					$value = is_array($value) ? implode(", ", $value) : $value;
-				}
+				$value = is_array($value) ? implode(", ", $value) : $value;
 				
 				//if($is_nl2br && $type === 'textarea'){
 				if($is_nl2br){

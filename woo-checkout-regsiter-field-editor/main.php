@@ -3,7 +3,7 @@
  * Plugin Name: Checkout Field Editor for Woocommerce - Checkout Manager
  * Description: Easily Add, Edit, Remove or re-arrange any fields on WooCommerce Checkout page.
  * Author:      Jcodex
- * Version:     2.5.1
+ * Version:     2.5.2
  * Author URI:  https://www.jcodex.com
  * Plugin URI:  https://www.jcodex.com
  * Text Domain: jwcfe
@@ -69,8 +69,182 @@ if (!defined('JWCFE_URL')) {
         }
         
         add_option( 'jwcfe_activation_redirect', true );
+
+        // Store activation time for delayed admin notices.
+        if ( ! get_option( 'jwcfe_activated_at' ) ) {
+            add_option( 'jwcfe_activated_at', time() );
+        } else {
+            update_option( 'jwcfe_activated_at', time() );
+        }
     }
-    
+
+    /**
+     * Admin review notice shown 3 days after activation.
+     */
+    add_action( 'admin_init', function () {
+        if ( ! is_admin() || ! is_user_logged_in() ) {
+            return;
+        }
+        if ( ! current_user_can( 'manage_woocommerce' ) ) {
+            return;
+        }
+
+        if ( isset( $_GET['jwcfe_dismiss_review_notice'] ) ) {
+            $nonce = isset( $_GET['_wpnonce'] ) ? sanitize_text_field( wp_unslash( $_GET['_wpnonce'] ) ) : '';
+            if ( wp_verify_nonce( $nonce, 'jwcfe_dismiss_review_notice' ) ) {
+                update_user_meta( get_current_user_id(), 'jwcfe_review_notice_dismissed', 1 );
+            }
+        }
+    } );
+
+    /**
+     * True when viewing this plugin's settings screen (notice is shown inline there, not in admin_notices).
+     */
+    function jwcfe_is_plugin_settings_admin_screen() {
+        return isset( $_GET['page'] ) && sanitize_text_field( wp_unslash( $_GET['page'] ) ) === 'jwcfe_checkout_register_editor';
+    }
+
+    /**
+     * Review notice: 'inline' = below header on plugin page (full width). 'global' = WordPress admin_notices strip on other admin pages.
+     *
+     * @param string $context 'inline'|'global'.
+     */
+    function jwcfe_render_review_notice( $context = 'inline' ) {
+        if ( ! is_admin() || ! is_user_logged_in() ) {
+            return;
+        }
+        if ( ! current_user_can( 'manage_woocommerce' ) ) {
+            return;
+        }
+
+        if ( get_user_meta( get_current_user_id(), 'jwcfe_review_notice_dismissed', true ) ) {
+            return;
+        }
+
+        $activated_at = (int) get_option( 'jwcfe_activated_at', 0 );
+        if ( ! $activated_at || ( time() - $activated_at ) < 3 * DAY_IN_SECONDS ) {
+            return;
+        }
+
+        $context = ( 'global' === $context ) ? 'global' : 'inline';
+        $extra_class = ( 'global' === $context ) ? 'jwcfe-review-notice--global' : 'jwcfe-review-notice--inline';
+
+        $review_url  = 'https://wordpress.org/support/plugin/woo-checkout-regsiter-field-editor/reviews/#new-post';
+        $dismiss_url = wp_nonce_url(
+            add_query_arg( 'jwcfe_dismiss_review_notice', '1' ),
+            'jwcfe_dismiss_review_notice'
+        );
+
+        $logo_url = plugin_dir_url( __FILE__ ) . 'admin/assets/logo-blue.svg';
+        ?>
+        <style>
+            #jwcfe-review-notice.jwcfe-review-notice--inline {
+                width: 100%;
+                max-width: 100%;
+                box-sizing: border-box;
+                margin: 12px 0 16px 0;
+                border-left: none;
+                padding: 0;
+                border-radius: 6px;
+                overflow: hidden;
+                box-shadow: 0 1px 4px rgba(0,0,0,0.1);
+            }
+            #jwcfe-review-notice.jwcfe-review-notice--global {
+                max-width: 100%;
+                box-sizing: border-box;
+                border-left: none;
+                padding: 0;
+                border-radius: 6px;
+                overflow: hidden;
+                box-shadow: 0 1px 4px rgba(0,0,0,0.1);
+            }
+            .jwcfe-notice-inner {
+                display: flex;
+                align-items: center;
+                gap: 15px;
+                padding: 12px 16px;
+                background: #f0f6ff;
+                border-left: 4px solid #2271b1;
+                border-radius: 6px;
+            }
+            .jwcfe-notice-logo img {
+                width: 40px;
+                height: 40px;
+                display: block;
+            }
+            .jwcfe-notice-text {
+                flex: 1;
+                font-size: 13px;
+                color: #1d2327;
+                line-height: 1.5;
+            }
+            .jwcfe-notice-text strong {
+                display: block;
+                margin-bottom: 2px;
+                font-size: 13px;
+            }
+            .jwcfe-notice-actions {
+                margin-top: 6px;
+            }
+            .jwcfe-notice-actions a.jwcfe-btn-review {
+                display: inline-block;
+                background: #2271b1;
+                color: #fff;
+                padding: 5px 14px;
+                border-radius: 4px;
+                text-decoration: none;
+                font-size: 12px;
+                margin-right: 8px;
+            }
+            .jwcfe-notice-actions a.jwcfe-btn-review:hover {
+                background: #135e96;
+            }
+            .jwcfe-notice-actions a.jwcfe-btn-dismiss {
+                color: #2271b1;
+                text-decoration: underline;
+                font-size: 12px;
+            }
+        </style>
+
+        <?php
+        // WordPress common.js moves div.notice after the first h1 unless it has class .inline.
+        $notice_classes = array( 'notice', 'is-dismissible', $extra_class );
+        if ( 'inline' === $context ) {
+            $notice_classes[] = 'inline';
+        }
+        ?>
+        <div class="<?php echo esc_attr( implode( ' ', $notice_classes ) ); ?>" id="jwcfe-review-notice">
+            <div class="jwcfe-notice-inner">
+                <div class="jwcfe-notice-logo">
+                    <img src="<?php echo esc_url( $logo_url ); ?>" alt="JCodex Logo" />
+                </div>
+                <div class="jwcfe-notice-text">
+                    <strong>Loving WooCommerce Checkout Field Editor? 🙌</strong>
+                    If this plugin helped you, a quick review would mean a lot
+                    <div class="jwcfe-notice-actions">
+                        <a href="<?php echo esc_url( $review_url ); ?>" target="_blank" rel="noopener noreferrer" class="jwcfe-btn-review">
+                            ⭐ Leave a Review
+                        </a>
+                        <a href="<?php echo esc_url( $dismiss_url ); ?>" class="jwcfe-btn-dismiss">
+                            Dismiss
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <?php
+    }
+
+    add_action(
+        'admin_notices',
+        function () {
+            if ( ! function_exists( 'jwcfe_is_plugin_settings_admin_screen' ) || jwcfe_is_plugin_settings_admin_screen() ) {
+                return;
+            }
+            jwcfe_render_review_notice( 'global' );
+        }
+    );
+
 add_filter('plugin_action_links_' . plugin_basename(__FILE__), 'jwcfe_add_plugin_action_links');
 function jwcfe_add_plugin_action_links($links) {
     // Add Settings link
@@ -141,6 +315,83 @@ function jwcfe_add_plugin_action_links($links) {
         }
     });
     
+    /**
+     * Hide "Additional information" heading in WooCommerce emails while keeping the fields.
+     */
+    add_filter( 'woocommerce_email_additional_information_heading', function ( $heading ) {
+        return '';
+    } );
+
+    /**
+     * Some WooCommerce email templates use the order meta heading filter instead.
+     * Hide it too, while leaving the actual meta rows intact.
+     */
+    add_filter( 'woocommerce_email_order_meta_heading', function ( $heading, $sent_to_admin = false, $order = null ) {
+        return '';
+    }, 10, 3 );
+
+    /**
+     * Last-resort: remove the literal "Additional information" heading in:
+     * - WooCommerce emails (including admin previews)
+     * - Order received page / My Account → View order
+     *
+     * Some templates output the heading as a hard-coded translated string, not a filter.
+     */
+    $GLOBALS['jwcfe_is_rendering_wc_email'] = false;
+    add_action( 'woocommerce_email_header', function () {
+        $GLOBALS['jwcfe_is_rendering_wc_email'] = true;
+    }, 0 );
+    add_action( 'woocommerce_email_footer', function () {
+        $GLOBALS['jwcfe_is_rendering_wc_email'] = false;
+    }, PHP_INT_MAX );
+
+    $jwcfe_maybe_hide_additional_information_heading = function ( $translated, $text, $domain ) {
+        // This heading is normally a WooCommerce string, but some themes/plugins may output it from other domains.
+        // We keep matching strict to the literal text to avoid side effects.
+        $t1 = strtolower( trim( (string) $text ) );
+        $t2 = strtolower( trim( (string) $translated ) );
+
+        $matches_heading = in_array( $t1, [ 'additional information', 'additional information:' ], true )
+            || in_array( $t2, [ 'additional information', 'additional information:' ], true );
+
+        if ( ! $matches_heading ) {
+            return $translated;
+        }
+
+        $is_order_details = ( function_exists( 'is_order_received_page' ) && is_order_received_page() )
+            || ( function_exists( 'is_wc_endpoint_url' ) && is_wc_endpoint_url( 'view-order' ) );
+
+        if ( ! empty( $GLOBALS['jwcfe_is_rendering_wc_email'] ) || $is_order_details ) {
+            return '';
+        }
+
+        return $translated;
+    };
+
+    add_filter( 'gettext', $jwcfe_maybe_hide_additional_information_heading, 20, 3 );
+    add_filter( 'gettext_with_context', function ( $translated, $text, $context, $domain ) use ( $jwcfe_maybe_hide_additional_information_heading ) {
+        return $jwcfe_maybe_hide_additional_information_heading( $translated, $text, $domain );
+    }, 20, 4 );
+
+    /**
+     * WooCommerce Blocks: remove the "Additional information" heading on the
+     * Order Confirmation page additional fields wrapper block.
+     *
+     * Block name: woocommerce/order-confirmation-additional-fields-wrapper
+     */
+    add_filter( 'render_block', function ( $block_content, $block ) {
+        if (
+            ! is_array( $block ) ||
+            empty( $block['blockName'] ) ||
+            $block['blockName'] !== 'woocommerce/order-confirmation-additional-fields-wrapper'
+        ) {
+            return $block_content;
+        }
+
+        // Remove only the heading, keep the fields list.
+        return preg_replace( '#<h2\b[^>]*>\s*Additional information\s*</h2>#i', '', (string) $block_content );
+    }, 20, 2 );
+
 
 require_once JWCFE_PATH . 'includes/class-jwcfe-deactivation-feedback.php';
 

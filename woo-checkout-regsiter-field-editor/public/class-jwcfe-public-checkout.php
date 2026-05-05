@@ -42,8 +42,6 @@ if (!class_exists('JWCFE_Public_Checkout')) :
 			
 
 			add_action('woocommerce_after_checkout_validation', array($this, 'jwcfe_check_field_validations'), 10, 4);
-			add_action('wp_ajax_jwcfe_file_action', array($this, 'jwcfe_handle_file_upload'));
-			add_action('wp_ajax_nopriv_jwcfe_file_action', array($this, 'jwcfe_handle_file_upload'));
 			add_action('woocommerce_email_order_meta', array($this, 'jwcfe_display_custom_fields_in_emails_lite'), 10, 3);
 
 
@@ -59,7 +57,6 @@ if (!class_exists('JWCFE_Public_Checkout')) :
 			add_filter('woocommerce_form_field_phone', array($this, 'jwcfe_checkout_form_field'), 10, 4);
 			add_filter('woocommerce_form_field_select', array($this, 'jwcfe_checkout_form_field'), 10, 4);
 			add_filter('woocommerce_form_field_radio', array($this, 'jwcfe_checkout_form_field'), 10, 4);
-			add_filter('woocommerce_form_field_file', array($this, 'jwcfe_checkout_form_field'), 10, 4);
 			add_filter('woocommerce_form_field_timepicker', array($this, 'jwcfe_checkout_form_field'), 10, 4);
 			add_filter('woocommerce_form_field_number', array($this, 'jwcfe_checkout_form_field'), 10, 4);
 			add_filter('woocommerce_form_field_hidden', array($this, 'jwcfe_checkout_form_field'), 10, 4);
@@ -918,18 +915,6 @@ if (!class_exists('JWCFE_Public_Checkout')) :
 					'ajaxurl' => admin_url('admin-ajax.php'),
 				));
 
-				wp_enqueue_script('jwcfe-upload', JWCFE_ASSETS_URL_PUBLIC . 'js/jwcfe-upload.js', array('jquery'), JWCFE_VERSION, true);
-
-				wp_localize_script('jwcfe-upload', 'MyAjax', array(
-
-					// URL to wp-admin/admin-ajax.php to process the request
-
-					'ajaxurl' => admin_url('admin-ajax.php'),
-					'loaderPath' => JWCFE_ASSETS_URL_PUBLIC . 'js/preloader.gif',
-					'donePath' => JWCFE_ASSETS_URL_PUBLIC . 'js/ajax-done.png',
-					'currentScreen' => $currentScreen
-				));
-
 				$pattern = array(
 					//day
 
@@ -1164,7 +1149,11 @@ if (!class_exists('JWCFE_Public_Checkout')) :
 						$previous_value = $session ? $session->get($key, '') : '';
 						
 						// Determine if the checkbox should be checked
-						$is_checked = (!empty($previous_value) || (!empty($args['checked']) && $args['checked'] === true));
+						$default_checked = false;
+						if (isset($args['default'])) {
+							$default_checked = in_array(strtolower((string) $args['default']), array('1', 'yes', 'true', 'on'), true);
+						}
+						$is_checked = (!empty($previous_value) || (!empty($args['checked']) && $args['checked'] === true) || $default_checked);
 
 						// Begin label with styling
 						$field .= '<label for="' . esc_attr($args['id']) . '" class="jwcfe-checkbox-label">';
@@ -1335,6 +1324,9 @@ if (!class_exists('JWCFE_Public_Checkout')) :
 								$session = WC()->session;
 								$previous_value = $session ? $session->get($key, '') : '';	
 								$display_value = !empty($previous_value) ? $previous_value : $value; // Use session value if available
+								if (empty($display_value) && !empty($args['default'])) {
+									$display_value = $args['default'];
+								}
 							
 								$field = '<p class="form-row ' . esc_attr(implode(' ', $args['class'])) . '" id="' . esc_attr($key) . '_field">';
 							
@@ -1511,6 +1503,9 @@ if (!class_exists('JWCFE_Public_Checkout')) :
 
 								$display_values = !empty($previous_value) ? $previous_value : $value;
 								$display_value = is_array($display_values) ? reset($display_values) : $display_values;
+								if (empty($selectedVal) && empty($display_value) && !empty($args['default'])) {
+									$selectedVal = $args['default'];
+								}
 							
 								// Loop through customer orders to retrieve previously selected value
 								foreach ($customer_orders as $order) {
@@ -1557,6 +1552,9 @@ if (!class_exists('JWCFE_Public_Checkout')) :
 								$session = WC()->session;
 								$previous_value = $session ? $session->get($key, '') : '';
 								$display_value = !empty($previous_value) ? $previous_value : $value; // Use session value if available
+								if (empty($display_value) && !empty($args['default'])) {
+									$display_value = $args['default'];
+								}
 
 								
 								if (!empty($args['options_json'])) {
@@ -1927,22 +1925,6 @@ if (!class_exists('JWCFE_Public_Checkout')) :
 						}
 					}
 		
-					// Handle file type fields if needed (as per your original logic)
-					if (isset($field['custom']) && $field['custom'] && $field["type"] == "file") {
-						$value = WC()->session->get($name);
-						if ($value) {
-							// Ensure the value is cleaned and is a string
-							if (is_array($value)) {
-								$value = implode(',', $value); // or handle it as needed
-							} else {
-								$value = wc_clean($value);
-							}
-							WC()->session->set($name, $value);
-							$order = wc_get_order($order_id);
-							$order->update_meta_data($name, $value);
-							$order->save();
-						}
-					}
 				}
 			}
 		}
@@ -2046,10 +2028,6 @@ if (!class_exists('JWCFE_Public_Checkout')) :
 								$field['required'] = 0;
 							}
 							if (isset($field['type']) && $field['type'] === 'customcontent') {
-								$field['required'] = 0;
-							}
-
-							if (isset($field['type']) && $field['type'] === 'file' && WC()->session->get($name)) {
 								$field['required'] = 0;
 							}
 
@@ -2195,6 +2173,9 @@ if (!class_exists('JWCFE_Public_Checkout')) :
 					$new_field['heading_type'] = isset($field['heading_type']) ? $field['heading_type'] : 'h4';
 
 					$new_field['placeholder'] = isset($field['placeholder']) ? $field['placeholder'] : '';
+					if (isset($field['default'])) {
+						$new_field['default'] = $field['default'];
+					}
 					$new_field['class'] = isset($field['class']) && is_array($field['class']) ? $field['class'] : array();
 					$new_field['validate'] = isset($field['validate']) && is_array($field['validate']) ? $field['validate'] : array();
 					$new_field['required'] = isset($field['required']) ? $field['required'] : 0;
@@ -2212,7 +2193,7 @@ if (!class_exists('JWCFE_Public_Checkout')) :
 		
 				
 					// Handle specific field types
-					if (isset($new_field['type']) && in_array($new_field['type'], ['file', 'hidden', 'heading', 'customcontent'])) {
+					if (isset($new_field['type']) && in_array($new_field['type'], ['hidden', 'heading', 'customcontent'])) {
 						$new_field['required'] = false;
 					}
 
@@ -2295,8 +2276,6 @@ if (!class_exists('JWCFE_Public_Checkout')) :
 			// Only render the section if there are fields to display
 			if (!empty($fields_to_display)) {
 				if ($plain_text === false) {
-					$sec_heading = 'Additional Fields';
-					$fields_html .= '<h2>' . esc_html($sec_heading, 'jwcfe') . '</h2>';
 					$fields_html .= '<table style="width: 100%; border-collapse: collapse;">'; // Start the table
 					$fields_html .= '<thead><tr><th style="border: 1px solid #ddd; padding: 8px;">Field</th><th style="border: 1px solid #ddd; padding: 8px;">Value</th></tr></thead>';
 					$fields_html .= '<tbody>'; // Start the body of the table
@@ -2307,11 +2286,7 @@ if (!class_exists('JWCFE_Public_Checkout')) :
 						$fields_html .= '<th style="border: 1px solid #ddd; padding: 8px;">' . esc_html($field['label']) . '</th>';
 						$fields_html .= '<td style="border: 1px solid #ddd; padding: 8px;">';
 		
-						if ($field['type'] === 'file') {
-							$fields_html .= '<a href="' . esc_url($field['value']) . '" download>Download File</a>';
-						} else {
-							$fields_html .= esc_html($field['value']);
-						}
+						$fields_html .= esc_html($field['value']);
 		
 						$fields_html .= '</td>';
 						$fields_html .= '</tr>';
@@ -2357,59 +2332,7 @@ if (!class_exists('JWCFE_Public_Checkout')) :
 			return false;
 		}
 
-		/**
-		 * AJAX handler for file upload fields on checkout/account pages.
-		 * Stores the uploaded file in the WordPress uploads directory and
-		 * saves the URL to the session so it can be retrieved on order save.
-		 */
-		public function jwcfe_handle_file_upload() {
-			if (empty($_FILES['file']) || $_FILES['file']['error'] !== UPLOAD_ERR_OK) {
-				echo json_encode(array('error' => __('No file uploaded or upload error.', 'jwcfe')));
-				wp_die();
-			}
-
-			$field_name    = isset($_POST['field_name']) ? sanitize_key($_POST['field_name']) : '';
-			$allowed_types = apply_filters('jwcfe_allowed_file_types', array(
-				'image/jpeg', 'image/png', 'image/gif', 'image/webp',
-				'application/pdf',
-				'text/plain',
-				'application/msword',
-				'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
-			));
-
-			$file_type = wp_check_filetype(basename($_FILES['file']['name']), null);
-			$mime      = isset($_FILES['file']['type']) ? $_FILES['file']['type'] : '';
-
-			if (!in_array($mime, $allowed_types)) {
-				echo json_encode(array('error' => __('File type not allowed.', 'jwcfe')));
-				wp_die();
-			}
-
-			$max_size = apply_filters('jwcfe_max_upload_size', wp_max_upload_size());
-			if ($_FILES['file']['size'] > $max_size) {
-				echo json_encode(array('error' => __('File size exceeds the allowed limit.', 'jwcfe')));
-				wp_die();
-			}
-
-			$upload = wp_handle_upload($_FILES['file'], array('test_form' => false));
-
-			if (isset($upload['error'])) {
-				echo json_encode(array('error' => $upload['error']));
-				wp_die();
-			}
-
-			// Store the uploaded file URL in session keyed by field name
-			// save_data() retrieves it via WC()->session->get($field_name)
-			if (!WC()->session) {
-				WC()->initialize_session();
-			}
-			if ($field_name) {
-				WC()->session->set($field_name, $upload['url']);
-			}
-
-			echo '1';
-			wp_die();
-		}
+		// File upload field type is no longer supported.
 	}
 
 endif;

@@ -6,22 +6,6 @@ if (!class_exists('JWCFE_Checkout_Fields_Utils')) :
 class JWCFE_Checkout_Fields_Utils {
 
     /**
-     * Get a display-friendly filename for a file upload field value.
-     * Returns just the filename stripped of path/URL prefix.
-     *
-     * @param  string $value      The stored file URL or path.
-     * @param  bool   $full_path  Whether to return the full path (unused, kept for compat).
-     * @return string
-     */
-    public static function get_file_display_name_order($value, $full_path = true) {
-        if (empty($value)) {
-            return '';
-        }
-        // Strip URL or path prefix — return just the original filename
-        return basename($value);
-    }
-
-    /**
      * Check if WooCommerce version is 3.0 or above.
      *
      * @return bool

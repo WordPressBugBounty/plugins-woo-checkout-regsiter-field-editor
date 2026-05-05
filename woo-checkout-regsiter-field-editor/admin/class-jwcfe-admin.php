@@ -84,6 +84,7 @@ if (!class_exists('JWCFE_Admin')):
 				wp_localize_script('jwcfe-admin-script', 'WcfeAdmin', array(
 					'MSG_INVALID_NAME' => 'NAME cannot contain spaces',
 					'ajaxurl' => admin_url('admin-ajax.php'),
+					'nonce' => wp_create_nonce('jwcfe_admin_nonce'),
 					'wc_fields' => $fields_options,
 
 
@@ -211,6 +212,11 @@ if (!class_exists('JWCFE_Admin')):
 
 		public function get_all_variations_of_product()
 		{
+			check_ajax_referer('jwcfe_admin_nonce');
+			if (!current_user_can('manage_woocommerce')) {
+				wp_send_json_error(array('message' => __('Unauthorized', 'jwcfe')), 403);
+			}
+
 			$attributes_dropdown = '';
 			if (isset($_POST['pID']) && is_array($_POST['pID']) && count($_POST['pID']) >= 1) {
 				$product_ids = $_POST['pID'];
@@ -252,6 +258,9 @@ if (!class_exists('JWCFE_Admin')):
 		public function render_page_header()
 		{
 			echo '<div style="display:flex;align-items:flex-start;justify-content:space-between;margin:16px 0 8px 0;"><div><h1 style="font-size:22px;font-weight:700;color:#1e1e1e;margin:0;display:flex;align-items:center;gap:10px;"><svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="none" viewBox="0 0 24 24" stroke="#2271b1" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"/></svg>' . esc_html__('Checkout Field Editor', 'jwcfe') . ' </h1><p style="color:#666;font-size:13px;margin:4px 0 0 0;">' . esc_html__('Add, edit, and reorder WooCommerce checkout fields.', 'jwcfe') . '</p></div><a href="https://jcodex.com/docs/woocommerce-custom-checkout-field-editor/" target="_blank" style="display:inline-flex;align-items:center;gap:5px;color:#2271b1;font-size:13px;text-decoration:none;border:1px solid #2271b1;padding:6px 14px;border-radius:5px;font-weight:500;margin-top:4px;white-space:nowrap;">&#9432; ' . esc_html__('Documentation', 'jwcfe') . '</a></div>';
+			if ( function_exists( 'jwcfe_render_review_notice' ) ) {
+				jwcfe_render_review_notice( 'inline' );
+			}
 		}
 
 		public function render_tabs_and_sections()
@@ -353,7 +362,7 @@ if (!class_exists('JWCFE_Admin')):
 			}
 
 			// Render tabs
-			echo '<div class="jwcfe-section-card" style="padding: 10px 20px; border-radius: 8px 8px 0 0;">';
+			echo '<div class="jwcfe-section-card" style="padding: 10px 20px; border-radius: 8px;">';
 			echo '<h2 class="nav-tab-wrapper woo-nav-tab-wrapper" style="display:flex; align-items:center; flex-wrap:wrap; border-bottom: none; margin-bottom: 0; padding: 0;">';
 
 			// 1. Classic Checkout
@@ -423,6 +432,7 @@ if (!class_exists('JWCFE_Admin')):
 				$f_extoptions = !empty($_POST['f_extoptions']) ? $_POST['f_extoptions'] : array();
 				$f_access = !empty($_POST['f_access']) ? $_POST['f_access'] : array();
 				$f_placeholder = !empty($_POST['f_placeholder']) ? $_POST['f_placeholder'] : array();
+				$f_default = !empty($_POST['f_default']) ? $_POST['f_default'] : array();
 				$i_min_time = !empty($_POST['i_min_time']) ? $_POST['i_min_time'] : array();
 				$i_max_time = !empty($_POST['i_max_time']) ? $_POST['i_max_time'] : array();
 				$i_time_step = !empty($_POST['i_time_step']) ? $_POST['i_time_step'] : array();
@@ -525,13 +535,6 @@ if (!class_exists('JWCFE_Admin')):
 						continue;
 					}
 
-
-					if ($f_types[$i] == 'file' && empty($f_extoptions[$i])) {
-						// Default allowed file types if none specified
-						$f_extoptions[$i] = 'jpg,jpeg,png,pdf,doc,docx';
-					}
-
-
 					// if new field
 
 					if (!isset($fields[$name])) {
@@ -621,6 +624,7 @@ if (!class_exists('JWCFE_Admin')):
 
 					$fields[$name]['access'] = empty($f_access[$i]) ? false : true;
 					$fields[$name]['placeholder'] = empty($f_placeholder[$i]) ? '' : wc_clean(stripslashes($f_placeholder[$i]));
+					$fields[$name]['default'] = empty($f_default[$i]) ? '' : wc_clean(stripslashes($f_default[$i]));
 					$fields[$name]['min_time'] = empty($i_min_time[$i]) ? '' : wc_clean(stripslashes($i_min_time[$i]));
 					$fields[$name]['max_time'] = empty($i_max_time[$i]) ? '' : wc_clean(stripslashes($i_max_time[$i]));
 					$fields[$name]['time_step'] = empty($i_time_step[$i]) ? '' : wc_clean(stripslashes($i_time_step[$i]));
@@ -707,6 +711,7 @@ if (!class_exists('JWCFE_Admin')):
 						$f_extoptions = !empty($_POST['f_extoptions']) ? $_POST['f_extoptions'] : array();
 						$f_access = !empty($_POST['f_access']) ? $_POST['f_access'] : array();
 						$f_placeholder = !empty($_POST['f_placeholder']) ? $_POST['f_placeholder'] : array();
+						$f_default = !empty($_POST['f_default']) ? $_POST['f_default'] : array();
 						$i_min_time = !empty($_POST['i_min_time']) ? $_POST['i_min_time'] : array();
 						$i_max_time = !empty($_POST['i_max_time']) ? $_POST['i_max_time'] : array();
 						$i_time_step = !empty($_POST['i_time_step']) ? $_POST['i_time_step'] : array();
@@ -793,13 +798,6 @@ if (!class_exists('JWCFE_Admin')):
 								continue;
 							}
 
-
-							if ($f_types[$i] == 'file' && empty($f_extoptions[$i])) {
-								// Default allowed file types if none specified
-								$f_extoptions[$i] = 'jpg,jpeg,png,pdf,doc,docx';
-							}
-
-
 							// if new field
 
 							if (!isset($fields[$name])) {
@@ -883,6 +881,7 @@ if (!class_exists('JWCFE_Admin')):
 							$fields[$name]['text'] = empty($f_text[$i]) ? '' : $f_text[$i];
 							$fields[$name]['access'] = empty($f_access[$i]) ? false : true;
 							$fields[$name]['placeholder'] = empty($f_placeholder[$i]) ? '' : wc_clean(stripslashes($f_placeholder[$i]));
+							$fields[$name]['default'] = empty($f_default[$i]) ? '' : wc_clean(stripslashes($f_default[$i]));
 							$fields[$name]['min_time'] = empty($i_min_time[$i]) ? '' : wc_clean(stripslashes($i_min_time[$i]));
 							$fields[$name]['max_time'] = empty($i_max_time[$i]) ? '' : wc_clean(stripslashes($i_max_time[$i]));
 							$fields[$name]['time_step'] = empty($i_time_step[$i]) ? '' : wc_clean(stripslashes($i_time_step[$i]));
@@ -957,9 +956,9 @@ if (!class_exists('JWCFE_Admin')):
 							$result = update_option('jwcfe_wc_fields_block_' . $section, $fields);
 						}
 						if ($result == true) {
-							echo '<div class="updated"><p>' . esc_html__('Your changes were saved.', 'jwcfe') . '</p></div>';
+							// echo '<div class="updated"><p>' . esc_html__('Your changes were saved.', 'jwcfe') . '</p></div>';
 						} else {
-							echo '<div class="success"><p> ' . esc_html__("Your changes have been successfully saved. There's nothing more to save.", 'jwcfe') . '</p></div>';
+							// echo '<div class="success"><p> ' . esc_html__("Your changes have been successfully saved. There's nothing more to save.", 'jwcfe') . '</p></div>';
 						}
 					} else {
 						wp_die('Security check failed. Please try again or contact support for assistance.', 'Security Error');
@@ -984,6 +983,10 @@ if (!class_exists('JWCFE_Admin')):
 
 		public function save_jwcfe_options()
 		{
+			check_ajax_referer('jwcfe_admin_nonce');
+			if (!current_user_can('manage_woocommerce')) {
+				wp_send_json_error(array('message' => __('Unauthorized', 'jwcfe')), 403);
+			}
 
 			$section_label = "";
 			$sync_with_checkout = "";
@@ -1058,14 +1061,7 @@ if (!class_exists('JWCFE_Admin')):
 
 						if (!empty($value)) {
 							$label = isset($options['label']) && !empty($options['label']) ? __($options['label'], 'jwcfe') : $name;
-
-							if ($options['type'] == 'file') {
-								$fields_html .= '<p><strong>' . __($label, 'jwcfe') . ':</strong>
-                        <br><button> <a class="download-file" href="' . esc_url($value) . '" download>Download File</a>
-                        </button></p>';
-							} else {
-								$fields_html .= '<p><strong>' . __($label, 'jwcfe') . ':</strong> <br/>' . esc_html($value) . '</p>';
-							}
+							$fields_html .= '<p><strong>' . __($label, 'jwcfe') . ':</strong> <br/>' . esc_html($value) . '</p>';
 						}
 					}
 				}
@@ -1213,35 +1209,17 @@ if (!class_exists('JWCFE_Admin')):
 							if (is_account_page()) {
 
 								if (apply_filters('jwcfe_view_order_customer_details_table_view', true)) {
-									if (isset($options['type']) && $options['type'] == 'file') {
-										$fields_html .= '<tr><th class="custom-th">' . esc_attr($label) . ':</th><td class="custom-td"><a href="' . esc_url($value) . '" download>Download File</a></td></tr>';
-									} else {
-										$fields_html .= '<tr><th class="custom-th">' . esc_attr($label) . ':</th><td class="custom-td">' . wptexturize($value) . '</td></tr>';
-									}
+									$fields_html .= '<tr><th class="custom-th">' . esc_attr($label) . ':</th><td class="custom-td">' . wptexturize($value) . '</td></tr>';
 								} else {
-
-									if (isset($options['type']) && $options['type'] == 'file') {
-										$fields_html .= '<br/><dt>' . esc_attr($label) . ':</dt><dd><a href="' . esc_url($value) . '" download>Download File</a></dd>';
-									} else {
-										$fields_html .= '<br/><dt>' . esc_attr($label) . ':</dt><dd>' . wptexturize($value) . '</dd>';
-									}
+									$fields_html .= '<br/><dt>' . esc_attr($label) . ':</dt><dd>' . wptexturize($value) . '</dd>';
 								}
 							} else {
 
 								if (apply_filters('jwcfe_thankyou_customer_details_table_view', true)) {
 
-									if (isset($options['type']) && $options['type'] == 'file') {
-										$fields_html .= '<tr><th class="custom-th">' . esc_attr($label) . ':</th><td class="custom-td"><a href="' . esc_url($value) . '" download>Download File</a></td></tr>';
-									} else {
-										$fields_html .= '<tr><th class="custom-th">' . esc_attr($label) . ':</th><td class="custom-td">' . wptexturize($value) . '</td></tr>';
-									}
+									$fields_html .= '<tr><th class="custom-th">' . esc_attr($label) . ':</th><td class="custom-td">' . wptexturize($value) . '</td></tr>';
 								} else {
-
-									if (isset($options['type']) && $options['type'] == 'file') {
-										$fields_html .= '<br/><dt>' . esc_attr($label) . ':</dt><dd><a href="' . esc_url($value) . '" download>Download File</a></dd>';
-									} else {
-										$fields_html .= '<br/><dt>' . esc_attr($label) . ':</dt><dd>' . wptexturize($value) . '</dd>';
-									}
+									$fields_html .= '<br/><dt>' . esc_attr($label) . ':</dt><dd>' . wptexturize($value) . '</dd>';
 								}
 							}
 						}
@@ -1251,8 +1229,6 @@ if (!class_exists('JWCFE_Admin')):
 				if ($fields_html) {
 					do_action('jwcfe_order_details_before_custom_fields_table', $order);
 					?>
-					<h3 class="woocommerce-column__title">Checkout Fields
-					</h3>
 					<table class="woocommerce-table woocommerce-table--custom-fields shop_table custom-fields" style="	border: 1px solid hsla(0, 0%, 7%, .11);
 							border-radius: 4px;
 							  border-spacing: 0 ;
