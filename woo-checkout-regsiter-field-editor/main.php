@@ -3,7 +3,7 @@
  * Plugin Name: Checkout Field Editor for Woocommerce - Checkout Manager
  * Description: Easily Add, Edit, Remove or re-arrange any fields on WooCommerce Checkout page.
  * Author:      Jcodex
- * Version:     2.5.2
+ * Version:     2.5.3
  * Author URI:  https://www.jcodex.com
  * Plugin URI:  https://www.jcodex.com
  * Text Domain: jwcfe
@@ -70,21 +70,32 @@ if (!defined('JWCFE_URL')) {
         
         add_option( 'jwcfe_activation_redirect', true );
 
-        // Store activation time for delayed admin notices.
-        if ( ! get_option( 'jwcfe_activated_at' ) ) {
-            add_option( 'jwcfe_activated_at', time() );
-        } else {
-            update_option( 'jwcfe_activated_at', time() );
-        }
+        // Activation timestamp: review notice becomes eligible exactly this many seconds later (see jwcfe_get_review_notice_delay_seconds).
+        update_option( 'jwcfe_activated_at', time() );
     }
 
     /**
-     * Admin review notice shown 3 days after activation.
+     * Seconds to wait after plugin activation before showing the review notice (default: 1 day; first admin request after this passes may display it).
+     *
+     * @return int
+     */
+    function jwcfe_get_review_notice_delay_seconds() {
+        return (int) apply_filters( 'jwcfe_review_notice_delay_seconds', DAY_IN_SECONDS );
+    }
+
+    /**
+     * Admin review notice shown 1 day after activation (see jwcfe_get_review_notice_delay_seconds()).
      */
     add_action( 'admin_init', function () {
         if ( ! is_admin() || ! is_user_logged_in() ) {
             return;
         }
+
+        // Backfill only if activation hook never stored a timestamp (e.g. manual copy of plugin files). Timer starts from this admin hit, not real activation.
+        if ( false === get_option( 'jwcfe_activated_at', false ) && current_user_can( 'activate_plugins' ) ) {
+            update_option( 'jwcfe_activated_at', time() );
+        }
+
         if ( ! current_user_can( 'manage_woocommerce' ) ) {
             return;
         }
@@ -122,7 +133,8 @@ if (!defined('JWCFE_URL')) {
         }
 
         $activated_at = (int) get_option( 'jwcfe_activated_at', 0 );
-        if ( ! $activated_at || ( time() - $activated_at ) < 3 * DAY_IN_SECONDS ) {
+        $delay        = jwcfe_get_review_notice_delay_seconds();
+        if ( ! $activated_at || ( time() - $activated_at ) < $delay ) {
             return;
         }
 

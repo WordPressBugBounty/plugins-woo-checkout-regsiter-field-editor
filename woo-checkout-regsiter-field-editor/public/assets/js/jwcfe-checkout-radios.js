@@ -3,6 +3,47 @@
 
     var cfg = window.jwcfe_checkout_radios || { selectDataAttr: 'data-jwcfe-type', selectDataVal: 'radio' };
 
+    function isJwcfeAdditionalSelect(select) {
+        var name = select.getAttribute('name') || '';
+        if (/^(contact|order|jwcfe-block)_/i.test(name)) {
+            return true;
+        }
+        return name.indexOf('jwcfe-block/') === 0;
+    }
+
+    function removeBlankSelectOption(select) {
+        if (!select || select.getAttribute('data-jwcfe-type') === 'radio') {
+            return;
+        }
+        if (!isJwcfeAdditionalSelect(select)) {
+            return;
+        }
+
+        var removed = false;
+        Array.prototype.forEach.call(select.options, function (opt) {
+            if (opt.value === '' && !String(opt.textContent || '').trim()) {
+                opt.remove();
+                removed = true;
+            }
+        });
+
+        if (removed && select.options.length && select.selectedIndex < 0) {
+            select.selectedIndex = 0;
+            try {
+                select.dispatchEvent(new Event('input', { bubbles: true }));
+                select.dispatchEvent(new Event('change', { bubbles: true }));
+            } catch (e) {
+                $(select).trigger('change');
+            }
+        }
+    }
+
+    function cleanupJwcfeSelects() {
+        document.querySelectorAll('select.wc-blocks-components-select__select').forEach(function (select) {
+            removeBlankSelectOption(select);
+        });
+    }
+
     function safeNameFromId(id) {
         // produce a safe input name from an id (no forbidden chars)
         return id.replace(/[^a-zA-Z0-9_\-:\[\]]/g, '_');
@@ -121,6 +162,7 @@ $select.after($wrapper).addClass('jwcfe-hidden-select');
     }
 
     function findAndConvert() {
+        cleanupJwcfeSelects();
         var attr = cfg.selectDataAttr;
         var val = cfg.selectDataVal;
         if (!attr) return;

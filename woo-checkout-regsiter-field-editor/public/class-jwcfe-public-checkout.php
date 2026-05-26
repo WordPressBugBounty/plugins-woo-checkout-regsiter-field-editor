@@ -273,9 +273,9 @@ if (!class_exists('JWCFE_Public_Checkout')) :
 									if ($options) {
 										$field_attributes['type'] = 'select';
 										$field_attributes['options'] = $options;
-										// set default if provided
-										if (!empty($field_data['default'])) {
-											$field_attributes['default'] = $field_data['default'];
+										$default = $this->jwcfe_get_block_select_default( $field_data, $options );
+										if ( null !== $default ) {
+											$field_attributes['default'] = $default;
 										}
 										woocommerce_register_additional_checkout_field($field_attributes);
 									}
@@ -333,8 +333,9 @@ if (!class_exists('JWCFE_Public_Checkout')) :
 					$field_attributes['attributes'] = isset($field_attributes['attributes']) && is_array($field_attributes['attributes']) ? $field_attributes['attributes'] : [];
 					$field_attributes['attributes']['data-jwcfe-type'] = 'radio';
 
-					if (!empty($field_data['default'])) {
-						$field_attributes['default'] = (string)$field_data['default'];
+					$default = $this->jwcfe_get_block_select_default( $field_data, $options );
+					if ( null !== $default ) {
+						$field_attributes['default'] = $default;
 					}
 
 					// context mapping as before
@@ -445,6 +446,30 @@ if (!class_exists('JWCFE_Public_Checkout')) :
 		}
 
 		/**
+		 * Default for block checkout select fields.
+		 * Blocks adds a blank first <option> when no default is set; use the first real option unless a placeholder is configured.
+		 *
+		 * @param array $field_data Saved field config.
+		 * @param array $options    Normalized options (value/label pairs).
+		 * @return string|null Default value, or null to leave unset (placeholder prompt).
+		 */
+		private function jwcfe_get_block_select_default( $field_data, $options ) {
+			if ( ! empty( $field_data['default'] ) ) {
+				return (string) $field_data['default'];
+			}
+
+			if ( ! empty( $field_data['placeholder'] ) ) {
+				return null;
+			}
+
+			if ( ! empty( $options[0]['value'] ) ) {
+				return (string) $options[0]['value'];
+			}
+
+			return null;
+		}
+
+		/**
 		 * Register custom (non-default) address fields in WooCommerce Block Checkout
 		 * Same as THWCFD_Block::register_additional_address_fields()
 		 */
@@ -524,20 +549,27 @@ if (!class_exists('JWCFE_Public_Checkout')) :
 					$field_attrs['data-jwcfe-type'] = 'radio';
 				}
 
-				woocommerce_register_additional_checkout_field(
-					[
-						'id'            => 'jwcfe-block/' . $clean_key,
-						'label'         => $label,
-						'optionalLabel' => $optional_label,
-						'placeholder'   => $placeholder,
-						'location'      => 'address',
-						'type'          => $register_type,
-						'required'      => $required,
-						'index'         => $priority,
-						'options'       => $options,
-						'attributes'    => $field_attrs,
-					]
-				);
+				$register_args = [
+					'id'            => 'jwcfe-block/' . $clean_key,
+					'label'         => $label,
+					'optionalLabel' => $optional_label,
+					'placeholder'   => $placeholder,
+					'location'      => 'address',
+					'type'          => $register_type,
+					'required'      => $required,
+					'index'         => $priority,
+					'options'       => $options,
+					'attributes'    => $field_attrs,
+				];
+
+				if ( 'select' === $register_type && ! empty( $options ) ) {
+					$default = $this->jwcfe_get_block_select_default( $field_data, $options );
+					if ( null !== $default ) {
+						$register_args['default'] = $default;
+					}
+				}
+
+				woocommerce_register_additional_checkout_field( $register_args );
 			}
 		}
 
@@ -835,7 +867,7 @@ if (!class_exists('JWCFE_Public_Checkout')) :
 		function jwcfe_enqueue_scripts()
 		{
 	
-			wp_register_script('jwcfe-checkout-radios', plugin_dir_url(__FILE__) . 'assets/js/jwcfe-checkout-radios.js', array('jquery'), '1.0.0', true);
+			wp_register_script('jwcfe-checkout-radios', plugin_dir_url(__FILE__) . 'assets/js/jwcfe-checkout-radios.js', array('jquery'), '1.0.1', true);
 			wp_enqueue_script('jwcfe-checkout-radios');
 
 			// localized config if needed

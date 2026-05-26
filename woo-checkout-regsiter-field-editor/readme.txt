@@ -7,7 +7,7 @@ Tags: checkout field editor for wooCommerce, custom fields, woocommerce checkout
 Requires at least: 4.9
 Tested up to: 6.9
 Requires PHP: 5.6
-Stable tag: 2.5.2
+Stable tag: 2.5.3
 License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
@@ -32,12 +32,11 @@ Built for both small stores and advanced **WooCommerce setups,** it gives you fu
 **➕ One Plugin, Both Checkout Architectures.** 
 Compatible with WooCommerce Block Checkout and Classic Checkout. Your custom field checkout works seamlessly in both.
 
-**How to Classic Checkout Field Editor simplifies customization?**
+👉 **[See Live Demo](https://demo.tastewp.com/woo-checkout-regsiter-field-editor)**  📘 **[Read Documentation](https://jcodex.com/docs/woocommerce-custom-checkout-field-editor/)**  💎 **[Upgrade to Premium](https://jcodex.com/plugins/woocommerce-custom-checkout-field-editor/)**
+
+**How does Classic Checkout Field Editor simplifies customization?**
 
 [youtube  https://youtu.be/8j6Wh8KrVC0]
-
-
-👉 **[See Live Demo](https://demo.tastewp.com/woo-checkout-regsiter-field-editor)**  📘 **[Read Documentation](https://jcodex.com/docs/woocommerce-custom-checkout-field-editor/)**  💎 **[Upgrade to Premium](https://jcodex.com/plugins/woocommerce-custom-checkout-field-editor/)**
 
 
 ### 🧩 Why This Checkout Field Editor?
@@ -95,6 +94,7 @@ Users can also add up to 4 checkout field types in **Block Checkout** to collect
     3.  Checkbox
     4.  Radio Button
 
+[youtube  https://youtu.be/AvbdrkDvKO0]
 
 ### 💡 Easy Interface
 Built for beginners and professionals alike, the plugin interface is clean, fast, and works seamlessly inside the WooCommerce dashboard.
