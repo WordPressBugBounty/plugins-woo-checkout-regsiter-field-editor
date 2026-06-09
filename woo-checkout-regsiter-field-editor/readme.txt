@@ -5,9 +5,9 @@ Donate link: https://www.paypal.com/donate/?hosted_button_id=QD4H8N3QVLLML
 
 Tags: checkout field editor for wooCommerce, custom fields, woocommerce checkout field editor, checkout manager, checkout editor
 Requires at least: 4.9
-Tested up to: 6.9
+Tested up to: 7.0
 Requires PHP: 5.6
-Stable tag: 2.5.3
+Stable tag: 2.5.4
 License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
@@ -274,6 +274,11 @@ Easily translate all field labels and descriptions into your store language.
 
 ## 🆕 CHANGELOG
 
+### 2.5.4
+* fix drop down field option issue frontend
+* fields edit popup new options added
+* change default tab to block checkout editor
+
 ### 2.5.2
 * fixed critical security issues add nonces add ajax handles
 * technical issues fixes
@@ -468,6 +473,11 @@ Go to **WooCommerce <span aria-hidden="true" class="wp-exclude-emoji"><span aria
 
 
 == Changelog ==
+
+= 2.5.4 =
+* fix drop down field option issue frontend
+* fields edit popup new options added
+* change default tab to block checkout editor
 
 = 2.5.2 =
 * fixed critical security issues add nonces add ajax handles

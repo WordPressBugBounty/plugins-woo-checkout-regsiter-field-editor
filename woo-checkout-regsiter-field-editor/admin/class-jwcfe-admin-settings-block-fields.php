@@ -132,7 +132,7 @@ if (!class_exists('JWCFE_Admin_Settings_Block_Fields')) :
                     ?>
 
                     <!-- ══ SECTION ACCORDION: <?php echo esc_html($sec_key); ?> ══ -->
-                    <div class="jwcfe-accordion-wrapper <?php echo ($sec_key === 'billing') ? 'jwcfe-accordion-open' : ''; ?>" data-section="<?php echo esc_attr($sec_key); ?>">
+                    <div class="jwcfe-accordion-wrapper jwcfe-accordion-open" data-section="<?php echo esc_attr($sec_key); ?>">
                     <div class="jwcfe-section-card jwcfe-accordion-trigger">
                         <div class="jwcfe-section-card-header">
                             <div class="jwcfe-section-card-title">
@@ -438,7 +438,7 @@ if (!class_exists('JWCFE_Admin_Settings_Block_Fields')) :
             ?>
             <div id="jwcfeModal" class="jwcfemodal" style="display: none;">
                 <div class="jwcfe-modal-box">
-                    <div id="jwcfe_new_field_form_pp" title="<?php echo esc_html($formTitle); ?>" class="<?php echo $addClass; ?> jwcfe_popup_wrapper">
+                    <div id="jwcfe_new_field_form_pp" class="<?php echo $addClass; ?> jwcfe_popup_wrapper">
                         <form method="POST" id="jwcfe_new_field_form" action="">
 
                             <!-- HEADER -->

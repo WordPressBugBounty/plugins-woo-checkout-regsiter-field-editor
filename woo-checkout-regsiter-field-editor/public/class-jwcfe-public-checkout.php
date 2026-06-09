@@ -71,6 +71,9 @@ if (!class_exists('JWCFE_Public_Checkout')) :
 			add_action('wp_enqueue_scripts', array($this, 'jwcfe_enqueue_scripts'), 10, 4);
 			add_action('woocommerce_init', array($this, 'jwcfe_load_address_blocks'), 10);
 			add_action('woocommerce_init', array($this, 'jwcfe_register_checkout_fields'), 20);
+			add_action('woocommerce_init', array($this, 'jwcfe_register_all_block_field_default_filters'), 25);
+			add_filter('rest_post_dispatch', array($this, 'jwcfe_apply_block_defaults_to_checkout_api_response'), 10, 3);
+			add_action('woocommerce_blocks_checkout_enqueue_data', array($this, 'jwcfe_enqueue_block_checkout_defaults'));
 			
 		}
 		
@@ -191,6 +194,8 @@ if (!class_exists('JWCFE_Public_Checkout')) :
 							'show_in_email'   => true,
 						];
 
+						$this->jwcfe_apply_block_field_help_text_attributes( $field_attributes, $field_data );
+
 						$field_type = $field_data['type'] ?? 'text';
 
 						switch ($field_type) {
@@ -219,10 +224,19 @@ if (!class_exists('JWCFE_Public_Checkout')) :
 									}
 								}
 
+								if ( isset( $field_data['default'] ) && '' !== (string) $field_data['default'] ) {
+									$this->jwcfe_register_block_field_default_filter( $field_id_formatted, $field_data['default'] );
+								}
+
 								woocommerce_register_additional_checkout_field($field_attributes);
 								break;
 
 							case 'checkbox':
+								if ( ! empty( $field_data['default'] ) ) {
+									$checkbox_default = in_array( strtolower( (string) $field_data['default'] ), array( '1', 'yes', 'true', 'on' ), true ) ? '1' : '0';
+									$this->jwcfe_register_block_field_default_filter( $field_id_formatted, $checkbox_default );
+								}
+
 								woocommerce_register_additional_checkout_field([
 									'type'     => 'checkbox',
 									'id'       => $field_id_formatted,
@@ -275,7 +289,7 @@ if (!class_exists('JWCFE_Public_Checkout')) :
 										$field_attributes['options'] = $options;
 										$default = $this->jwcfe_get_block_select_default( $field_data, $options );
 										if ( null !== $default ) {
-											$field_attributes['default'] = $default;
+											$this->jwcfe_register_block_field_default_filter( $field_id_formatted, $default );
 										}
 										woocommerce_register_additional_checkout_field($field_attributes);
 									}
@@ -335,7 +349,7 @@ if (!class_exists('JWCFE_Public_Checkout')) :
 
 					$default = $this->jwcfe_get_block_select_default( $field_data, $options );
 					if ( null !== $default ) {
-						$field_attributes['default'] = $default;
+						$this->jwcfe_register_block_field_default_filter( $field_id_formatted, $default );
 					}
 
 					// context mapping as before
@@ -470,6 +484,283 @@ if (!class_exists('JWCFE_Public_Checkout')) :
 		}
 
 		/**
+		 * Register WooCommerce block checkout default value for a field.
+		 * Block checkout reads defaults via woocommerce_get_default_value_for_{$field_id}, not registration args.
+		 *
+		 * @param string $field_id      Full field id (e.g. billing/my-field or jwcfe-block/my-field).
+		 * @param string $default_value Default value from plugin settings.
+		 */
+		/**
+		 * Pass Description / Help Text to block checkout field attributes for frontend display.
+		 *
+		 * @param array $field_attributes Registration args (passed by reference).
+		 * @param array $field_data     Saved field config from admin.
+		 */
+		private function jwcfe_apply_block_field_help_text_attributes( array &$field_attributes, array $field_data ) {
+			if ( empty( $field_data['text'] ) ) {
+				return;
+			}
+
+			$help_text = trim( wp_strip_all_tags( (string) $field_data['text'] ) );
+
+			if ( '' === $help_text ) {
+				return;
+			}
+
+			if ( ! isset( $field_attributes['attributes'] ) || ! is_array( $field_attributes['attributes'] ) ) {
+				$field_attributes['attributes'] = array();
+			}
+
+			$field_attributes['attributes']['data-jwcfe-description'] = $help_text;
+		}
+
+		private function jwcfe_register_block_field_default_filter( $field_id, $default_value ) {
+			if ( null === $default_value || ( '' === (string) $default_value && '0' !== $default_value ) ) {
+				return;
+			}
+
+			$default_value = (string) $default_value;
+
+			add_filter(
+				'woocommerce_get_default_value_for_' . $field_id,
+				static function ( $value, $group, $wc_object ) use ( $default_value ) {
+					unset( $group, $wc_object );
+
+					if ( null === $value || '' === $value ) {
+						return $default_value;
+					}
+
+					return $value;
+				},
+				10,
+				3
+			);
+		}
+
+		/**
+		 * Parse options_json from saved field config (same shapes as block registration).
+		 *
+		 * @param array $field_data Saved field row.
+		 * @return array Normalized options with value/label keys.
+		 */
+		private function jwcfe_parse_block_field_options( $field_data ) {
+			$options = array();
+
+			if ( empty( $field_data['options_json'] ) ) {
+				return $options;
+			}
+
+			$opts_source = $field_data['options_json'];
+
+			if ( is_string( $opts_source ) ) {
+				$decoded = json_decode( urldecode( $opts_source ), true );
+				if ( null !== $decoded ) {
+					$opts_source = $decoded;
+				} else {
+					$decoded2 = json_decode( $opts_source, true );
+					if ( null !== $decoded2 ) {
+						$opts_source = $decoded2;
+					}
+				}
+			}
+
+			if ( ! is_array( $opts_source ) ) {
+				return $options;
+			}
+
+			foreach ( $opts_source as $option ) {
+				if ( is_array( $option ) && isset( $option['key'], $option['text'] ) ) {
+					$options[] = array(
+						'value' => $option['key'],
+						'label' => $option['text'],
+					);
+				} elseif ( is_array( $option ) && isset( $option['value'], $option['label'] ) ) {
+					$options[] = array(
+						'value' => $option['value'],
+						'label' => $option['label'],
+					);
+				} elseif ( is_string( $option ) ) {
+					$options[] = array(
+						'value' => $option,
+						'label' => $option,
+					);
+				}
+			}
+
+			return $options;
+		}
+
+		/**
+		 * Collect default values for all enabled block checkout fields from saved options.
+		 *
+		 * @return array<string, string> Field id => default value.
+		 */
+		private function jwcfe_collect_block_field_defaults() {
+			$defaults = array();
+
+			foreach ( array( 'billing', 'additional' ) as $section ) {
+				$saved_fields = maybe_unserialize( get_option( 'jwcfe_wc_fields_block_' . $section, array() ) );
+
+				if ( ! is_array( $saved_fields ) ) {
+					continue;
+				}
+
+				foreach ( $saved_fields as $field_id => $field_data ) {
+					if ( empty( $field_data['enabled'] ) ) {
+						continue;
+					}
+
+					$clean_field_id = preg_replace( '/^(billing|shipping|additional)_/', '', $field_id );
+					$block_field_id = $section . '/' . $clean_field_id;
+					$field_type       = isset( $field_data['type'] ) ? $field_data['type'] : 'text';
+
+					if ( in_array( $field_type, array( 'select', 'radio' ), true ) ) {
+						$options = $this->jwcfe_parse_block_field_options( $field_data );
+						$value   = $this->jwcfe_get_block_select_default( $field_data, $options );
+					} elseif ( 'checkbox' === $field_type ) {
+						$value = ! empty( $field_data['default'] ) && in_array(
+							strtolower( (string) $field_data['default'] ),
+							array( '1', 'yes', 'true', 'on' ),
+							true
+						) ? '1' : null;
+					} elseif ( isset( $field_data['default'] ) && '' !== (string) $field_data['default'] ) {
+						$value = (string) $field_data['default'];
+					} else {
+						$value = null;
+					}
+
+					if ( null !== $value && '' !== (string) $value ) {
+						$defaults[ $block_field_id ] = (string) $value;
+					}
+				}
+			}
+
+			$saved_address_fields = $this->jwcfe_get_saved_address_field_set();
+			$core_fields          = $this->jwcfe_get_core_address_fields();
+
+			if ( is_array( $saved_address_fields ) ) {
+				foreach ( $saved_address_fields as $field_id => $field_data ) {
+					if ( empty( $field_data['enabled'] ) ) {
+						continue;
+					}
+
+					$clean_key = preg_replace( '/^(billing|shipping|additional)_/', '', $field_id );
+
+					if ( isset( $core_fields[ $clean_key ] ) ) {
+						continue;
+					}
+
+					$block_field_id = 'jwcfe-block/' . $clean_key;
+					$type           = isset( $field_data['type'] ) ? $field_data['type'] : 'text';
+
+					if ( in_array( $type, array( 'select', 'radio' ), true ) ) {
+						$options = $this->jwcfe_parse_block_field_options( $field_data );
+						$value   = $this->jwcfe_get_block_select_default( $field_data, $options );
+					} elseif ( isset( $field_data['default'] ) && '' !== (string) $field_data['default'] ) {
+						$value = (string) $field_data['default'];
+					} else {
+						$value = null;
+					}
+
+					if ( null !== $value && '' !== (string) $value ) {
+						$defaults[ $block_field_id ] = (string) $value;
+					}
+				}
+			}
+
+			return $defaults;
+		}
+
+		/**
+		 * Register default-value filters for every saved block field (covers fields skipped during registration).
+		 */
+		public function jwcfe_register_all_block_field_default_filters() {
+			if ( ! function_exists( 'woocommerce_register_additional_checkout_field' ) ) {
+				return;
+			}
+
+			foreach ( $this->jwcfe_collect_block_field_defaults() as $field_id => $default_value ) {
+				$this->jwcfe_register_block_field_default_filter( $field_id, $default_value );
+			}
+		}
+
+		/**
+		 * Merge plugin defaults into Store API checkout response (draft orders can store empty meta).
+		 *
+		 * @param WP_REST_Response $response REST response.
+		 * @param WP_REST_Server   $server   REST server.
+		 * @param WP_REST_Request  $request  REST request.
+		 * @return WP_REST_Response
+		 */
+		public function jwcfe_apply_block_defaults_to_checkout_api_response( $response, $server, $request ) {
+			unset( $server );
+
+			if ( ! $request instanceof \WP_REST_Request || 'GET' !== $request->get_method() ) {
+				return $response;
+			}
+
+			$route = $request->get_route();
+
+			if ( false === strpos( $route, '/wc/store/v1/checkout' ) ) {
+				return $response;
+			}
+
+			$data = $response->get_data();
+
+			if ( empty( $data['additional_fields'] ) || ! is_array( $data['additional_fields'] ) ) {
+				$data['additional_fields'] = array();
+			}
+
+			foreach ( $this->jwcfe_collect_block_field_defaults() as $field_id => $default_value ) {
+				if ( ! isset( $data['additional_fields'][ $field_id ] ) || '' === (string) $data['additional_fields'][ $field_id ] ) {
+					$data['additional_fields'][ $field_id ] = $default_value;
+				}
+			}
+
+			$response->set_data( $data );
+
+			return $response;
+		}
+
+		/**
+		 * Pass block field defaults to the checkout block and apply them in the client store.
+		 */
+		public function jwcfe_enqueue_block_checkout_defaults() {
+			if ( ! $this->jwcfe_has_block_checkout() ) {
+				return;
+			}
+
+			$defaults = $this->jwcfe_collect_block_field_defaults();
+
+			if ( empty( $defaults ) ) {
+				return;
+			}
+
+			if (
+				class_exists( '\Automattic\WooCommerce\Blocks\Package' ) &&
+				class_exists( '\Automattic\WooCommerce\Blocks\Assets\AssetDataRegistry' )
+			) {
+				try {
+					$container = \Automattic\WooCommerce\Blocks\Package::container();
+					$registry  = $container->get( \Automattic\WooCommerce\Blocks\Assets\AssetDataRegistry::class );
+					$registry->add( 'jwcfeBlockFieldDefaults', $defaults );
+				} catch ( \Exception $e ) {
+					// Asset registry not available yet; JS still receives defaults via wp_localize_script below.
+				}
+			}
+
+			wp_register_script(
+				'jwcfe-block-checkout-defaults',
+				plugin_dir_url( __FILE__ ) . 'assets/js/jwcfe-block-checkout-defaults.js',
+				array( 'wc-blocks-checkout', 'wp-data' ),
+				$this->version,
+				true
+			);
+			wp_localize_script( 'jwcfe-block-checkout-defaults', 'jwcfeBlockFieldDefaults', $defaults );
+			wp_enqueue_script( 'jwcfe-block-checkout-defaults' );
+		}
+
+		/**
 		 * Register custom (non-default) address fields in WooCommerce Block Checkout
 		 * Same as THWCFD_Block::register_additional_address_fields()
 		 */
@@ -562,11 +853,17 @@ if (!class_exists('JWCFE_Public_Checkout')) :
 					'attributes'    => $field_attrs,
 				];
 
+				$this->jwcfe_apply_block_field_help_text_attributes( $register_args, $field_data );
+
+				$block_field_id = 'jwcfe-block/' . $clean_key;
+
 				if ( 'select' === $register_type && ! empty( $options ) ) {
 					$default = $this->jwcfe_get_block_select_default( $field_data, $options );
 					if ( null !== $default ) {
-						$register_args['default'] = $default;
+						$this->jwcfe_register_block_field_default_filter( $block_field_id, $default );
 					}
+				} elseif ( isset( $field_data['default'] ) && '' !== (string) $field_data['default'] ) {
+					$this->jwcfe_register_block_field_default_filter( $block_field_id, $field_data['default'] );
 				}
 
 				woocommerce_register_additional_checkout_field( $register_args );
@@ -866,9 +1163,29 @@ if (!class_exists('JWCFE_Public_Checkout')) :
 
 		function jwcfe_enqueue_scripts()
 		{
-	
-			wp_register_script('jwcfe-checkout-radios', plugin_dir_url(__FILE__) . 'assets/js/jwcfe-checkout-radios.js', array('jquery'), '1.0.1', true);
-			wp_enqueue_script('jwcfe-checkout-radios');
+			if ( ! is_checkout() ) {
+				return;
+			}
+
+			if ( $this->jwcfe_has_block_checkout() ) {
+				$this->jwcfe_enqueue_block_checkout_defaults();
+			}
+
+			wp_enqueue_style(
+				'jwcfe-style-front',
+				JWCFE_ASSETS_URL_PUBLIC . 'css/jwcfe-style-front.css',
+				array(),
+				$this->version
+			);
+
+			wp_register_script(
+				'jwcfe-checkout-radios',
+				plugin_dir_url( __FILE__ ) . 'assets/js/jwcfe-checkout-radios.js',
+				array( 'jquery' ),
+				$this->version,
+				true
+			);
+			wp_enqueue_script( 'jwcfe-checkout-radios' );
 
 			// localized config if needed
 			wp_localize_script('jwcfe-checkout-radios', 'jwcfe_checkout_radios', array(
@@ -1137,6 +1454,9 @@ if (!class_exists('JWCFE_Public_Checkout')) :
 						$session = WC()->session;
 						$previous_value = $session ? $session->get($key, '') : '';
 						$display_value = !empty($previous_value) ? $previous_value : $value;
+						if (empty($display_value) && !empty($args['default'])) {
+							$display_value = $args['default'];
+						}
 						
 						$field .= '<input type="datetime-local" class="input-text ' . esc_attr(implode(' ', (array)$args['input_class'])) . '" name="' . esc_attr($key) . '" id="' . esc_attr($args['id']) . '"';
 						if (!empty($args['custom_attributes']) && is_array($args['custom_attributes'])) {
@@ -1221,6 +1541,9 @@ if (!class_exists('JWCFE_Public_Checkout')) :
 								$session = WC()->session;
 								$previous_value = $session ? $session->get($key, '') : '';
 								$display_value = !empty($previous_value) ? $previous_value : $value; // Use session value if available
+								if (empty($display_value) && !empty($args['default'])) {
+									$display_value = $args['default'];
+								}
 							
 								$field .= '<input type="month" class="input-text ' . esc_attr(implode(' ', $args['input_class'])) . '" name="' . esc_attr($args['id']) . '" id="' . esc_attr($args['id']) . '"';
 							
@@ -1255,6 +1578,9 @@ if (!class_exists('JWCFE_Public_Checkout')) :
 							$session = WC()->session;
 							$previous_value = $session ? $session->get($key, '') : '';
 							$display_value = !empty($previous_value) ? $previous_value : $value; // Use session value if available
+							if (empty($display_value) && !empty($args['default'])) {
+								$display_value = $args['default'];
+							}
 						
 							$field .= '<input type="week" class="input-text ' . esc_attr(implode(' ', $args['input_class'])) . '" name="' . esc_attr($args['id']) . '" id="' . esc_attr($args['id']) . '"';
 						
@@ -1678,6 +2004,8 @@ if (!class_exists('JWCFE_Public_Checkout')) :
 					
 					if (is_array($display_values) && !empty($display_values)) {
 						$display_value = $display_values[0]; // Get the first value
+					} elseif (is_scalar($display_values) && '' !== (string) $display_values) {
+						$display_value = (string) $display_values;
 					} else {
 						$display_value = ''; // Set to an empty string if no values
 					}
@@ -1702,9 +2030,23 @@ if (!class_exists('JWCFE_Public_Checkout')) :
 							$selectedVal = implode(',', $valArr);
 						}
 					}
+
+					$default_time = isset($args['default']) ? trim((string) $args['default']) : '';
+					if ('' !== $default_time && '' === $selectedVal && '' === $display_value) {
+						$display_value = $default_time;
+					}
 				
 					// Merge display value with selectedVal for comparison
 					$selectedValArray = array_filter(array_merge(explode(',', $selectedVal), [$display_value]));
+
+					if ('' !== $default_time) {
+						$selectedValArray[] = $default_time;
+						$default_time_stamp = strtotime($default_time);
+						if (false !== $default_time_stamp) {
+							$selectedValArray[] = date('H:i', $default_time_stamp);
+						}
+					}
+					$selectedValArray = array_values(array_unique(array_map('strval', $selectedValArray)));
 					
 					$after = (!empty($args['clear'])) ? '<div class="clear"></div>' : '';
 					$required = $args['required'] ? ' <abbr class="required" title="' . esc_attr__('required', 'jwcfe') . '">*</abbr>' : '';
@@ -1720,6 +2062,14 @@ if (!class_exists('JWCFE_Public_Checkout')) :
 					$max_time = strtotime($args['max_time']);
 					$time_step = $args['time_step'];
 					$time_format = $args['time_format'];
+					if ('' !== $default_time) {
+						$default_time_stamp = strtotime($default_time);
+						if (false !== $default_time_stamp) {
+							$selectedValArray[] = date($time_format, $default_time_stamp);
+							$selectedValArray = array_values(array_unique(array_map('strval', $selectedValArray)));
+						}
+					}
+					$has_selected_option = false;
 					
 					for ($hours = 0; $hours < 24; $hours++) {
 						for ($mins = 0; $mins < 60; $mins += $time_step) {
@@ -1728,13 +2078,23 @@ if (!class_exists('JWCFE_Public_Checkout')) :
 							if (strtotime($rawtime) >= $min_time && strtotime($rawtime) <= $max_time) {
 								// Check if this time was previously selected
 								$option_attributes = '';
-								if (in_array($formatted_time, $selectedValArray)) {
+								if (in_array($formatted_time, $selectedValArray, true) || in_array($rawtime, $selectedValArray, true)) {
 									$option_attributes = ' selected'; // Add selected attribute if this time was previously selected
+									$has_selected_option = true;
 								}
 								
 								$options .= '<option value="' . esc_attr($formatted_time) . '"' . $option_attributes . '>' . esc_html($formatted_time) . '</option>';
 							}
 						}
+					}
+
+					if ('' !== $default_time && ! $has_selected_option) {
+						$default_label = $default_time;
+						$default_time_stamp = strtotime($default_time);
+						if (false !== $default_time_stamp) {
+							$default_label = date($time_format, $default_time_stamp);
+						}
+						$options .= '<option value="' . esc_attr($default_label) . '" selected>' . esc_html($default_label) . '</option>';
 					}
 					
 					// Build the select field

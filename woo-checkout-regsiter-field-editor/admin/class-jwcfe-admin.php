@@ -54,6 +54,7 @@ if (!class_exists('JWCFE_Admin')):
 			if (isset($_GET['page']) && $_GET['page'] === 'jwcfe_checkout_register_editor') {
 
 				wp_enqueue_style('jwcfe-newstyle', JWCFE_ASSETS_URL_ADMIN . 'css/jwcfe-newstyle.css', array(), $this->version);
+				wp_enqueue_style('jwcfe-premium', JWCFE_ASSETS_URL_ADMIN . 'css/jwcfe-premium.css', array(), $this->version);
 				wp_enqueue_editor();
 
 				$deps = array('jquery', 'jquery-ui-tabs', 'jquery-ui-dialog', 'jquery-ui-sortable', 'woocommerce_admin', 'select2', 'jquery-tiptip');
@@ -155,9 +156,9 @@ if (!class_exists('JWCFE_Admin')):
 		public function get_current_ctype()
 		{
 			$allowed_ctypes = array('classic', 'block'); // include accounts
-			$ctype = isset($_GET['c_type']) ? sanitize_text_field($_GET['c_type']) : 'classic';
+			$ctype = isset($_GET['c_type']) ? sanitize_text_field($_GET['c_type']) : 'block';
 
-			return in_array($ctype, $allowed_ctypes, true) ? $ctype : 'classic';
+			return in_array($ctype, $allowed_ctypes, true) ? $ctype : 'block';
 		}
 
 
@@ -353,7 +354,7 @@ if (!class_exists('JWCFE_Admin')):
 				// Redirect to first section if invalid/empty
 				if (!empty($sections)) {
 					$first_section = reset($sections);
-					$c_type = isset($_GET['c_type']) ? sanitize_text_field($_GET['c_type']) : 'classic';
+					$c_type = isset($_GET['c_type']) ? sanitize_text_field($_GET['c_type']) : 'block';
 					wp_safe_redirect(admin_url(
 						'admin.php?page=jwcfe_checkout_register_editor&tab=' . $tab . '&c_type=' . $c_type . '&section=' . $first_section
 					));

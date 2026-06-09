@@ -58,57 +58,9 @@ if (!class_exists('JWCFE_Admin_Settings_Fields')) :
                 global $supress_field_modification;
                 $supress_field_modification = false;
             
-                // Display premium message with image link
-                
-                echo '<div class="premium-container">'; // New wrapper container
-                    echo '<div class="premium-message">';
-                        echo '<a href="https://jcodex.com/plugins/woocommerce-custom-checkout-field-editor/">';
-                            echo '<img style="
-                    height: auto;
-                    width: 100%;
-                    border-radius: 24px;
-                " src="' . plugins_url('/assets/css/my-account-banner-03.jpg', __FILE__) . '">';
-                        echo '</a>';
-                    echo '</div>';
-                echo '</div>';
-
-                // Add this CSS to your stylesheet
-                echo '<style>
-                .premium-container {
-                    display: grid;
-                    grid-template-columns: 65% 35%;
-                    gap: 15px;
-                    width: 100%;
-                    max-width: 100%;
-                    margin: 0 auto;
-                    margin-top: 30px;
-                }
-
-                .premium-message {
-                    position: relative;
-                    overflow: hidden;
-                }
-
-                .premium-message img {
-                    width: 100%;
-                    height: 100%;
-                    border-radius: 24px;
-                }
-
-                @media (max-width: 768px) {
-                    .premium-container {
-                        grid-template-columns: 1fr;
-                    }
-                    
-                    .premium-message img {
-                        width: 100% !important;
-                    }
-                }
-                </style>';
-            
-                // Display new and edit field forms
-                // $this->jwcfe_new_field_form_pp();
-                // $this->jwcfe_edit_field_form_pp();
+                // Display Premium Features page
+                $pro_page = JWCFE_Admin_Settings_Pro::instance();
+                $pro_page->render_page();
             
                 echo '</div>';
                 $this->jwcfe_field_popup();
@@ -173,7 +125,7 @@ if (!class_exists('JWCFE_Admin_Settings_Fields')) :
                     ?>
 
                     <!-- ═══ SECTION ACCORDION: <?php echo esc_html($sec_key); ?> ═══ -->
-                    <div class="jwcfe-accordion-wrapper <?php echo ($sec_key === 'billing') ? 'jwcfe-accordion-open' : ''; ?>" data-section="<?php echo esc_attr($sec_key); ?>">
+                    <div class="jwcfe-accordion-wrapper jwcfe-accordion-open" data-section="<?php echo esc_attr($sec_key); ?>">
                     <div class="jwcfe-section-card jwcfe-accordion-trigger">
                         <div class="jwcfe-section-card-header">
                             <div class="jwcfe-section-card-title">
@@ -547,7 +499,7 @@ if (!class_exists('JWCFE_Admin_Settings_Fields')) :
             ?>
             <div id="jwcfeModal" class="jwcfemodal" style="display: none;">
                 <div class="jwcfe-modal-box">
-                    <div id="jwcfe_new_field_form_pp" title="<?php echo esc_html($formTitle); ?>" class="<?php echo $addClass; ?> jwcfe_popup_wrapper">
+                    <div id="jwcfe_new_field_form_pp" class="<?php echo $addClass; ?> jwcfe_popup_wrapper">
                         <form method="POST" id="jwcfe_new_field_form" action="">
 
                             <!-- HEADER -->

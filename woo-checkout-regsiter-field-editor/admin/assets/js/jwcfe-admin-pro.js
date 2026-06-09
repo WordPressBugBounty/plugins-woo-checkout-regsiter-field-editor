@@ -47,6 +47,15 @@ document.addEventListener("DOMContentLoaded", function () {
    ────────────────────────────────────────────────────────── */
 document.addEventListener("DOMContentLoaded", function () {
 
+  // Initialize all already-open accordions on page load (set maxHeight so they are visible)
+  document.querySelectorAll(".jwcfe-accordion-wrapper.jwcfe-accordion-open").forEach(function (wrapper) {
+    var body = wrapper.querySelector(".jwcfe-accordion-body");
+    if (body) {
+      body.style.maxHeight = "9999px";
+      body.style.opacity   = "1";
+    }
+  });
+
   // Bind click on every accordion trigger (section card header)
   document.querySelectorAll(".jwcfe-accordion-trigger").forEach(function (trigger) {
 
@@ -1485,11 +1494,21 @@ var jwcfe_settings = (function ($, window, document) {
     var $dv = $(form).find("input[name=fdefault]");
     if (!$dv.length) return;
 
+    var inputType = "text";
+
     if (type === "date") {
-      $dv.attr("type", "date");
-    } else {
-      $dv.attr("type", "text");
+      inputType = "date";
+    } else if (type === "week") {
+      inputType = "week";
+    } else if (type === "month") {
+      inputType = "month";
+    } else if (type === "datetime-local") {
+      inputType = "datetime-local";
+    } else if (type === "timepicker") {
+      inputType = "time";
     }
+
+    $dv.attr("type", inputType);
   }
 
   _fieldTypeChangeListner = function fieldTypeChangeListner(elm) {
@@ -1563,6 +1582,8 @@ var jwcfe_settings = (function ($, window, document) {
       form.find(".rowCustomText").hide();
       form.find(".rowOptions").hide();
       form.find(".rowPlaceholder").hide();
+      form.find(".rowDefault").hide();
+      form.find("input[name=fdefault]").val("");
       form.find(".rowDescription").show();
       form.find(".rowClass").show(); //this is for field width
       form.find(".texteditor").hide();
@@ -1822,9 +1843,10 @@ var jwcfe_settings = (function ($, window, document) {
     } else if (type === "checkbox") {
       form
         .find(
-          ".rowDescription2, .rowDescription, .rowRequired, .rowAccess, .rowMaxlength, .rowValidate, .rowCustomText, .rowOptions, .rowPlaceholder",
+          ".rowDescription2, .rowDescription, .rowRequired, .rowAccess, .rowMaxlength, .rowValidate, .rowCustomText, .rowOptions, .rowPlaceholder, .rowDefault",
         )
         .hide();
+      form.find("input[name=fdefault]").val("");
       form.find(".rowClass").show();
     } else if (type === "textarea") {
       form

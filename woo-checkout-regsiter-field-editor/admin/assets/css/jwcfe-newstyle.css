@@ -424,6 +424,14 @@ table#jwcfe_checkout_fields thead th {
   color: #046c4e;
 }
 
+.jwcfe-type-week,
+.jwcfe-type-month,
+.jwcfe-type-timepicker,
+.jwcfe-type-datetime-local {
+  background: #e8fef5;
+  color: #046c4e;
+}
+
 .jwcfe-type-number {
   background: #e8f4fe;
   color: #1a7abf;
