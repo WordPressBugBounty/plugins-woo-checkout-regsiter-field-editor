@@ -220,20 +220,31 @@ if (!class_exists('JWCFE_Admin')):
 
 			$attributes_dropdown = '';
 			if (isset($_POST['pID']) && is_array($_POST['pID']) && count($_POST['pID']) >= 1) {
-				$product_ids = $_POST['pID'];
-				$selected_variations = $_POST['selected_variations'];
+				// Product/variation IDs are always numeric — enforce that before using them.
+				$product_ids = array_map('absint', wp_unslash($_POST['pID']));
+				$selected_variations = isset($_POST['selected_variations']) && is_array($_POST['selected_variations'])
+					? array_map('absint', wp_unslash($_POST['selected_variations']))
+					: array();
 
 				foreach ($product_ids as $product_id) {
 					$product = wc_get_product($product_id);
+					if (!$product) {
+						continue;
+					}
 					$title = $product->get_name();
 
-					if ($product && $product->is_type('variable')) {
+					if ($product->is_type('variable')) {
 						$variations = $product->get_available_variations(); // Get all available variations
-						$attributes_dropdown .= '<select multiple="multiple" name="i_rule_operand_variation[]" data-placeholder="' . $title . ' to choose variations" class="jwcfe-enhanced-multi-select2 jwcfe-enhanced-multi-variations" style="width:200px;" value="">';
+						// Product title can be vendor/customer-influenced (e.g. multivendor marketplaces),
+						// so it must be escaped before being placed in an HTML attribute.
+						$attributes_dropdown .= '<select multiple="multiple" name="i_rule_operand_variation[]" data-placeholder="' . esc_attr($title . ' to choose variations') . '" class="jwcfe-enhanced-multi-select2 jwcfe-enhanced-multi-variations" style="width:200px;" value="">';
 						$variation_data = array();
 						foreach ($variations as $variation) {
-							$variation_id = $variation['variation_id'];
+							$variation_id = absint($variation['variation_id']);
 							$variation_obj = wc_get_product($variation_id);
+							if (!$variation_obj) {
+								continue;
+							}
 							$variation_name = implode(", ", $variation_obj->get_variation_attributes()); // Get variation attributes as a string
 							$variation_price = $variation_obj->get_price(); // Get variation price
 							$variation_data[] = array(
@@ -242,10 +253,12 @@ if (!class_exists('JWCFE_Admin')):
 								'variation_price' => $variation_price
 							);
 							$selected = '';
-							if (!empty($selected_variations) && in_array($variation_id, $selected_variations)) {
+							if (!empty($selected_variations) && in_array($variation_id, $selected_variations, true)) {
 								$selected = 'selected';
 							}
-							$attributes_dropdown .= '<option value="' . $variation_id . '" ' . $selected . '>' . $variation_name . ' - $' . $variation_price . '</option>';
+							// Variation attribute names come from product data set by shop owners/vendors —
+							// escape before output to prevent stored/reflected XSS in this admin dropdown.
+							$attributes_dropdown .= '<option value="' . esc_attr($variation_id) . '" ' . esc_attr($selected) . '>' . esc_html($variation_name . ' - $' . $variation_price) . '</option>';
 						}
 						$attributes_dropdown .= '</select>';
 					}
@@ -990,22 +1003,31 @@ if (!class_exists('JWCFE_Admin')):
 			}
 
 			$section_label = "";
+			$section_email_heading = "";
+			$section_order_heading = "";
 			$sync_with_checkout = "";
 
-			foreach ($_POST['formdata'] as $formRow) {
+			$formdata = isset($_POST['formdata']) && is_array($_POST['formdata']) ? wp_unslash($_POST['formdata']) : array();
+
+			foreach ($formdata as $formRow) {
+				if (!isset($formRow['name'])) {
+					continue;
+				}
+				$row_value = isset($formRow['value']) ? sanitize_text_field($formRow['value']) : '';
+
 				if ($formRow['name'] == 'section_label') {
-					$section_label = $formRow['value'];
+					$section_label = $row_value;
 				}
 				if ($formRow['name'] == 'section_email_heading') {
 
-					$section_email_heading = $formRow['value'];
+					$section_email_heading = $row_value;
 				}
 				if ($formRow['name'] == 'section_order_heading') {
-					$section_order_heading = $formRow['value'];
+					$section_order_heading = $row_value;
 				}
 
 				if ($formRow['name'] == 'sync_with_checkout') {
-					$sync_with_checkout = $formRow['value'];
+					$sync_with_checkout = $row_value;
 				}
 			}
 

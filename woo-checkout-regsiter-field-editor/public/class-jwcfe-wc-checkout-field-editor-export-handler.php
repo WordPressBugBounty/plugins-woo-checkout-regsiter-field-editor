@@ -47,6 +47,7 @@ class JWCFE_WC_Checkout_Field_Editor_Export_Handler {
 					$field_data[ $field_key ] = is_array( $field_value ) 
 						? implode( ', ', $field_value ) 
 						: $field_value;
+					$field_data[ $field_key ] = $this->jwcfe_escape_csv_formula( $field_data[ $field_key ] );
 				} else {
 					$field_data[ $field_key ] = 'N/A';
 				}
@@ -66,6 +67,27 @@ class JWCFE_WC_Checkout_Field_Editor_Export_Handler {
 		}
 	
 		return $new_order_data;
+	}
+
+	/**
+	 * Prevent CSV/formula injection (a.k.a. "CSV injection") when customer-entered
+	 * checkout field values are opened later in Excel/Google Sheets. Any value that
+	 * starts with a formula-triggering character is prefixed with a single quote so
+	 * spreadsheet apps treat it as plain text instead of evaluating it as a formula.
+	 *
+	 * @param string $value
+	 * @return string
+	 */
+	private function jwcfe_escape_csv_formula( $value ) {
+		if ( ! is_string( $value ) || $value === '' ) {
+			return $value;
+		}
+
+		if ( in_array( $value[0], array( '=', '+', '-', '@', "\t", "\r" ), true ) ) {
+			return "'" . $value;
+		}
+
+		return $value;
 	}
 	
     /**

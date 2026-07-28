@@ -3,7 +3,7 @@
  * Plugin Name: Checkout Field Editor for Woocommerce - Checkout Manager
  * Description: Easily Add, Edit, Remove or re-arrange any fields on WooCommerce Checkout page.
  * Author:      Jcodex
- * Version:     2.5.4
+ * Version:     2.5.5
  * Author URI:  https://www.jcodex.com
  * Plugin URI:  https://www.jcodex.com
  * Text Domain: jwcfe
@@ -33,7 +33,7 @@ if (!defined('ABSPATH')) {
 }
 // Avoid defining constants if they are already defined.
 if (!defined('JWCFE_VERSION')) {
-    define('JWCFE_VERSION', '2.5.0');
+    define('JWCFE_VERSION', '2.5.5');
 }
 
 if (!defined('JWCFE_BASE_NAME')) {
@@ -70,41 +70,62 @@ if (!defined('JWCFE_URL')) {
         
         add_option( 'jwcfe_activation_redirect', true );
 
-        // Activation timestamp: review notice becomes eligible exactly this many seconds later (see jwcfe_get_review_notice_delay_seconds).
+        // Activation timestamp, kept for reference/diagnostics (no longer used to gate the review notice).
         update_option( 'jwcfe_activated_at', time() );
     }
 
     /**
-     * Seconds to wait after plugin activation before showing the review notice (default: 3 days; first admin request after this passes may display it).
+     * How long the review notice campaign runs for, per site, before it stops showing
+     * to everyone automatically — regardless of whether anyone dismissed it (default: 2 weeks).
      *
      * @return int
      */
-    function jwcfe_get_review_notice_delay_seconds() {
-        return (int) apply_filters( 'jwcfe_review_notice_delay_seconds', 3 * DAY_IN_SECONDS );
+    function jwcfe_get_review_notice_campaign_seconds() {
+        return (int) apply_filters( 'jwcfe_review_notice_campaign_seconds', 14 * DAY_IN_SECONDS );
     }
 
     /**
-     * Admin review notice shown 3 days after activation (see jwcfe_get_review_notice_delay_seconds()).
+     * Stamps the moment this review campaign starts on a given site (first admin page
+     * load after this code is active) so the notice appears immediately — including for
+     * sites that already had the plugin installed and activated before this update.
+     */
+    add_action( 'admin_init', function () {
+        if ( ! is_admin() || ! is_user_logged_in() || ! current_user_can( 'activate_plugins' ) ) {
+            return;
+        }
+        if ( false === get_option( 'jwcfe_review_notice_campaign_started_at', false ) ) {
+            update_option( 'jwcfe_review_notice_campaign_started_at', time() );
+        }
+    }, 5 );
+
+    /**
+     * Handles clicks on the review notice's action links. Both actions permanently
+     * dismiss the notice for that admin — either they already left a review, or they
+     * just closed it. Either way, nobody sees it again after responding once.
      */
     add_action( 'admin_init', function () {
         if ( ! is_admin() || ! is_user_logged_in() ) {
             return;
         }
 
-        // Backfill only if activation hook never stored a timestamp (e.g. manual copy of plugin files). Timer starts from this admin hit, not real activation.
-        if ( false === get_option( 'jwcfe_activated_at', false ) && current_user_can( 'activate_plugins' ) ) {
-            update_option( 'jwcfe_activated_at', time() );
-        }
-
         if ( ! current_user_can( 'manage_woocommerce' ) ) {
             return;
         }
 
-        if ( isset( $_GET['jwcfe_dismiss_review_notice'] ) ) {
-            $nonce = isset( $_GET['_wpnonce'] ) ? sanitize_text_field( wp_unslash( $_GET['_wpnonce'] ) ) : '';
-            if ( wp_verify_nonce( $nonce, 'jwcfe_dismiss_review_notice' ) ) {
-                update_user_meta( get_current_user_id(), 'jwcfe_review_notice_dismissed', 1 );
-            }
+        if ( ! isset( $_GET['jwcfe_review_notice_action'] ) ) {
+            return;
+        }
+
+        $nonce = isset( $_GET['_wpnonce'] ) ? sanitize_text_field( wp_unslash( $_GET['_wpnonce'] ) ) : '';
+        if ( ! wp_verify_nonce( $nonce, 'jwcfe_review_notice_action' ) ) {
+            return;
+        }
+
+        $action  = sanitize_text_field( wp_unslash( $_GET['jwcfe_review_notice_action'] ) );
+        $user_id = get_current_user_id();
+
+        if ( 'already_reviewed' === $action || 'dismiss' === $action ) {
+            update_user_meta( $user_id, 'jwcfe_review_notice_dismissed', 1 );
         }
     } );
 
@@ -128,29 +149,44 @@ if (!defined('JWCFE_URL')) {
             return;
         }
 
-        if ( get_user_meta( get_current_user_id(), 'jwcfe_review_notice_dismissed', true ) ) {
+        $user_id = get_current_user_id();
+
+        // Permanently dismissed (already reviewed, or closed it) — never show again.
+        if ( get_user_meta( $user_id, 'jwcfe_review_notice_dismissed', true ) ) {
             return;
         }
 
-        $activated_at = (int) get_option( 'jwcfe_activated_at', 0 );
-        $delay        = jwcfe_get_review_notice_delay_seconds();
-        if ( ! $activated_at || ( time() - $activated_at ) < $delay ) {
+        // Campaign window: shows immediately (no per-site waiting period) on every site running
+        // this update — including sites where the plugin was already active before this update —
+        // then stops appearing for everyone once the window closes, dismissed or not.
+        $campaign_started_at = (int) get_option( 'jwcfe_review_notice_campaign_started_at', 0 );
+        if ( ! $campaign_started_at ) {
+            $campaign_started_at = time();
+            update_option( 'jwcfe_review_notice_campaign_started_at', $campaign_started_at );
+        }
+        if ( ( time() - $campaign_started_at ) >= jwcfe_get_review_notice_campaign_seconds() ) {
             return;
         }
 
         $context = ( 'global' === $context ) ? 'global' : 'inline';
         $extra_class = ( 'global' === $context ) ? 'jwcfe-review-notice--global' : 'jwcfe-review-notice--inline';
 
-        $review_url  = 'https://wordpress.org/support/plugin/woo-checkout-regsiter-field-editor/reviews/#new-post';
+        $review_url = 'https://wordpress.org/support/plugin/woo-checkout-regsiter-field-editor/reviews/#new-post';
+
+        $already_reviewed_url = wp_nonce_url(
+            add_query_arg( 'jwcfe_review_notice_action', 'already_reviewed' ),
+            'jwcfe_review_notice_action'
+        );
         $dismiss_url = wp_nonce_url(
-            add_query_arg( 'jwcfe_dismiss_review_notice', '1' ),
-            'jwcfe_dismiss_review_notice'
+            add_query_arg( 'jwcfe_review_notice_action', 'dismiss' ),
+            'jwcfe_review_notice_action'
         );
 
         $logo_url = plugin_dir_url( __FILE__ ) . 'admin/assets/logo-blue.svg';
         ?>
         <style>
             #jwcfe-review-notice.jwcfe-review-notice--inline {
+                position: relative;
                 width: 100%;
                 max-width: 100%;
                 box-sizing: border-box;
@@ -162,6 +198,7 @@ if (!defined('JWCFE_URL')) {
                 box-shadow: 0 1px 4px rgba(0,0,0,0.1);
             }
             #jwcfe-review-notice.jwcfe-review-notice--global {
+                position: relative;
                 max-width: 100%;
                 box-sizing: border-box;
                 border-left: none;
@@ -174,10 +211,30 @@ if (!defined('JWCFE_URL')) {
                 display: flex;
                 align-items: center;
                 gap: 15px;
-                padding: 12px 16px;
+                padding: 12px 40px 12px 16px;
                 background: #f0f6ff;
                 border-left: 4px solid #2271b1;
                 border-radius: 6px;
+            }
+            .jwcfe-notice-close {
+                position: absolute;
+                top: 8px;
+                right: 10px;
+                width: 22px;
+                height: 22px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                line-height: 1;
+                font-size: 16px;
+                color: #646970 !important;
+                text-decoration: none !important;
+                border-radius: 3px;
+            }
+            .jwcfe-notice-close:hover,
+            .jwcfe-notice-close:focus {
+                color: #3c434a !important;
+                background: rgba(0,0,0,0.05);
             }
             .jwcfe-notice-logo img {
                 width: 40px;
@@ -197,48 +254,63 @@ if (!defined('JWCFE_URL')) {
             }
             .jwcfe-notice-actions {
                 margin-top: 6px;
+                display: flex;
+                align-items: center;
+                flex-wrap: wrap;
+                gap: 8px 14px;
             }
-            .jwcfe-notice-actions a.jwcfe-btn-review {
+            .jwcfe-notice-actions a.jwcfe-btn-review,
+            .jwcfe-notice-actions a.jwcfe-btn-review:visited {
                 display: inline-block;
                 background: #2271b1;
-                color: #fff;
+                color: #ffffff !important;
                 padding: 5px 14px;
                 border-radius: 4px;
                 text-decoration: none;
                 font-size: 12px;
-                margin-right: 8px;
+                border: 1px solid #2271b1;
             }
-            .jwcfe-notice-actions a.jwcfe-btn-review:hover {
+            .jwcfe-notice-actions a.jwcfe-btn-review:hover,
+            .jwcfe-notice-actions a.jwcfe-btn-review:focus,
+            .jwcfe-notice-actions a.jwcfe-btn-review:active {
                 background: #135e96;
+                border-color: #135e96;
+                color: #ffffff !important;
             }
-            .jwcfe-notice-actions a.jwcfe-btn-dismiss {
-                color: #2271b1;
+            .jwcfe-notice-actions a.jwcfe-btn-secondary,
+            .jwcfe-notice-actions a.jwcfe-btn-secondary:visited {
+                color: #2271b1 !important;
                 text-decoration: underline;
                 font-size: 12px;
+            }
+            .jwcfe-notice-actions a.jwcfe-btn-secondary:hover,
+            .jwcfe-notice-actions a.jwcfe-btn-secondary:focus {
+                color: #135e96 !important;
             }
         </style>
 
         <?php
         // WordPress common.js moves div.notice after the first h1 unless it has class .inline.
-        $notice_classes = array( 'notice', 'is-dismissible', $extra_class );
+        $notice_classes = array( 'notice', $extra_class );
         if ( 'inline' === $context ) {
             $notice_classes[] = 'inline';
         }
         ?>
         <div class="<?php echo esc_attr( implode( ' ', $notice_classes ) ); ?>" id="jwcfe-review-notice">
+            <a href="<?php echo esc_url( $dismiss_url ); ?>" class="jwcfe-notice-close" aria-label="<?php esc_attr_e( 'Dismiss this notice', 'jwcfe' ); ?>" title="<?php esc_attr_e( 'Dismiss', 'jwcfe' ); ?>">&times;</a>
             <div class="jwcfe-notice-inner">
                 <div class="jwcfe-notice-logo">
                     <img src="<?php echo esc_url( $logo_url ); ?>" alt="JCodex Logo" />
                 </div>
                 <div class="jwcfe-notice-text">
-                    <strong>Loving WooCommerce Checkout Field Editor? 🙌</strong>
-                    If this plugin helped you, a quick review would mean a lot
+                    <strong><?php esc_html_e( 'Enjoying Checkout Field Editor? 🙌', 'jwcfe' ); ?></strong>
+                    <?php esc_html_e( 'A quick review helps other store owners find this plugin. Got a minute?', 'jwcfe' ); ?>
                     <div class="jwcfe-notice-actions">
                         <a href="<?php echo esc_url( $review_url ); ?>" target="_blank" rel="noopener noreferrer" class="jwcfe-btn-review">
-                            ⭐ Leave a Review
+                            ⭐ <?php esc_html_e( 'Leave a Review', 'jwcfe' ); ?>
                         </a>
-                        <a href="<?php echo esc_url( $dismiss_url ); ?>" class="jwcfe-btn-dismiss">
-                            Dismiss
+                        <a href="<?php echo esc_url( $already_reviewed_url ); ?>" class="jwcfe-btn-secondary">
+                            <?php esc_html_e( 'I already left a review', 'jwcfe' ); ?>
                         </a>
                     </div>
                 </div>

@@ -1,13 +1,12 @@
-=== Checkout Field Editor (Checkout Page Manager) for WooCommerce ===
+=== Checkout Field Editor (Checkout Manager) for WooCommerce ===
 
 Contributors: jcodex, junaidit
 Donate link: https://www.paypal.com/donate/?hosted_button_id=QD4H8N3QVLLML
-
-Tags: checkout field editor for wooCommerce, custom fields, woocommerce checkout field editor, checkout manager, checkout editor
+Tags: checkout field editor, checkout manager, woocommerce checkout fields, custom checkout fields, woocommerce checkout field editor
 Requires at least: 4.9
 Tested up to: 7.0
 Requires PHP: 5.6
-Stable tag: 2.5.4
+Stable tag: 2.5.5
 License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 

@@ -389,9 +389,38 @@ var jwcfe_settings = (function ($, window, document) {
       var form = $("#jwcfe_checkout_fields_form");
 
       if (result) {
+        jwcfe_show_field_modal_saving_state($(this));
         form.submit();
       }
     });
+
+  /**
+   * Shows an inline spinner + "Saving..." on the Add/Save button and locks the
+   * modal (cancel, close icon, backdrop click) so the customer gets immediate
+   * feedback instead of a silent 2-3 second wait while the page reloads.
+   *
+   * @param {jQuery} $saveBtn The #btnaddfield element that was clicked.
+   */
+  function jwcfe_show_field_modal_saving_state($saveBtn) {
+    var savingLabel =
+      (typeof jwcfe_admin_i18n !== "undefined" && jwcfe_admin_i18n.saving) ||
+      "Saving...";
+
+    $saveBtn
+      .data("jwcfe-original-html", $saveBtn.html())
+      .prop("disabled", true)
+      .addClass("jwcfe-btn-saving")
+      .html(
+        '<span class="jwcfe-btn-spinner" aria-hidden="true"></span>' +
+          '<span class="jwcfe-btn-saving-text">' +
+          savingLabel +
+          "</span>",
+      );
+
+    $(".btncancel").prop("disabled", true).addClass("jwcfe-disabled-link");
+    $(".jwcfecloseBtn").addClass("jwcfe-disabled-link");
+    $("#jwcfeModal").addClass("jwcfe-modal-saving");
+  }
 
   function jwcfe_add_new_row(form) {
     if (typeof tinymce !== "undefined" && tinymce.get("flabel_editor")) {
@@ -1387,6 +1416,11 @@ var jwcfe_settings = (function ($, window, document) {
   // ensure function exists inside IIFE scope
   function closejwcfeModalLocal() {
     var modal = document.getElementById("jwcfeModal");
+    if (modal && modal.classList.contains("jwcfe-modal-saving")) {
+      // A save is in flight (full-page submit about to navigate) — don't let
+      // the customer close the modal out from under it.
+      return;
+    }
     if (modal) modal.style.display = "none";
   }
 

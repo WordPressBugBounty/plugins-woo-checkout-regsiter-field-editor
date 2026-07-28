@@ -1261,6 +1261,48 @@ input[name="save_fields"]:focus {
 }
 
 /* ============================================================
+   ADD/EDIT FIELD MODAL — SAVING STATE
+   Gives immediate feedback on click instead of a silent pause while
+   the full-page form submit reloads the settings screen.
+   ============================================================ */
+.popup_button_dailogbox .dialog-button-set #btnaddfield.jwcfe-btn-saving {
+  cursor: not-allowed;
+  opacity: 0.85;
+  display: inline-flex !important;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.jwcfe-btn-spinner {
+  display: inline-block;
+  width: 14px;
+  height: 14px;
+  border: 2px solid rgba(255, 255, 255, 0.5);
+  border-top-color: #fff;
+  border-radius: 50%;
+  animation: jwcfe-spin 0.7s linear infinite;
+  flex: none;
+}
+
+@keyframes jwcfe-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.jwcfe-disabled-link {
+  pointer-events: none;
+  opacity: 0.5;
+}
+
+#jwcfeModal.jwcfe-modal-saving .jwcfe-modal-header,
+#jwcfeModal.jwcfe-modal-saving #jwcfe_new_field_form {
+  opacity: 0.6;
+  pointer-events: none;
+}
+
+/* ============================================================
    FORM LAYOUT INSIDE POPUP
    ============================================================ */
 /* OLD layout neutralized — new modal uses .jwcfe-modal-box/.jwcfe-modal-body instead */

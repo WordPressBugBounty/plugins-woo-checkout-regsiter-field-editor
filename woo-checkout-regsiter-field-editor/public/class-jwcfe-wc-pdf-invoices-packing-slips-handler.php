@@ -148,20 +148,29 @@ class JWCFE_WC_PDF_Invoices_Packing_Slips_Handler extends JWCFE_Checkout_Fields_
 				
 				//if($is_nl2br && $type === 'textarea'){
 				if($is_nl2br){
-					$value = nl2br($value);
+					$value = nl2br( esc_html( $value ) );
+				} else {
+					$value = esc_html( $value );
 				}
+
+				// Field key is used as an HTML class name; field title may contain
+				// admin-entered text — both are escaped before being concatenated into markup.
+				// Value is customer/user-supplied (checkout or account meta), so it must never
+				// be output unescaped here.
+				$safe_key   = esc_attr( $key );
+				$safe_title = esc_html( __( $field['title'], 'woocommerce-checkout-field-editor-pro' ) );
 
 				if($value){
 					if($display === self::DISPLAY_CELL){
-						$html .= '<dl class="'.$key.'"><dt>'. __($field['title'], 'woocommerce-checkout-field-editor-pro') .':</dt><dd>'. $value .'</dd></dl>';
+						$html .= '<dl class="'.$safe_key.'"><dt>'. $safe_title .':</dt><dd>'. $value .'</dd></dl>';
 					}else{
-						$html .= '<tr class="'.$key.'"><th>'. __($field['title'], 'woocommerce-checkout-field-editor-pro') .':</th><td>'. $value .'</td></tr>';
+						$html .= '<tr class="'.$safe_key.'"><th>'. $safe_title .':</th><td>'. $value .'</td></tr>';
 					}
 				}else if($type === 'heading' || $type === 'label'){
 					if($display === self::DISPLAY_CELL){
-						$html .= '<dl class="'.$key.'"><dt>'. __($field['title'], 'woocommerce-checkout-field-editor-pro') .'</dt><dd></dd></dl>';
+						$html .= '<dl class="'.$safe_key.'"><dt>'. $safe_title .'</dt><dd></dd></dl>';
 					}else{
-						$html .= '<tr class="'.$key.'"><th colspan="2">'. __($field['title'], 'woocommerce-checkout-field-editor-pro') .'</th></tr>';
+						$html .= '<tr class="'.$safe_key.'"><th colspan="2">'. $safe_title .'</th></tr>';
 					}
 				}
 			}

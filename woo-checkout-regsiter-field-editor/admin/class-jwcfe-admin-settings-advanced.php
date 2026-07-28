@@ -348,7 +348,13 @@ class JWCFE_Admin_Settings_Advanced {
 		}
 
 		$settings = json_decode( $decoded, true );
-		$saved    = false;
+
+		if ( ! is_array( $settings ) ) {
+			$this->print_notice( __( 'The entered import settings data is invalid. Please try again with valid data.', 'jwcfe' ), 'error' );
+			return false;
+		}
+
+		$saved = false;
 
 		$map = array(
 			'billing'          => 'jwcfe_wc_fields_billing',
@@ -360,14 +366,18 @@ class JWCFE_Admin_Settings_Advanced {
 		);
 
 		foreach ( $map as $key => $option ) {
-			if ( isset( $settings[ $key ] ) ) {
-				update_option( $option, $settings[ $key ] );
+			// Imported data is treated the same as untrusted input: it must be an array
+			// of field definitions, and each field is re-sanitized the same way the normal
+			// field editor sanitizes it, so importing can't be used to smuggle in
+			// unsanitized HTML/markup that bypasses the editor's own rules.
+			if ( isset( $settings[ $key ] ) && is_array( $settings[ $key ] ) ) {
+				update_option( $option, $this->sanitize_imported_fields( $settings[ $key ] ) );
 				$saved = true;
 			}
 		}
 
-		if ( isset( $settings['advanced'] ) ) {
-			$this->save_advanced_settings( $settings['advanced'] );
+		if ( isset( $settings['advanced'] ) && is_array( $settings['advanced'] ) ) {
+			$this->save_advanced_settings( $this->sanitize_imported_advanced_settings( $settings['advanced'] ) );
 			$saved = true;
 		}
 
@@ -376,6 +386,103 @@ class JWCFE_Admin_Settings_Advanced {
 		} else {
 			$this->print_notice( __( 'Nothing was imported (or data was empty).', 'jwcfe' ), 'error' );
 		}
+	}
+
+	/**
+	 * Re-sanitize an imported set of field definitions using the same rules the
+	 * normal field editor applies on save, so pasted import data can't introduce
+	 * unescaped markup/script content that the regular UI would never allow.
+	 *
+	 * @param array $fields
+	 * @return array
+	 */
+	private function sanitize_imported_fields( $fields ) {
+		$allowed_tags = array(
+			'a'          => array( 'class' => array(), 'href' => array(), 'rel' => array(), 'title' => array() ),
+			'abbr'       => array( 'title' => array() ),
+			'b'          => array(),
+			'blockquote' => array( 'cite' => array() ),
+			'cite'       => array( 'title' => array() ),
+			'code'       => array(),
+			'del'        => array( 'datetime' => array(), 'title' => array() ),
+			'dd'         => array(),
+			'div'        => array( 'class' => array(), 'title' => array(), 'style' => array() ),
+			'dl'         => array(),
+			'dt'         => array(),
+			'em'         => array(),
+			'h1'         => array(),
+			'h2'         => array(),
+			'h3'         => array(),
+			'h4'         => array(),
+			'h5'         => array(),
+			'h6'         => array(),
+			'i'          => array(),
+			'img'        => array( 'alt' => array(), 'class' => array(), 'height' => array(), 'src' => array(), 'width' => array() ),
+			'li'         => array( 'class' => array() ),
+			'ol'         => array( 'class' => array() ),
+			'p'          => array( 'class' => array() ),
+			'q'          => array( 'cite' => array(), 'title' => array() ),
+			'span'       => array( 'class' => array(), 'title' => array(), 'style' => array() ),
+			'strike'     => array(),
+			'strong'     => array(),
+			'ul'         => array( 'class' => array() ),
+		);
+
+		$sanitized = array();
+
+		foreach ( $fields as $name => $field ) {
+			$name = sanitize_title( (string) $name );
+			if ( ! $name || ! is_array( $field ) ) {
+				continue;
+			}
+
+			if ( isset( $field['label'] ) ) {
+				$field['label'] = wp_kses_post( (string) $field['label'] );
+			}
+			if ( isset( $field['texteditor'] ) ) {
+				$field['texteditor'] = wp_kses( (string) $field['texteditor'], $allowed_tags );
+			}
+			foreach ( array( 'placeholder', 'default', 'min_time', 'max_time', 'time_step', 'time_format', 'heading_type', 'maxlength' ) as $plain_key ) {
+				if ( isset( $field[ $plain_key ] ) && is_scalar( $field[ $plain_key ] ) ) {
+					$field[ $plain_key ] = wc_clean( (string) $field[ $plain_key ] );
+				}
+			}
+			if ( isset( $field['class'] ) ) {
+				$field['class'] = array_filter( array_map( 'sanitize_html_class', (array) $field['class'] ) );
+			}
+			if ( isset( $field['label_class'] ) ) {
+				$field['label_class'] = array_map( 'wc_clean', (array) $field['label_class'] );
+			}
+
+			$sanitized[ $name ] = $field;
+		}
+
+		return $sanitized;
+	}
+
+	/**
+	 * Advanced settings only ever hold a fixed set of on/off toggles — whitelist
+	 * both the keys and the values on import instead of trusting the payload.
+	 *
+	 * @param array $settings
+	 * @return array
+	 */
+	private function sanitize_imported_advanced_settings( $settings ) {
+		$allowed_keys = array(
+			'enable_label_override',
+			'enable_placeholder_override',
+			'enable_class_override',
+			'enable_priority_override',
+			'enable_required_override',
+		);
+
+		$sanitized = array();
+		foreach ( $allowed_keys as $key ) {
+			if ( isset( $settings[ $key ] ) ) {
+				$sanitized[ $key ] = ( $settings[ $key ] === '1' ) ? '1' : '';
+			}
+		}
+		return $sanitized;
 	}
 
 	private function is_json( $string ) {
