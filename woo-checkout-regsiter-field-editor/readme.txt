@@ -4,7 +4,7 @@ Contributors: jcodex, junaidit
 Donate link: https://www.paypal.com/donate/?hosted_button_id=QD4H8N3QVLLML
 Tags: checkout field editor, checkout manager, woocommerce checkout fields, custom checkout fields, woocommerce checkout field editor
 Requires at least: 4.9
-Tested up to: 7.0
+Tested up to: 7.1
 Requires PHP: 5.6
 Stable tag: 2.5.5
 License: GPLv3
